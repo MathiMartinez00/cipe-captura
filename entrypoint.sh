@@ -1,6 +1,6 @@
 #!/bin/sh
 
-if [ "$DATABASE" = "mysql" ]
+if [ "$DATABASE" = "postgresql" ]
 then
     echo "Waiting for mysql..."
 
@@ -8,7 +8,7 @@ then
       sleep 0.1
     done
 
-    echo "MySQL started"
+    echo "PostgreSQL started"
 fi
 
 python manage.py flush --no-input
