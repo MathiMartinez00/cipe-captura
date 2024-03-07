@@ -71,6 +71,9 @@ class Scientist(models.Model):
     def __str__(self):
         return f"{self.first_name.title()} {self.last_name.title()}"
 
+    def serialize(self):
+        return {"pk": self.id, "name": f"{self.first_name} {self.last_name}"}
+
     class Meta:
         unique_together = ('email', 'ci')
 
