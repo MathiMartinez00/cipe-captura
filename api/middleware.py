@@ -11,9 +11,9 @@ class BasicAuthMiddleware(MiddlewareMixin):
             values = request.headers['Authorization'].split(" ")
             auth_type = values[0]
             token_value = values[1]
-            print(auth_type, token_value)
-            user = User.objects.get(username=token_value)
-            request.user = user
+            user = User.objects.filter(username=token_value)
+            if user:
+                request.user = user[0]
         return None
 
     def process_response(self, request, response):

@@ -8,7 +8,8 @@ from app.utils import get_location_info_from_coordinates, load_countries_iso2
 from django.db.models import Count
 from django.forms.models import model_to_dict
 from django.shortcuts import render
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
+from django.core import serializers
 
 
 logger = logging.getLogger(__name__)

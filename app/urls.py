@@ -8,5 +8,5 @@ urlpatterns = [
     path('registration/edit/<str:scientist_slug>', views.edit_scientist, name='edit_scientist'),
     path('success/', views.success_registration),
     path('map/', views.map_scientists, name='map'),
-    path('map/filter_map/', views.filter_map, name='filter_map')
+    path('map/filter_map/', views.filter_map, name='filter_map'),
 ]
