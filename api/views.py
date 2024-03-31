@@ -5,6 +5,7 @@ from django.utils.decorators import method_decorator
 from app.models import Scientist
 import json
 
+
 @method_decorator(csrf_exempt, name='dispatch')
 class ScientistListView(View):
 
