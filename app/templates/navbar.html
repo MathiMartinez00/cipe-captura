@@ -26,6 +26,17 @@
                     <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="{% url 'registration' %}">Registrarse</a>
                 </li>
                 <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="{% url 'user_registration' %}">Crear Cuenta</a>
+                </li>
+                <li class="nav-item mx-0 mx-lg-1">
+                    <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="{% url 'user_login' %}">Hacer Login</a>
+                </li>
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item mx-0 mx-lg-1">
+                        <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="{% url 'view_api_key' %}">Ver API Key</a>
+                    </li>
+                {% endif %}
+                <li class="nav-item mx-0 mx-lg-1">
                     <a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="{% url 'map' %}">Mapa</a>
                 </li>
             </ul>

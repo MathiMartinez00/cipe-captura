@@ -2,15 +2,16 @@ import logging
 import json
 
 from app.constants import SCIENTIFIC_AREA, POSITION, FIRST_CAT_SCIENTIFIC_AREA
-from app.forms import RegistrationForm, RegistrationEditForm
+from app.forms import RegistrationForm, RegistrationEditForm, UserRegistrationForm
 from app.models import Institution, Scientist, Affiliation
 from app.utils import get_location_info_from_coordinates, load_countries_iso2
 from django.db.models import Count
 from django.forms.models import model_to_dict
-from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse
-from django.core import serializers
-
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse
 
 logger = logging.getLogger(__name__)
 countries_iso2 = load_countries_iso2()
@@ -379,3 +380,43 @@ def edit_scientist(request, **kwargs):
         'registration_result': registration_error
     }
     return render(request, 'register.html', context)
+
+def user_registration(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            User.objects.create_user(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            return redirect('index')
+
+        return render(request, 'user-registration.html', {'form': form})
+
+    form = UserRegistrationForm()
+    context = {
+        'form': form,
+        'action_url': reverse('user_registration')
+    }
+    return render(request, 'user-registration.html', context)
+
+
+def user_login(request):
+    if request.method == 'POST':
+        form = UserRegistrationForm(request.POST)
+        if form.is_valid():
+            user = authenticate(request, username=form.cleaned_data['username'], password=form.cleaned_data['password'])
+            if user is not None:
+                login(request, user)
+                return redirect('index')
+
+        return render(request, 'user-registration.html', {'form': form})
+
+    form = UserRegistrationForm()
+    context = {
+        'form': form,
+        'action_url': reverse('user_login')
+    }
+    return render(request, 'user-registration.html', context)
+
+
+def view_api_key(request):
+    if request.user.is_authenticated:
+        return HttpResponse(request.user.usertoken.bearer_token)

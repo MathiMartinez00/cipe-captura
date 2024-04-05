@@ -8,6 +8,21 @@ CHANNEL_EMPTY = [('','Indique un canal de comunicación')] + list(COMMUNICATION_
 BECAL = [(False, 'Indique si es becario de BECAL'), (False, 'No'), (True, 'Si')]
 
 
+class UserRegistrationForm(forms.Form):
+    username = forms.CharField(label='Nombre de usuario *', widget=forms.TextInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese su nombre de usuario',
+        }
+    ))
+
+    password = forms.CharField(label='Contraseña *', widget=forms.PasswordInput(
+        attrs={
+            'class': 'form-control',
+            'placeholder': 'Ingrese su contraseña',
+        }
+    ))
+
 class RegistrationForm(forms.Form):
     first_name = forms.CharField(label='Nombre *', widget=forms.TextInput(
         attrs={
