@@ -6,10 +6,14 @@ import secrets
 import string
 
 
+# TODO: Add a way to create users in the website.
 class UserToken(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bearer_token = models.CharField(max_length=32)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'User token for {self.user.username}'
 
 
 @receiver(post_save, sender=User)
