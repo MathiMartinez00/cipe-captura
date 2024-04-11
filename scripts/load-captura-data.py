@@ -4,6 +4,8 @@ from faker import Faker
 
 # Get domain from env.
 DOMAIN = os.environ.get('DOMAIN')
+SUPERUSER_USERNAME = os.environ.get('DJANGO_SUPERUSER_USERNAME')
+SUPERUSER_PASSWORD = os.environ.get('DJANGO_SUPERUSER_PASSWORD')
 fake = Faker()
 
 # TODO: Figure out how to import captura data.
@@ -18,7 +20,13 @@ for _ in range(10):
     })
 
 # Get token and do requests with it.
-token_request = requests.post(f'{DOMAIN}api/get-user-token/', json={'username': 'superuser', 'password': 'superuser'})
+token_request = requests.post(
+    f'{DOMAIN}api/get-user-token/',
+    json={
+        'username': SUPERUSER_USERNAME,
+        'password': SUPERUSER_PASSWORD
+    }
+)
 token = token_request.json()['token']
 auth_header = {'Authorization': f'Bearer {token}'}
 for scientist in scientist_list:
