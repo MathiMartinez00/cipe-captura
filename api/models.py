@@ -6,7 +6,6 @@ import secrets
 import string
 
 
-# TODO: Add a way to create users in the website.
 class UserToken(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bearer_token = models.CharField(max_length=32)
