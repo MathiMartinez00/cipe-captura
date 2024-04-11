@@ -15,6 +15,6 @@ python manage.py flush --no-input
 python manage.py migrate
 python manage.py loaddata data/initial_data.json
 python manage.py collectstatic --no-input
-python manage.py createsuperuser --username example --email example@example.com --no-input
+python manage.py createsuperuser --username superuser --email superuser@example.com --no-input
 
 exec "$@"
