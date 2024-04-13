@@ -11,7 +11,7 @@
                 <p>
                     Para el acceso a los datos es necesaria una API key, que puede ser creada con una cuenta.
                 </p>
-                <form method="POST" action="{% url 'user_registration' %}">
+                <form method="POST" action="{% url action_url_name %}">
                     {% csrf_token %}
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls mb-0 pb-2">

@@ -8,7 +8,7 @@ from app.utils import get_location_info_from_coordinates, load_countries_iso2
 from django.db.models import Count
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
@@ -381,6 +381,7 @@ def edit_scientist(request, **kwargs):
     }
     return render(request, 'register.html', context)
 
+
 def user_registration(request):
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
@@ -393,7 +394,7 @@ def user_registration(request):
     form = UserRegistrationForm()
     context = {
         'form': form,
-        'action_url': reverse('user_registration')
+        'action_url_name': 'user_registration'
     }
     return render(request, 'user-registration.html', context)
 
@@ -407,16 +408,25 @@ def user_login(request):
                 login(request, user)
                 return redirect('index')
 
-        return render(request, 'user-registration.html', {'form': form})
+        context = {
+            'form': form,
+            'action_url_name': 'user_login'
+        }
+        return render(request, 'user-registration.html', context)
 
     form = UserRegistrationForm()
     context = {
         'form': form,
-        'action_url': reverse('user_login')
+        'action_url_name': 'user_login'
     }
     return render(request, 'user-registration.html', context)
 
 
+def user_logout(request):
+    logout(request)
+    return redirect('index')
+
+
 def view_api_key(request):
     if request.user.is_authenticated:
-        return HttpResponse(request.user.usertoken.bearer_token)
+        return JsonResponse({'token': request.user.usertoken.bearer_token}, safe=False)
