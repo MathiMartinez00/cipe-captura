@@ -37,10 +37,10 @@ Once containers are fully created, you can watch the logs with `docker-compose -
 2. Get into the directory `cipe`;
 3. Change to development branch `git checkout develop`;
 4. Pull last changes in the development branch `git pull origin develp`;
-5. Rename the file `cipe/settings.py.sample` as `cipe/settings.py`;
-6. Rename the file `.env.dev.sample` as `.env.dev`;
+5. Create a copy of the file `cipe/settings.py.sample` as `cipe/settings.py`;
+6. Create a copy of the file `.env.dev.sample` as `.env.dev`;
 7. Generate a random secret key to be used as part of the configuration of the tool. One way of generating the key is by running the following command `python -c 'import random; print("".join([random.choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for i in range(50)]))'`;
-8. Set the SECRET_KEY, configuration parameters of the database, the app domain (used in scripts, default: `http://localhost:8000/`) and the default superuser in `.env.dev`;
+8. Set the SECRET_KEY, configuration parameters of the database, the app domain (used in scripts, default: `http://localhost:8000/`) and the default superuser in `.env.dev` and `docker-compose.yml`;
 9. Build docker container `docker compose -f docker-compose.yml up --build -d`;
 10. Go to `http://localhost:8000` to access the tool
 
