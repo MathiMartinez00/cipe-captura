@@ -16,7 +16,10 @@ class ScientistListView(View):
         return JsonResponse(scientists, safe=False)
 
     def post(self, request, *args, **kwargs):
-        scientist_data = json.loads(request.body)
+        try:
+            scientist_data = json.loads(request.body)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON'}, status=400)
         scientist = Scientist.objects.create(**scientist_data)
         return JsonResponse(scientist.serialize(), safe=False)
 
@@ -25,16 +28,30 @@ class ScientistListView(View):
 class ScientistDetailView(View):
 
     def get(self, request, scientist_id, *args, **kwargs):
-        scientist = [s.serialize() for s in Scientist.objects.filter(id=scientist_id)]
-        return JsonResponse(scientist, safe=False)
+        try:
+            scientist = Scientist.objects.get(id=scientist_id)
+        except Scientist.DoesNotExist:
+            return JsonResponse({'error': 'Scientist not found'}, status=404)
+        return JsonResponse(scientist.serialize(), safe=False)
 
-    def put(self, request, scientist_id):
-        scientist_data = json.loads(request.body)
-        Scientist.objects.filter(id=scientist_id).update(**scientist_data)
+    def put(self, request, scientist_id, *args, **kwargs):
+        try:
+            scientist_data = json.loads(request.body)
+            scientist = Scientist.objects.get(id=scientist_id)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+        except Scientist.DoesNotExist:
+            return JsonResponse({'error': 'Scientist not found'}, status=404)
+
+        scientist.update(**scientist_data)
         return JsonResponse({'message': 'Scientist updated successfully!'})
 
     def delete(self, request, scientist_id, *args, **kwargs):
-        Scientist.objects.filter(id=scientist_id).delete()
+        try:
+            scientist = Scientist.objects.get(id=scientist_id)
+        except Scientist.DoesNotExist:
+            return JsonResponse({'error': 'Scientist not found'}, status=404)
+        scientist.delete()
         return JsonResponse({'message': 'Scientist deleted successfully!'})
 
 
@@ -43,9 +60,14 @@ class GetUserToken(View):
     requires_auth = False
 
     def post(self, request, *args, **kwargs):
-        credentials = json.loads(request.body)
-        user = User.objects.get(username=credentials['username'])
-        print(user.password, credentials['password'])
+        try:
+            credentials = json.loads(request.body)
+            user = User.objects.get(username=credentials['username'])
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Invalid credentials.'}, status=404)
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+
         if check_password(credentials['password'], user.password):
             return JsonResponse({'token': user.usertoken.bearer_token})
 
