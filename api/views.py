@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.http import JsonResponse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -18,9 +19,11 @@ class ScientistListView(View):
     def post(self, request, *args, **kwargs):
         try:
             scientist_data = json.loads(request.body)
+            scientist = Scientist.objects.create(**scientist_data)
         except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON'}, status=400)
-        scientist = Scientist.objects.create(**scientist_data)
+            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
+        except IntegrityError:
+            return JsonResponse({'error': 'Scientist already registered.'}, status=400)
         return JsonResponse(scientist.serialize(), safe=False)
 
 
@@ -31,7 +34,7 @@ class ScientistDetailView(View):
         try:
             scientist = Scientist.objects.get(id=scientist_id)
         except Scientist.DoesNotExist:
-            return JsonResponse({'error': 'Scientist not found'}, status=404)
+            return JsonResponse({'error': 'Scientist not found.'}, status=404)
         return JsonResponse(scientist.serialize(), safe=False)
 
     def put(self, request, scientist_id, *args, **kwargs):
@@ -41,16 +44,16 @@ class ScientistDetailView(View):
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON.'}, status=400)
         except Scientist.DoesNotExist:
-            return JsonResponse({'error': 'Scientist not found'}, status=404)
+            return JsonResponse({'error': 'Scientist not found.'}, status=404)
 
-        scientist.update(**scientist_data)
+        Scientist.objects.filter(id=scientist.id).update(**scientist_data)
         return JsonResponse({'message': 'Scientist updated successfully!'})
 
     def delete(self, request, scientist_id, *args, **kwargs):
         try:
             scientist = Scientist.objects.get(id=scientist_id)
         except Scientist.DoesNotExist:
-            return JsonResponse({'error': 'Scientist not found'}, status=404)
+            return JsonResponse({'error': 'Scientist not found.'}, status=404)
         scientist.delete()
         return JsonResponse({'message': 'Scientist deleted successfully!'})
 
