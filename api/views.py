@@ -64,7 +64,7 @@ class GetUserToken(View):
             credentials = json.loads(request.body)
             user = User.objects.get(username=credentials['username'])
         except User.DoesNotExist:
-            return JsonResponse({'error': 'Invalid credentials.'}, status=404)
+            return JsonResponse({'error': 'Invalid credentials.'}, status=400)
         except json.JSONDecodeError:
             return JsonResponse({'error': 'Invalid JSON.'}, status=400)
 
