@@ -20,11 +20,11 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                           |
    > |-------------|--------------------|------------------------------------|
    > | `200`       | `application/json` | `{"token": <token>}`               |
-   > | `400`       | `application/json` | `{"error": "Invalid JSON"}         |
+   > | `400`       | `application/json` | `{"error": "Invalid JSON."}        |
    > | `400`       | `application/json` | `{"error": "Invalid credentials."} | 
 
 #### Example cURL
-   > TODO!
+   > curl -X POST -H "Content-Type: application/json" --data '{"username": "username", "password": "password"}' http://localhost:8000/api/get-user-token/
 </details>
 
 # Scientist
@@ -46,7 +46,7 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > | `200`       | `application/json` | `JSON String with all scientists' information` |
 
 #### Example cURL
-   > TODO!
+   > curl -X GET -H "Authorization: Bearer <USER_TOKEN>" http://localhost:8000/api/scientist/
 </details>
 
 <details>
@@ -69,10 +69,11 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                                                   |
    > |-------------|--------------------|------------------------------------------------------------|
    > | `201`       | `application/json` | `JSON String with all the created scientist's information` |
-   > | `400`       | `application/json` | `{"error": "Invalid JSON"}                                 |
+   > | `400`       | `application/json` | `{"error": "Invalid JSON."}`                               |
+   > | `400`       | `application/json` | `{"error": "Scientist already registered."}`               |
 
 #### Example cURL
-   > TODO!
+   > curl -X POST -H "Content-Type: application/json" -H "Authorization: Bearer <USER_TOKEN>" --data '{"first_name": "first_name", "last_name": "last_name", "ci": "123456", "email": "email@example.com"}' http://localhost:8000/api/scientist/
 </details>
 
 <details>
@@ -92,10 +93,10 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                                                 |
    > |-------------|--------------------|----------------------------------------------------------|
    > | `201`       | `application/json` | `JSON String with the requested scientist's information` |
-   > | `404`       | `application/json` | `{"error": "Scientist not found"}`                       |
+   > | `404`       | `application/json` | `{"error": "Scientist not found."}`                      |
 
 #### Example cURL
-   > TODO!
+   > curl -X GET -H "Authorization: Bearer <USER_TOKEN>" http://localhost:8000/api/scientist/1/
 </details>
 
 <details>
@@ -118,11 +119,11 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                                         |
    > |-------------|--------------------|--------------------------------------------------|
    > | `200`       | `application/json` | `{"message": "Scientist updated successfully!"}` |
-   > | `400`       | `application/json` | `{"error": "Invalid JSON"}                       |   
-   > | `404`       | `application/json` | `{"error": "Scientist not found"}`               |
+   > | `400`       | `application/json` | `{"error": "Invalid JSON."}                      |   
+   > | `404`       | `application/json` | `{"error": "Scientist not found."}`              |
 
 #### Example cURL
-   > TODO!
+   > curl -X PUT -H "Content-Type: application/json" -H "Authorization: Bearer <USER_TOKEN>" --data '{"email": "new_email@example.com"}' http://localhost:8000/api/scientist/1/
 </details>
 
 <details>
@@ -140,8 +141,8 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                                         |
    > |-------------|--------------------|--------------------------------------------------|
    > | `200`       | `application/json` | `{'message': 'Scientist deleted successfully!'}` |
-   > | `404`       | `application/json` | `{"error": "Scientist not found"}`               |
+   > | `404`       | `application/json` | `{"error": "Scientist not found."}`              |
 
 #### Example cURL
-   > TODO!
+   > curl -X DELETE -H "Content-Type: application/json" -H "Authorization: Bearer <USER_TOKEN>" http://localhost:8000/api/scientist/1/
 </details>
