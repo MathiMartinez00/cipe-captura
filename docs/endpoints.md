@@ -17,9 +17,11 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > | `password` | required | string    | The user's password |
 
 #### Responses
-   > |  HTTP Code  | Content-Type       | Response             |
-   > |-------------|--------------------|----------------------|
-   > | `200`       | `application/json` | `{"token": <token>}` |
+   > |  HTTP Code  | Content-Type       | Response                           |
+   > |-------------|--------------------|------------------------------------|
+   > | `200`       | `application/json` | `{"token": <token>}`               |
+   > | `400`       | `application/json` | `{"error": "Invalid JSON"}         |
+   > | `400`       | `application/json` | `{"error": "Invalid credentials."} | 
 
 #### Example cURL
    > TODO!
@@ -67,6 +69,7 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                                                   |
    > |-------------|--------------------|------------------------------------------------------------|
    > | `201`       | `application/json` | `JSON String with all the created scientist's information` |
+   > | `400`       | `application/json` | `{"error": "Invalid JSON"}                                 |
 
 #### Example cURL
    > TODO!
@@ -89,6 +92,7 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                                                 |
    > |-------------|--------------------|----------------------------------------------------------|
    > | `201`       | `application/json` | `JSON String with the requested scientist's information` |
+   > | `404`       | `application/json` | `{"error": "Scientist not found"}`                       |
 
 #### Example cURL
    > TODO!
@@ -114,6 +118,8 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                                         |
    > |-------------|--------------------|--------------------------------------------------|
    > | `200`       | `application/json` | `{"message": "Scientist updated successfully!"}` |
+   > | `400`       | `application/json` | `{"error": "Invalid JSON"}                       |   
+   > | `404`       | `application/json` | `{"error": "Scientist not found"}`               |
 
 #### Example cURL
    > TODO!
@@ -134,6 +140,7 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                                         |
    > |-------------|--------------------|--------------------------------------------------|
    > | `200`       | `application/json` | `{'message': 'Scientist deleted successfully!'}` |
+   > | `404`       | `application/json` | `{"error": "Scientist not found"}`               |
 
 #### Example cURL
    > TODO!
