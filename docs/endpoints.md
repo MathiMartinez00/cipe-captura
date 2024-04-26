@@ -119,7 +119,7 @@ This documentation was heavily inspired by [this](https://gist.github.com/azagni
    > |  HTTP Code  | Content-Type       | Response                                         |
    > |-------------|--------------------|--------------------------------------------------|
    > | `200`       | `application/json` | `{"message": "Scientist updated successfully!"}` |
-   > | `400`       | `application/json` | `{"error": "Invalid JSON."}                      |   
+   > | `400`       | `application/json` | `{"error": "Invalid JSON."}`                     |   
    > | `404`       | `application/json` | `{"error": "Scientist not found."}`              |
 
 #### Example cURL
