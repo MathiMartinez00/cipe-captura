@@ -383,23 +383,30 @@ def edit_scientist(request, **kwargs):
 
 
 def user_registration(request):
+    context = {
+        'action_url_name': 'user_registration',
+        'is_create_mode': True,
+    }
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
             User.objects.create_user(username=form.cleaned_data['username'], password=form.cleaned_data['password'])
             return redirect('index')
 
+        context['form'] = form
         return render(request, 'user-registration.html', {'form': form})
 
     form = UserRegistrationForm()
-    context = {
-        'form': form,
-        'action_url_name': 'user_registration'
-    }
+    context['form'] = form
+
     return render(request, 'user-registration.html', context)
 
 
 def user_login(request):
+    context = {
+        'action_url_name': 'user_login',
+        'is_create_mode': False,
+    }
     if request.method == 'POST':
         form = UserRegistrationForm(request.POST)
         if form.is_valid():
@@ -408,17 +415,12 @@ def user_login(request):
                 login(request, user)
                 return redirect('index')
 
-        context = {
-            'form': form,
-            'action_url_name': 'user_login'
-        }
+        context['form'] = form
         return render(request, 'user-registration.html', context)
 
     form = UserRegistrationForm()
-    context = {
-        'form': form,
-        'action_url_name': 'user_login'
-    }
+    context['form'] = form
+
     return render(request, 'user-registration.html', context)
 
 
@@ -429,4 +431,6 @@ def user_logout(request):
 
 def view_api_key(request):
     if request.user.is_authenticated:
-        return JsonResponse({'token': request.user.usertoken.bearer_token}, safe=False)
+        return render(request, 'user-info.html')
+
+    return redirect('index')

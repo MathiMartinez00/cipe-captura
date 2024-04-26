@@ -12,5 +12,5 @@ urlpatterns = [
     path('user-registration/', views.user_registration, name='user_registration'),
     path('user-login/', views.user_login, name='user_login'),
     path('user-logout/', views.user_logout, name='user_logout'),
-    path('view-api-key/', views.view_api_key, name='view_api_key'),
+    path('view-user-info/', views.view_api_key, name='view_api_key'),
 ]
