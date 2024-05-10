@@ -12,7 +12,7 @@ services:
     env_file:
       - ./.env.dev
     depends_on:
-      - db
+      - postgres
   db:
     image: postgres:16.2
     volumes:
@@ -21,6 +21,6 @@ services:
       - "5432:5432"
     restart: always
     environment:
-      - POSTGRES_PASSWORD=
-      - POSTGRES_DB=
-      - POSTGRES_USER=
+      - POSTGRES_PASSWORD=cipe
+      - POSTGRES_DB=cipe
+      - POSTGRES_USER=cipe_user
