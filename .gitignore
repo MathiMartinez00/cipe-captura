@@ -110,4 +110,4 @@ settings.py
 
 mysql/
 
-static/admin
+static/
