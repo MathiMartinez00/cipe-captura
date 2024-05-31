@@ -41,8 +41,11 @@ Once containers are fully created, you can watch the logs with `docker-compose -
 6. Create a copy of the file `.env.dev.sample` as `.env.dev`;
 7. Generate a random secret key to be used as part of the configuration of the tool. One way of generating the key is by running the following command `python -c 'import random; print("".join([random.choice("abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)") for i in range(50)]))'`;
 8. Set the SECRET_KEY, configuration parameters of the database, the app domain (used in scripts, default: `http://localhost:8000/`) and the default superuser in `.env.dev` and `docker-compose.yml`;
-9. Build docker container `docker compose -f docker-compose.yml up --build -d`;
-10. Go to `http://localhost:8000` to access the tool
+9. Clone the repository `https://github.com/jokoframework/captura-community-docker.git` outside of the `cipe` directory;
+10. Build docker container `docker compose -f docker-compose.yml up --build -d`;
+11. Run docker container in captura-community-docker `docker compose -f <path to docker-compose.yml> up --build -d`;
+12. Go to `http://localhost:8000` to access the tool;
+> IMPORTANT: Make sure the database credentials in `.env.dev` match the ones in captura-community-docker's `docker-compose.yml`.
 
 ## Cleanup/reinitialize
 
