@@ -5,7 +5,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
+from rest_framework import generics
+from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+
+from api.models import Complaint
+from api.serializers import ComplaintSerializer
 from app.models import Scientist
+
 import json
 
 
@@ -75,3 +81,11 @@ class GetUserToken(View):
             return JsonResponse({'token': user.usertoken.bearer_token})
 
         return JsonResponse({'message': 'Invalid credentials.'}, status=400)
+
+
+class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+    queryset = Complaint.objects.all()
+    serializer_class = ComplaintSerializer
+    authentication_classes = [TokenAuthentication, SessionAuthentication]
+
+
