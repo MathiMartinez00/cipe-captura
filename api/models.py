@@ -23,31 +23,27 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
         UserToken.objects.create(user=instance, bearer_token=bearer_token)
 
 
-class Form(models.Model):
-    name = models.CharField(max_length=120)
-    version = models.CharField(max_length=5)
+class ComplaintType(models.Model):
+    name = models.CharField(max_length=64)
+    code = models.CharField(max_length=8)
 
 
-class FormFieldType(models.Model):
-    name = models.CharField(max_length=120)
+class City(models.Model):
+    name = models.CharField(max_length=64)
 
 
-class FormField(models.Model):
-    form = models.ForeignKey(Form, on_delete=models.CASCADE)
-    name = models.CharField(max_length=120)
-    field_type = models.ForeignKey(FormFieldType, on_delete=models.DO_NOTHING)
+class RoadType(models.Model):
+    name = models.CharField(max_length=32)
 
 
-class FormResponseHeader(models.Model):
-    form = models.ForeignKey(Form, on_delete=models.DO_NOTHING)
-
-
-class FormResponseDetail(models.Model):
-    form_response = models.ForeignKey(FormResponseHeader, on_delete=models.DO_NOTHING)
-    form_field = models.ForeignKey(FormField, on_delete=models.DO_NOTHING)
-    value = models.TextField()
-
-# Preguntas:
-# Me tengo que preocupar por la validacion? Si dejare que carguen respuestas por aca deberia,
-# pero agrega complejidad ya que debe coincidir con captura
-# Porque no uso nomas las tablas de Captura?
+class Complaint(models.Model):
+    complaint_type = models.ForeignKey(ComplaintType, on_delete=models.CASCADE)
+    description = models.TextField()
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
+    latitude = models.FloatField()
+    longitude = models.FloatField()
+    altitude = models.FloatField()
+    accuracy = models.FloatField()
+    photo = models.ImageField(upload_to='complaint_photos/')
+    road_type = models.ForeignKey(RoadType, on_delete=models.CASCADE, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
