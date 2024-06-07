@@ -7,6 +7,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets
 
 from api.models import Complaint
 from api.serializers import ComplaintSerializer
@@ -86,6 +88,6 @@ class GetUserToken(View):
 class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Complaint.objects.all()
     serializer_class = ComplaintSerializer
-    authentication_classes = [TokenAuthentication, SessionAuthentication]
-
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
 
