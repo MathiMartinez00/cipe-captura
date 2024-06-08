@@ -144,6 +144,12 @@ function distanceInK(lat1, lon1, lat2, lon2) {
 	}
 }
 
+function addMarkersComplaint(complaints, isIndex, map, markers) {
+    for (let i = 0; i < complaints.length; i++) {
+        L.marker([complaints[i].latitude, complaints[i].longitude]).addTo(map);
+    }
+}
+
 
 function addMarkers(scientists, isIndex, map, markers) {
 
@@ -191,7 +197,8 @@ function initMap(mapDivId) {
     /**
      mapDivId: ID of the map's div in the html code
       **/
-    var map = L.map(mapDivId, {
+    debugger;
+    let map = L.map(mapDivId, {
         fullscreenControl: true,
         // OR
         fullscreenControl: {
@@ -200,8 +207,8 @@ function initMap(mapDivId) {
         minZoom: 2
     }).setView([0, 0], 2);
 
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
     return map;
 }

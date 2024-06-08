@@ -1,6 +1,7 @@
 import logging
 import json
 
+from api.models import City, ComplaintType, Complaint
 from app.constants import SCIENTIFIC_AREA, POSITION, FIRST_CAT_SCIENTIFIC_AREA
 from app.forms import RegistrationForm, RegistrationEditForm, UserRegistrationForm
 from app.models import Institution, Scientist, Affiliation
@@ -272,9 +273,22 @@ def map_scientists(request):
         for position in POSITION:
             if position[1] == value_position:
                 positions.append(position)
+
+    cities = City.objects.all()
+    complaint_types = ComplaintType.objects.all()
+    complaint_objs = Complaint.objects.all()
+    complaints = []
+    for complaint_obj in complaint_objs:
+        complaints.append({
+            'latitude': complaint_obj.latitude,
+            'longitude': complaint_obj.longitude,
+        })
     context = {
         'scientists': json.dumps(scientists),
         'scientific_areas': scientific_areas,
+        'cities': cities,
+        'complaint_types': complaint_types,
+        'complaints': json.dumps(complaints),
         'positions': positions,
         'exists_becal_scholar': exists_becal_scholar
     }

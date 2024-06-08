@@ -7,8 +7,9 @@
 
     var markers = L.markerClusterGroup(); // Leaflet's cluster group
 
-    addMarkers({{ scientists|safe }}, false, map, markers);
-
+    // addMarkers({{ scientists|safe }}, false, map, markers);
+    addMarkersComplaint({{ complaints|safe }}, false, map, markers);
+    
     var exists_becal_scholar = { exists_becal_scholar };
     var becal_cb = document.getElementById("becal");
     if (exists_becal_scholar == true) {
@@ -60,18 +61,18 @@
     <div class="row align-items-center mb-3 mt-3 justify-content-center">
         <form class="form-inline" method="POST" id="filter">
             {% csrf_token %}
-            <label class="my-1 mr-2" for="scientific_area">Disciplina</label>
+            <label class="my-1 mr-2" for="scientific_area">Ciudad</label>
             <select class="custom-select my-1 mr-sm-2" id="scientific_area">
                 <option selected value="">Todas</option>
-                {% for area_key, area_value in scientific_areas %}
-                    <option value="{{ area_key }}">{{ area_value }}</option>
+                {% for city in cities %}
+                    <option value="{{ city.id }}">{{ city.name }}</option>
                 {% endfor %}
             </select>
-            <label class="my-1 mr-2" for="position">Posición</label>
+            <label class="my-1 mr-2" for="position">Tipo denuncia</label>
             <select class="custom-select my-1 mr-sm-2" id="position">
                 <option value="" selected>Todas</option>
-                {% for position_key, position_value in positions %}
-                    <option value="{{ position_key }}">{{ position_value }}</option>
+                {% for complaint_type in complaint_types %}
+                    <option value="{{ complaint_type.id }}">{{ complaint_type.name }}</option>
                 {% endfor %}
             </select>
             <div class="custom-control custom-checkbox" style="display: none;">
@@ -94,5 +95,5 @@
 * The key parameter will contain your own API key (which is not needed for this tutorial)
 * The callback parameter executes the initMap() function
 -->
-<script defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"></script>
+<script defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&loading=async&callback=initMap"></script>
 {% endblock %}
