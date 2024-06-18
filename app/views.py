@@ -304,6 +304,7 @@ def filter_map(request):
         response_data = {
             'scientists': scientists,
         }
+        complaints = Complaint.objects.filter(city_id=scientific_area)
         return HttpResponse(
             json.dumps(response_data),
             content_type="application/json"

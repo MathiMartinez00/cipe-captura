@@ -15,15 +15,17 @@
     if (exists_becal_scholar == true) {
         becal_cb.style.display = "block";
     }
-    $('#filter').on('submit', function(event){
+    $('#filter').on('submit', function(event) {
         event.preventDefault();
         $.ajax({
-            url : "filter_map/",
-            type : "POST",
-            data : { scientific_area : $('#scientific_area').val(),
-                     position: $('#position').val(),
-                     becal: $('#becal').is(':checked'),
-                     csrfmiddlewaretoken: '{{ csrf_token }}' },
+            url: "filter_map/",
+            type: "POST",
+            data: {
+                scientific_area : $('#scientific_area').val(),
+                position: $('#position').val(),
+                becal: $('#becal').is(':checked'),
+                csrfmiddlewaretoken: '{{ csrf_token }}',
+            },
             // handle a successful response
             success : function(json) {
                 removeMarkers(markers);
