@@ -1,5 +1,5 @@
 from django.urls import path
-from api.views import ScientistListView, ScientistDetailView, GetUserToken, ComplaintListView
+from api.views import ScientistListView, ScientistDetailView, ComplaintListView
 from rest_framework.authtoken import views
 
 urlpatterns = [

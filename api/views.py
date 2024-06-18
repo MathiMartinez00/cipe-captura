@@ -5,6 +5,9 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
+from django.conf import settings
+from django.core.files import File
+from django.core.files.base import ContentFile
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -91,3 +94,5 @@ class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestr
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
+    def perform_create(self, serializer):
+        complaint = serializer.save()
