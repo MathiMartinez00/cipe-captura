@@ -24,8 +24,8 @@ class ComplaintSerializer(serializers.ModelSerializer):
             accuracy=self.validated_data['accuracy'],
             road_type=self.validated_data.get('road_type', None),
         )
-        if self.validated_data['photo_base64']:
-            photo_base64_string = self.validated_data['photo_base64']
+        photo_base64_string = self.validated_data.get('photo_base64', None)
+        if photo_base64_string:
             photo_file = ContentFile(base64.b64decode(photo_base64_string), name='temp.png')
             complaint.photo.save("test.png", photo_file)
         return complaint
