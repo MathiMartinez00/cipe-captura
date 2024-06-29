@@ -3,8 +3,7 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-import secrets
-import string
+from time import gmtime, strftime
 
 
 class UserToken(models.Model):
@@ -44,6 +43,10 @@ class RoadType(models.Model):
         return self.name
 
 
+def complaint_directory_path(instance, filename):
+    return strftime(f'complaint_photos/%Y/%m/%d/{instance.complaint_type.name}/{filename}')
+
+
 class Complaint(models.Model):
     complaint_type = models.ForeignKey(ComplaintType, on_delete=models.CASCADE)
     description = models.TextField(null=True, blank=True)
@@ -52,7 +55,7 @@ class Complaint(models.Model):
     longitude = models.FloatField()
     altitude = models.FloatField()
     accuracy = models.FloatField()
-    photo = models.ImageField(upload_to='complaint_photos/', null=True, blank=True)
+    photo = models.ImageField(upload_to=complaint_directory_path, null=True, blank=True)
     road_type = models.ForeignKey(RoadType, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
