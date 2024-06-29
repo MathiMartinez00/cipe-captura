@@ -282,19 +282,14 @@ def map_scientists(request):
 
     cities = City.objects.all()
     complaint_types = ComplaintType.objects.all()
-    complaint_objs = Complaint.objects.all()
-    complaints = []
-    for complaint_obj in complaint_objs:
-        complaints.append({
-            'latitude': complaint_obj.latitude,
-            'longitude': complaint_obj.longitude,
-        })
+    complaints = Complaint.objects.all()
+    serializer = ComplaintSerializer(complaints, many=True)
     context = {
         'scientists': json.dumps(scientists),
         'scientific_areas': scientific_areas,
         'cities': cities,
         'complaint_types': complaint_types,
-        'complaints': json.dumps(complaints),
+        'complaints': json.dumps(serializer.data),
         'positions': positions,
         'exists_becal_scholar': exists_becal_scholar
     }

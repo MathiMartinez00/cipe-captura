@@ -28,6 +28,21 @@ function closeInfoWindow() {
     }
 }
 
+function generateInfoWindowContentComplaint(scientist_info) {
+    let content = "";
+    let position_class = 'badge-primary';
+    content += "<br>";
+    content += "<div>";
+    content += "<img src='" + scientist_info.photo + "' alt='avatar_masculino' height='60' width='60' style='display: inline-block; vertical-align: middle; margin-right: 8px;'>";
+    content += "<span style='display: inline-block; vertical-align: middle;'><b>" + scientist_info.complaint_type.name + "</b>";
+    content += "<br><span class='badge " + position_class + "' float='right'>" + scientist_info.city.name + "</span><br>";
+    content += "</div>";
+    content += "<div class='text-left'>";
+    content += "<br>" + scientist_info.description;
+    content += "</div>";
+    return content
+}
+
 function generateInfoWindowContent(scientist_info) {
     let content = "";
     let position_class = '';
@@ -145,8 +160,12 @@ function distanceInK(lat1, lon1, lat2, lon2) {
 }
 
 function addMarkersComplaint(complaints, isIndex, map, markers) {
+    debugger;
     for (let i = 0; i < complaints.length; i++) {
         let marker = L.marker([complaints[i].latitude, complaints[i].longitude]);
+        if (!isIndex) {
+            marker.bindPopup(generateInfoWindowContentComplaint(complaints[i])).openPopup();
+        }
         markers.addLayer(marker);
     }
     map.addLayer(markers);

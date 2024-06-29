@@ -3,7 +3,7 @@ from django.db.models.signals import post_save
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from rest_framework.authtoken.models import Token
-from time import gmtime, strftime
+from time import localtime, strftime
 
 
 class UserToken(models.Model):
@@ -44,7 +44,7 @@ class RoadType(models.Model):
 
 
 def complaint_directory_path(instance, filename):
-    return strftime(f'complaint_photos/%Y/%m/%d/{instance.complaint_type.name}/{filename}')
+    return strftime(f'complaint_photos/%Y/%m/%d/{instance.complaint_type.name}/{filename}', localtime())
 
 
 class Complaint(models.Model):
