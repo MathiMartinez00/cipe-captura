@@ -1,7 +1,10 @@
 import logging
 import json
 
+from rest_framework import status
+
 from api.models import City, ComplaintType, Complaint
+from api.serializers import ComplaintSerializer
 from app.constants import SCIENTIFIC_AREA, POSITION, FIRST_CAT_SCIENTIFIC_AREA
 from app.forms import RegistrationForm, RegistrationEditForm, UserRegistrationForm
 from app.models import Institution, Scientist, Affiliation
@@ -13,6 +16,9 @@ from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.urls import reverse
+
+from rest_framework.response import Response
+from rest_framework.renderers import JSONRenderer
 
 logger = logging.getLogger(__name__)
 countries_iso2 = load_countries_iso2()
@@ -304,11 +310,14 @@ def filter_map(request):
         response_data = {
             'scientists': scientists,
         }
-        complaints = Complaint.objects.filter(city_id=scientific_area)
-        return HttpResponse(
-            json.dumps(response_data),
-            content_type="application/json"
-        )
+        complaints = Complaint.objects.all()
+        if position:
+            complaints = complaints.filter(complaint_type_id=position)
+        if scientific_area:
+            complaints = complaints.filter(city_id=scientific_area)
+        serializer = ComplaintSerializer(complaints, many=True)
+        response_data['scientists'] = serializer.data
+        return HttpResponse(json.dumps(response_data), content_type='application/json')
     else:
         return HttpResponse(
             json.dumps({"msg": "Cannot recognize the method type"}),

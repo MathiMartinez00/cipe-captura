@@ -146,8 +146,10 @@ function distanceInK(lat1, lon1, lat2, lon2) {
 
 function addMarkersComplaint(complaints, isIndex, map, markers) {
     for (let i = 0; i < complaints.length; i++) {
-        L.marker([complaints[i].latitude, complaints[i].longitude]).addTo(map);
+        let marker = L.marker([complaints[i].latitude, complaints[i].longitude]);
+        markers.addLayer(marker);
     }
+    map.addLayer(markers);
 }
 
 
@@ -197,7 +199,6 @@ function initMap(mapDivId) {
     /**
      mapDivId: ID of the map's div in the html code
       **/
-    debugger;
     let map = L.map(mapDivId, {
         fullscreenControl: true,
         // OR
