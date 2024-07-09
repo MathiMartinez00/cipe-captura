@@ -220,12 +220,8 @@ function initMap(mapDivId) {
       **/
     let map = L.map(mapDivId, {
         fullscreenControl: true,
-        // OR
-        fullscreenControl: {
-            pseudoFullscreen: false // if true, fullscreen to page width and height
-        },
         minZoom: 2
-    }).setView([0, 0], 2);
+    }).setView([-23.4425, -58.4438], 7);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'

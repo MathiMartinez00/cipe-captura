@@ -12,7 +12,6 @@ class ComplaintSerializer(serializers.ModelSerializer):
     class Meta:
         model = Complaint
         fields = '__all__'
-        depth = 1
 
     def save(self):
         complaint = Complaint.objects.create(
