@@ -15,6 +15,7 @@ jobs:
           HOST: ${{ secrets.SSH_HOST }}
           USERNAME: ${{ secrets.SSH_USERNAME }}
         run: |
+          echo "$PRIVATE_KEY $HOST $USERNAME"
           echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
           ssh -i private_key ${USERNAME}@${HOST} '
             
