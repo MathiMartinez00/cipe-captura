@@ -4,7 +4,7 @@ import json
 from rest_framework import status
 
 from api.models import City, ComplaintType, Complaint
-from api.serializers import ComplaintSerializer
+from api.serializers import ComplaintSerializerRead
 from app.constants import SCIENTIFIC_AREA, POSITION, FIRST_CAT_SCIENTIFIC_AREA
 from app.forms import RegistrationForm, RegistrationEditForm, UserRegistrationForm
 from app.models import Institution, Scientist, Affiliation
@@ -283,7 +283,7 @@ def map_scientists(request):
     cities = City.objects.all()
     complaint_types = ComplaintType.objects.all()
     complaints = Complaint.objects.all()
-    serializer = ComplaintSerializer(complaints, many=True)
+    serializer = ComplaintSerializerRead(complaints, many=True)
     context = {
         'scientists': json.dumps(scientists),
         'scientific_areas': scientific_areas,
@@ -310,7 +310,7 @@ def filter_map(request):
             complaints = complaints.filter(complaint_type_id=position)
         if scientific_area:
             complaints = complaints.filter(city_id=scientific_area)
-        serializer = ComplaintSerializer(complaints, many=True)
+        serializer = ComplaintSerializerRead(complaints, many=True)
         response_data['scientists'] = serializer.data
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     else:

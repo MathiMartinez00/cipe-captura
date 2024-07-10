@@ -6,7 +6,15 @@ from api.models import Complaint
 import base64
 
 
-class ComplaintSerializer(serializers.ModelSerializer):
+class ComplaintSerializerRead(serializers.ModelSerializer):
+    photo_base64 = serializers.CharField(required=False, allow_blank=True)
+
+    class Meta:
+        model = Complaint
+        fields = '__all__'
+
+
+class ComplaintSerializerWrite(serializers.ModelSerializer):
     photo_base64 = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
@@ -14,6 +22,7 @@ class ComplaintSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
     def save(self):
+        print(self.validated_data)
         complaint = Complaint.objects.create(
             complaint_type=self.validated_data['complaint_type'],
             description=self.validated_data['description'],

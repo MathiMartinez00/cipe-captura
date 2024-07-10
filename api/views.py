@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 
 from api.models import Complaint
-from api.serializers import ComplaintSerializer
+from api.serializers import ComplaintSerializerRead, ComplaintSerializerWrite
 from app.models import Scientist
 
 import json
@@ -90,9 +90,16 @@ class GetUserToken(View):
 
 class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Complaint.objects.all()
-    serializer_class = ComplaintSerializer
+    # serializer_class = ComplaintSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         complaint = serializer.save()
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return ComplaintSerializerRead
+        if self.request.method == 'POST':
+            return ComplaintSerializerWrite
+
