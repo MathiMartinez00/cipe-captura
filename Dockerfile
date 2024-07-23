@@ -1,5 +1,5 @@
 # pull official base image
-FROM python:3.11-alpine
+FROM python:3.12-alpine
 
 # set work directory
 WORKDIR /usr/src/app
@@ -13,8 +13,7 @@ RUN apk --no-cache add --virtual build-dependencies \
     build-base \
     gcc \
     libc-dev \
-    libffi-dev \
-    mariadb-dev
+    libffi-dev
 
 # install app dependencies
 RUN pip install --upgrade pip
