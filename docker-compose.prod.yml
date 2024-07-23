@@ -23,8 +23,6 @@ services:
     networks:
       - postgres
 
-
-
 networks:
   postgres:
     name: captura-community-docker_postgres
