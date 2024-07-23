@@ -1,5 +1,5 @@
 name: Redeploy Amazon EC2
-run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+run-name: Redeploy Amazon EC2
 on:
   push:
     branches:

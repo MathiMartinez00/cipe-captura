@@ -19,7 +19,7 @@ Install docker and docker-compose in your local machine. Check the official inst
 ### Production
 
 For the impatient: The only key you need to get a **really quick start**, is a valid Google Map API KEY, all the others default credentials will be used. However your are encouraged to complete the setup process if your planning to use this proyect in the long run.
-1. Obtain a google maps api key by following the instructions [here](https://developers.google.com/maps/documentation/embed/get-api-key);
+1. Obtain a Google Maps API key by following the instructions [here](https://developers.google.com/maps/documentation/embed/get-api-key);
 2. Clone the repository `git clone https://github.com/joausaga/cipe.git`;
 3. Get into the directory `cipe`;
 4. Run `scripts/prepare-config-templates.sh`
