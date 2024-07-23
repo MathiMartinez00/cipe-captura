@@ -1,6 +1,14 @@
-version: '3.8'
-
 services:
+  nginx:
+    restart: always
+    build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/static
+    ports:
+      - '1550:80'
+    depends_on:
+      - app
+
   app:
     build:
       context: .
@@ -15,15 +23,7 @@ services:
     networks:
       - postgres
 
-  nginx:
-    restart: always
-    build: ./nginx
-    volumes:
-      - static_volume:/home/app/web/static
-    ports:
-      - '1550:80'
-    depends_on:
-      - app
+
 
 networks:
   postgres:
