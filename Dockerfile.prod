@@ -3,7 +3,7 @@
 ###########
 
 # pull official base image
-FROM python:3.6-slim-buster as builder
+FROM python:3.12-slim-bookworm as builder
 
 # set work directory
 WORKDIR /usr/src/app
@@ -29,7 +29,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /usr/src/app/wheels -r requir
 #########
 
 # pull official base image
-FROM python:3.6-slim-buster
+FROM python:3.12-slim-bookworm
 
 # create directory for the app user
 RUN mkdir -p /home/app
@@ -52,7 +52,7 @@ COPY --from=builder /usr/src/app/requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache /wheels/*
 
-RUN apt-get update & apt-get install -y netcat-openbsd libmariadb-dev
+RUN apt-get update & apt-get install -y netcat-openbsd
 
 # copy entrypoint.prod.sh
 COPY ./entrypoint.prod.sh $APP_HOME
