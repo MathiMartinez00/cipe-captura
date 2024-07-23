@@ -8,6 +8,8 @@ services:
       - '1550:80'
     depends_on:
       - app
+    networks:
+      - postgres
 
   app:
     build:
