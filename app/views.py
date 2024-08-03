@@ -132,11 +132,14 @@ def __get_distribution_position():
 def index(request, *args, **kwargs):
     scientists, num_scientists, num_institutions, num_countries, num_male_scientists, num_female_scientists, \
         max_age_male, max_age_female, min_age_male, min_age_female, num_cities = __get_data_map()
-    top_area_m, total_top_area_m = __get_top_scientific_areas({'sex':'masculino'})
+    top_area_m, total_top_area_m = __get_top_scientific_areas({'sex': 'masculino'})
     top_area_f, total_top_area_f = __get_top_scientific_areas({'sex': 'femenino'})
     dis_positions = __get_distribution_position()
+    complaints = Complaint.objects.all()
+    serializer = ComplaintSerializerRead(complaints, many=True)
     context = {
         'scientists': json.dumps(scientists),
+        'complaints': json.dumps(serializer.data),
         'num_scientists': num_scientists,
         'num_male_scientists': num_male_scientists,
         'num_female_scientists': num_female_scientists,

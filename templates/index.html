@@ -8,10 +8,8 @@
 
     var markers = L.markerClusterGroup(); // Leaflet's cluster group
 
-    addMarkers({{ scientists|safe }}, true, map, markers);    
-    
-
-{% endblock %}
+    addMarkersComplaint({{ complaints|safe }}, true, map, markers);
+    {% endblock %}
 </script>
 
 {% block content %}
@@ -34,18 +32,13 @@
         right: 0;
         margin: auto;">
             <div class="jumbotron transparentBackground">
-                <h1 class="page-section-heading text-center text-uppercase text-secondary mb-0">Investigadores Paraguayos en el Mundo</h1><br>
-                <a class="btn btn-xl btn-primary" href="{% url 'registration' %}">
-                    <i class="fas fa-user-plus mr-2"></i>
-                        Registrate
-                </a>
+                <h1 class="page-section-heading text-center text-uppercase text-secondary mb-0">Chake Denuncias</h1><br>
                 <a class="btn btn-xl btn-primary" href="{% url 'map' %}">
                     <i class="fas fa-map mr-2"></i>
                         Ver Mapa
                 </a>
             </div>
         </div>
-    </div>
     </div>
 </header>
 <!-- Seccion Sobre el Sitio -->
@@ -64,9 +57,8 @@
       <div class="row">
         <div class="col-lg-12 ml-auto">
             <p class="lead">
-                El sitio pretende ser un espacio que compile <b>información</b> sobre <b>investigadores</b> (estudiantes de másters
-                académicos y doctorado, postdocs, profesores) <b>paraguayos</b> que se encuentren <b>residiendo en el extranjero</b> y
-                realizando trabajos académicos en cualquier área en universidades, centros de investigación, y empresas fuera del país.
+                El sitio pretende ser un espacio que compile <b>información</b> sobre <b>denuncias</b> hechas con la aplicación
+                Chake Denuncias.
             </p>
         </div>
       </div>
