@@ -29,13 +29,13 @@ class Command(BaseCommand):
         road_types.append(RoadType.objects.create(name='Asfalto'))
         road_types.append(RoadType.objects.create(name='Empedrado'))
 
-        for i in range(options.get('complaint-count', 10)):
+        for i in range(options.get('complaint_count', 10)):
             Complaint.objects.create(
                 complaint_type=random.choice(complaint_types),
                 description=fake.paragraph(nb_sentences=random.randint(1, 3), variable_nb_sentences=False),
                 city=random.choice(cities),
-                latitude=random.uniform(-25.17, -26.17),
-                longitude=random.uniform(-57.36, -56.36),
+                latitude=random.uniform(-25.28994, -26.28994),
+                longitude=random.uniform(-57.77053, -54.77053),
                 altitude=0,
                 accuracy=0,
                 road_type=random.choice(road_types),
