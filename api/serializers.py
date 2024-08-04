@@ -12,6 +12,7 @@ class ComplaintSerializerRead(serializers.ModelSerializer):
     class Meta:
         model = Complaint
         fields = '__all__'
+        depth = 1
 
 
 class ComplaintSerializerWrite(serializers.ModelSerializer):
@@ -22,7 +23,6 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
         fields = '__all__'
 
     def save(self):
-        print(self.validated_data)
         complaint = Complaint.objects.create(
             complaint_type=self.validated_data['complaint_type'],
             description=self.validated_data['description'],
