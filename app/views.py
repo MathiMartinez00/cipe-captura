@@ -1,24 +1,19 @@
 import logging
 import json
 
-from rest_framework import status
-
 from api.models import City, ComplaintType, Complaint
 from api.serializers import ComplaintSerializerRead
 from app.constants import SCIENTIFIC_AREA, POSITION, FIRST_CAT_SCIENTIFIC_AREA
 from app.forms import RegistrationForm, RegistrationEditForm, UserRegistrationForm
 from app.models import Institution, Scientist, Affiliation
 from app.utils import get_location_info_from_coordinates, load_countries_iso2
-from django.db.models import Count
+from django.db.models import Count, Max, Sum
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.urls import reverse
 
-from rest_framework.response import Response
-from rest_framework.renderers import JSONRenderer
 
 logger = logging.getLogger(__name__)
 countries_iso2 = load_countries_iso2()
@@ -129,7 +124,40 @@ def __get_distribution_position():
     return position_list
 
 
+def __get_complaints_statistics():
+    complaint_list = list()
+    complaints = Complaint.objects.all()
+    cities_dict = dict()
+    cities = City.objects.all()
+    complaint_types = ComplaintType.objects.all()
+    complaint_types_dict = dict()
+    for complaint_type in complaint_types:
+        complaint_types_dict[complaint_type.id] = 0
+    for city in cities:
+        cities_dict[city.id] = 0
+    for complaint in complaints:
+        complaint_list.append(complaint)
+        cities_dict[complaint.city.id] += 1
+        complaint_types_dict[complaint.complaint_type.id] += 1
+    complaint_count = len(complaint_list)
+    cities_ordered = sorted(cities_dict.items(), key=lambda x: x[1], reverse=True)
+    complaint_types_ordered = sorted(complaint_types_dict.items(), key=lambda x: x[1], reverse=True)
+    statistics = {
+        'complaint_count': complaint_count,
+        'max_cities': {
+            'count': cities_ordered[0][1],
+            'city': cities.get(pk=cities_ordered[0][0])
+        },
+        'max_complaint_types': {
+            'count': complaint_types_ordered[0][1],
+            'complaint_type': complaint_types.get(pk=complaint_types_ordered[0][0])
+        },
+    }
+    return statistics
+
+
 def index(request, *args, **kwargs):
+    complaints_stats = __get_complaints_statistics()
     scientists, num_scientists, num_institutions, num_countries, num_male_scientists, num_female_scientists, \
         max_age_male, max_age_female, min_age_male, min_age_female, num_cities = __get_data_map()
     top_area_m, total_top_area_m = __get_top_scientific_areas({'sex': 'masculino'})
@@ -161,6 +189,7 @@ def index(request, *args, **kwargs):
         'name_second_most_common_position': dis_positions[1]['position'],
         'total_third_most_common_position': dis_positions[2]['total'],
         'name_third_most_common_position': dis_positions[2]['position'],
+        'complaints_stats': complaints_stats,
     }
     return render(request, 'index.html', context)
 
