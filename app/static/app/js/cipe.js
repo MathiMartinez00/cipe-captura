@@ -33,7 +33,9 @@ function generateInfoWindowContentComplaint(scientist_info) {
     let position_class = 'badge-primary';
     content += "<br>";
     content += "<div>";
-    content += "<img src='" + scientist_info.photo + "' alt='avatar_masculino' height='60' width='60' style='display: inline-block; vertical-align: middle; margin-right: 8px;'>";
+    if (scientist_info.photo) {
+        content += "<img src='" + scientist_info.photo + "' alt='avatar_masculino' class='d-inline-block img-fluid' style='vertical-align: middle; margin-right: 8px;'>";
+    }
     content += "<span style='display: inline-block; vertical-align: middle;'><b>" + scientist_info.complaint_type.name + "</b>";
     content += "<br><span class='badge " + position_class + "' float='right'>" + scientist_info.city.name + "</span><br>";
     content += "</div>";
@@ -160,12 +162,22 @@ function distanceInK(lat1, lon1, lat2, lon2) {
 }
 
 function addMarkersComplaint(complaints, isIndex, map, markers) {
-    debugger;
     for (let i = 0; i < complaints.length; i++) {
         let marker = L.marker([complaints[i].latitude, complaints[i].longitude]);
         if (!isIndex) {
-            marker.bindPopup(generateInfoWindowContentComplaint(complaints[i])).openPopup();
+            // marker.bindPopup(generateInfoWindowContentComplaint(complaints[i])).openPopup();
         }
+        marker.on("click", function (event) {
+            let modalElement = document.getElementById("detailModal");
+            let modalBootstrap = new bootstrap.Modal(modalElement);
+            let content = `<p>Ciudad: ${complaints[i].city.name}</p>`;
+            content += `<p>Descripción: ${complaints[i].description}</p>`;
+            if (complaints[i].photo) {
+                content += `<img src='${complaints[i].photo}' alt='Foto denuncia' class='d-inline-block img-fluid'>`;
+            }
+            modalElement.querySelector('.modal-body p').innerHTML = content;
+            modalBootstrap.show();
+        })
         markers.addLayer(marker);
     }
     map.addLayer(markers);
