@@ -32,7 +32,7 @@ class Command(BaseCommand):
         number_of_objects = 10
         if options['complaint_count']:
             number_of_objects = options['complaint_count']
-        for i in range(number_of_objects + 1):
+        for i in range(number_of_objects):
             Complaint.objects.create(
                 complaint_type=random.choice(complaint_types),
                 description=fake.paragraph(nb_sentences=random.randint(1, 3), variable_nb_sentences=False),
