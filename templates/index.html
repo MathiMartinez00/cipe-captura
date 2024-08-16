@@ -31,7 +31,7 @@
         left: 0;
         right: 0;
         margin: auto;">
-            <div class="jumbotron transparentBackground">
+            <div class="py-4 transparentBackground">
                 <h1 class="page-section-heading text-center text-uppercase text-secondary mb-0">Chake Denuncias</h1><br>
                 <a class="btn btn-xl btn-primary" href="{% url 'map' %}">
                     <i class="fas fa-map mr-2"></i>
@@ -115,24 +115,24 @@
         <div class="row">
             <div class="col-lg-4 ml-auto">
                 <div class="card">
-                    <img src="{% static 'app/img/woman_avatar.svg' %}" alt="Female Scientists" style="width:80%">
+                    <img src="{% static 'app/img/ic_launcher.png' %}" alt="Female Scientists" style="width:80%">
                     <br>
                     <div class="card_container bg-primary">
-                        <h1 class="page-section-heading text-center text-white">{{ complaints_stats.complaint_count }}</h1>
-                        <p class="card-text text-center text-white">
-                            Denuncias hechas
+                        <p class="fs-3 text-center text-white m-0">Total de denuncias</p>
+                        <p class="fs-3 card-text text-center text-white">
+                            {{ complaints_stats.complaint_count }}
                         </p>
                     </div>
                 </div>
             </div>
             <div class="col-lg-4 mr-auto">
-                <div class="card bg-light">
-                    <img src="{% static 'app/img/man_avatar.svg' %}" alt="Male Scientists" style="width:80%">
+                <div class="card">
+                    <img src="{% static 'app/img/building.svg' %}" alt="Male Scientists" style="width:80%">
                     <br>
                     <div class="card_container bg-primary">
-                        <h1 class="page-section-heading text-center text-white">{{ complaints_stats.max_cities.count }}</h1>
-                        <p class="card-text text-center text-white">
-                            Denuncias en <b>{{ complaints_stats.max_cities.city.name }}</b>
+                        <p class="fs-3 text-center text-white m-0">Ciudad con más denuncias</p>
+                        <p class="fs-3 card-text text-center text-white">
+                            {{ complaints_stats.max_cities.city.name }} ({{ complaints_stats.max_cities.count }})
                         </p>
                     </div>
                 </div>
@@ -142,9 +142,9 @@
                   <img src="{% static 'app/img/institution.svg' %}" alt="Institution" style="width:80%">
                   <br>
                   <div class="card_container bg-primary">
-                      <h1 class="page-section-heading text-center text-white">{{ complaints_stats.max_complaint_types.count }}</h1>
-                      <p class="card-text text-center text-white">
-                          Denuncias del tipo <b>{{ complaints_stats.max_complaint_types.complaint_type.name }}</b>
+                      <p class="fs-3 text-center text-white m-0">Tipo de denuncia más común</p>
+                      <p class="card-text fs-3 text-center text-white">
+                          {{ complaints_stats.max_complaint_types.complaint_type.name }} ({{ complaints_stats.max_complaint_types.count }})
                       </p>
                   </div>
                 </div>

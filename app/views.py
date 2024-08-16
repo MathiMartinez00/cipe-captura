@@ -131,29 +131,31 @@ def __get_complaints_statistics():
     cities = City.objects.all()
     complaint_types = ComplaintType.objects.all()
     complaint_types_dict = dict()
-    for complaint_type in complaint_types:
-        complaint_types_dict[complaint_type.id] = 0
-    for city in cities:
-        cities_dict[city.id] = 0
-    for complaint in complaints:
-        complaint_list.append(complaint)
-        cities_dict[complaint.city.id] += 1
-        complaint_types_dict[complaint.complaint_type.id] += 1
-    complaint_count = len(complaint_list)
-    cities_ordered = sorted(cities_dict.items(), key=lambda x: x[1], reverse=True)
-    complaint_types_ordered = sorted(complaint_types_dict.items(), key=lambda x: x[1], reverse=True)
-    statistics = {
-        'complaint_count': complaint_count,
-        'max_cities': {
-            'count': cities_ordered[0][1],
-            'city': cities.get(pk=cities_ordered[0][0])
-        },
-        'max_complaint_types': {
-            'count': complaint_types_ordered[0][1],
-            'complaint_type': complaint_types.get(pk=complaint_types_ordered[0][0])
-        },
-    }
-    return statistics
+    if complaints and complaint_types and cities:
+        for complaint_type in complaint_types:
+            complaint_types_dict[complaint_type.id] = 0
+        for city in cities:
+            cities_dict[city.id] = 0
+        for complaint in complaints:
+            complaint_list.append(complaint)
+            cities_dict[complaint.city.id] += 1
+            complaint_types_dict[complaint.complaint_type.id] += 1
+        complaint_count = len(complaint_list)
+        cities_ordered = sorted(cities_dict.items(), key=lambda x: x[1], reverse=True)
+        complaint_types_ordered = sorted(complaint_types_dict.items(), key=lambda x: x[1], reverse=True)
+        statistics = {
+            'complaint_count': complaint_count,
+            'max_cities': {
+                'count': cities_ordered[0][1],
+                'city': cities.get(pk=cities_ordered[0][0])
+            },
+            'max_complaint_types': {
+                'count': complaint_types_ordered[0][1],
+                'complaint_type': complaint_types.get(pk=complaint_types_ordered[0][0])
+            },
+        }
+        return statistics
+    return dict()
 
 
 def index(request, *args, **kwargs):

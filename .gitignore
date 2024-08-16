@@ -110,5 +110,5 @@ settings.py
 
 mysql/
 
-static/
+/static/
 media/
