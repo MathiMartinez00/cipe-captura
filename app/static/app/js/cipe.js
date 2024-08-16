@@ -171,6 +171,7 @@ function addMarkersComplaint(complaints, isIndex, map, markers) {
             let modalElement = document.getElementById("detailModal");
             let modalBootstrap = new bootstrap.Modal(modalElement);
             let content = `<p>Ciudad: ${complaints[i].city.name}</p>`;
+            content += `<p>Tipo de denuncia: ${complaints[i].complaint_type.name}</p>`
             content += `<p>Descripción: ${complaints[i].description}</p>`;
             if (complaints[i].photo) {
                 content += `<img src='${complaints[i].photo}' alt='Foto denuncia' class='d-inline-block img-fluid'>`;

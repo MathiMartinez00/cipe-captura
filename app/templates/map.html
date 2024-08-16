@@ -60,27 +60,33 @@
 </div>
 <div class="container">
     <div class="row align-items-center mb-3 mt-3 justify-content-center">
-        <form class="form-inline" method="POST" id="filter">
+        <form class="row align-items-end" method="POST" id="filter">
             {% csrf_token %}
-            <label class="my-1 mr-2" for="scientific_area">Ciudad</label>
-            <select class="custom-select my-1 mr-sm-2" id="scientific_area">
-                <option selected value="">Todas</option>
-                {% for city in cities %}
-                    <option value="{{ city.id }}">{{ city.name }}</option>
-                {% endfor %}
-            </select>
-            <label class="my-1 mr-2" for="position">Tipo denuncia</label>
-            <select class="custom-select my-1 mr-sm-2" id="position">
-                <option value="" selected>Todas</option>
-                {% for complaint_type in complaint_types %}
-                    <option value="{{ complaint_type.id }}">{{ complaint_type.name }}</option>
-                {% endfor %}
-            </select>
-            <div class="custom-control custom-checkbox" style="display: none;">
-                <input type="checkbox" class="custom-control-input" id="becal">
-                <label class="custom-control-label mr-3" for="becal">Becal</label>
+            <div class="col">
+                <label class="my-1 mr-2" for="scientific_area">Ciudad</label>
+                <select class="form-select my-1 mr-sm-2" id="scientific_area">
+                    <option selected value="">Todas</option>
+                    {% for city in cities %}
+                        <option value="{{ city.id }}">{{ city.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
-            <button type="submit" class="btn btn-primary my-1">Filtrar</button>
+            <div class="col">
+                <label class="my-1 mr-2" for="position">Tipo denuncia</label>
+                <select class="form-select my-1 mr-sm-2" id="position">
+                    <option value="" selected>Todas</option>
+                    {% for complaint_type in complaint_types %}
+                        <option value="{{ complaint_type.id }}">{{ complaint_type.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col">
+                <div class="custom-control custom-checkbox" style="display: none;">
+                    <input type="checkbox" class="custom-control-input" id="becal">
+                    <label class="custom-control-label mr-3" for="becal">Becal</label>
+                </div>
+                <button type="submit" class="btn btn-primary my-1">Filtrar</button>
+            </div>
         </form>
     </div>
 </div>
@@ -102,7 +108,7 @@
                   <p>Modal body text goes here.</p>
             </div>
             <div class="modal-footer p-3">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
