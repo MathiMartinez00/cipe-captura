@@ -1,356 +1,491 @@
 // Initialize and add the map
 var InforObj = [];
-var centerCords = {
-    lat: 41.389633,
-    lng: 2.116217
-};
 var markerCluster = null;
-var twitter_icon = '/static/app/img/icons/twitter.png';
-var gscholar_icon = '/static/app/img/icons/google-scholar.png';
-var facebook_icon = '/static/app/img/icons/facebook.png';
-var scopus_icon = '/static/app/img/icons/scopus.png';
-var instws_icon = '/static/app/img/icons/globe.png';
-var persws_icon = '/static/app/img/icons/home.png';
-var orcid_icon = '/static/app/img/icons/orcid.png';
-var linkedin_icon = '/static/app/img/icons/linkedin.png';
-var researchgate_icon = '/static/app/img/icons/researchgate.png';
-var academia_icon = '/static/app/img/icons/academia.svg';
+var twitter_icon = "/static/app/img/icons/twitter.png";
+var gscholar_icon = "/static/app/img/icons/google-scholar.png";
+var facebook_icon = "/static/app/img/icons/facebook.png";
+var scopus_icon = "/static/app/img/icons/scopus.png";
+var instws_icon = "/static/app/img/icons/globe.png";
+var persws_icon = "/static/app/img/icons/home.png";
+var orcid_icon = "/static/app/img/icons/orcid.png";
+var linkedin_icon = "/static/app/img/icons/linkedin.png";
+var researchgate_icon = "/static/app/img/icons/researchgate.png";
+var academia_icon = "/static/app/img/icons/academia.svg";
 
+/**
+ * Define types here.
+ */
 
 function closeInfoWindow() {
-    if (InforObj.length > 0) {
-        /* detach the info-window from the marker */
-        InforObj[0].set("marker", null);
-        /* and close it */
-        InforObj[0].close();
-        /* blank the array */
-        InforObj.length = 0;
-    }
+  if (InforObj.length > 0) {
+    /* detach the info-window from the marker */
+    InforObj[0].set("marker", null);
+    /* and close it */
+    InforObj[0].close();
+    /* blank the array */
+    InforObj.length = 0;
+  }
 }
 
-function generateInfoWindowContentComplaint(scientist_info) {
-    let content = "";
-    let position_class = 'badge-primary';
-    content += "<br>";
-    content += "<div>";
-    if (scientist_info.photo) {
-        content += "<img src='" + scientist_info.photo + "' alt='avatar_masculino' class='d-inline-block img-fluid' style='vertical-align: middle; margin-right: 8px;'>";
-    }
-    content += "<span style='display: inline-block; vertical-align: middle;'><b>" + scientist_info.complaint_type.name + "</b>";
-    content += "<br><span class='badge " + position_class + "' float='right'>" + scientist_info.city.name + "</span><br>";
-    content += "</div>";
-    content += "<div class='text-left'>";
-    content += "<br>" + scientist_info.description;
-    content += "</div>";
-    return content
+// TODO: Change this, I hate how it is written.
+function generateInfoWindowContentComplaint(complaint_info) {
+  let content = "";
+  let position_class = "badge-primary";
+  content += "<br>";
+  content += "<div>";
+  if (complaint_info.photo) {
+    content +=
+      "<img src='" +
+      complaint_info.photo +
+      "' alt='avatar_masculino' class='d-inline-block img-fluid' style='vertical-align: middle; margin-right: 8px;'>";
+  }
+  content +=
+    "<span style='display: inline-block; vertical-align: middle;'><b>" +
+    complaint_info.complaint_type.name +
+    "</b>";
+  content +=
+    "<br><span class='badge " +
+    position_class +
+    "' float='right'>" +
+    complaint_info.city.name +
+    "</span><br>";
+  content += "</div>";
+  content += "<div class='text-left'>";
+  content += "<br>" + complaint_info.description;
+  content += "</div>";
+  return content;
 }
 
 function generateInfoWindowContent(scientist_info) {
-    let content = "";
-    let position_class = '';
-    if (scientist_info.position == 'Estudiante de Doctorado') {
-        position_class = 'badge-primary';
+  let content = "";
+  let position_class = "";
+  if (scientist_info.position == "Estudiante de Doctorado") {
+    position_class = "badge-primary";
+  } else {
+    if (scientist_info.position == "Estudiante de Máster Académico") {
+      position_class = "badge-secondary";
     } else {
-        if (scientist_info.position == 'Estudiante de Máster Académico') {
-            position_class = 'badge-secondary';
+      if (scientist_info.position == "Post-doc") {
+        position_class = "badge-warning";
+      } else {
+        if (scientist_info.position == "Profesor") {
+          position_class = "badge-danger";
         } else {
-            if (scientist_info.position == 'Post-doc') {
-                position_class = 'badge-warning';
-            } else {
-                if (scientist_info.position == 'Profesor') {
-                    position_class = 'badge-danger';
-                } else {
-                    position_class = 'badge-info';
-                }
-            }
+          position_class = "badge-info";
         }
+      }
     }
-    content += "<br>";
-    content += "<div>";
-    if (scientist_info.sex == 'masculino') {
-        content += "<img src='/static/app/img/man_avatar.svg' alt='avatar_masculino' height='60' width='60' style='display: inline-block; vertical-align: middle; margin-right: 8px;'>";
-    } else {
-        content += "<img src='/static/app/img/woman_avatar.svg' alt='avatar_femenino' height='60' width='60' style='display: inline-block; vertical-align: middle; margin-right: 8px;'>";
+  }
+  content += "<br>";
+  content += "<div>";
+  if (scientist_info.sex == "masculino") {
+    content +=
+      "<img src='/static/app/img/man_avatar.svg' alt='avatar_masculino' height='60' width='60' style='display: inline-block; vertical-align: middle; margin-right: 8px;'>";
+  } else {
+    content +=
+      "<img src='/static/app/img/woman_avatar.svg' alt='avatar_femenino' height='60' width='60' style='display: inline-block; vertical-align: middle; margin-right: 8px;'>";
+  }
+  content +=
+    "<span style='display: inline-block; vertical-align: middle;'><b>" +
+    scientist_info.name +
+    "</b>";
+  content +=
+    "<br><span class='badge " +
+    position_class +
+    "' float='right'>" +
+    scientist_info.position +
+    "</span><br>";
+  content += scientist_info.institution_name + "<br>";
+  if (scientist_info.institution_country_iso2 != "") {
+    content +=
+      "<i class='flag-icon flag-icon-" +
+      scientist_info.institution_country_iso2 +
+      "'></i></span>";
+  } else {
+    content += scientist_info.institution_country + "</span>";
+  }
+  content += "</div>";
+  content += "<div class='text-left'>";
+  content +=
+    "<br>Área de investigación<br><b>" +
+    scientist_info.scientific_area +
+    "</b>";
+  if (
+    scientist_info.twitter_handler != null ||
+    scientist_info.gscholar_profile != null ||
+    scientist_info.facebook_profile != null ||
+    scientist_info.scopus_profile != null ||
+    scientist_info.institutional_website != null ||
+    scientist_info.personal_website != null ||
+    scientist_info.orcid_profile != null ||
+    scientist_info.linkedin_profile != null ||
+    scientist_info.researchgate_profile != null ||
+    scientist_info.academia_profile != null
+  ) {
+    content = content + "</br><br>";
+    if (scientist_info.linkedin_profile != null) {
+      content =
+        content +
+        "<a href='" +
+        scientist_info.linkedin_profile +
+        "' target='_blank'><img src='" +
+        linkedin_icon +
+        "' width='32' height='32' title='Perfil Linkedin' alt='Linkedin Logo'></a>";
     }
-    content += "<span style='display: inline-block; vertical-align: middle;'><b>" + scientist_info.name + "</b>";
-    content += "<br><span class='badge " + position_class + "' float='right'>" + scientist_info.position + "</span><br>";
-    content += scientist_info.institution_name + "<br>";
-    if (scientist_info.institution_country_iso2 != '') {
-        content += "<i class='flag-icon flag-icon-" + scientist_info.institution_country_iso2 + "'></i></span>";
+    if (scientist_info.gscholar_profile != null) {
+      content =
+        content +
+        "<a href='" +
+        scientist_info.gscholar_profile +
+        "' target='_blank'><img src='" +
+        gscholar_icon +
+        "' width='32' height='32' title='Perfil Google Scholar' alt='Scholar Logo'></a>";
+    }
+    if (scientist_info.scopus_profile != null) {
+      content =
+        content +
+        "<a href='" +
+        scientist_info.scopus_profile +
+        "' target='_blank'><img src='" +
+        scopus_icon +
+        "' width='32' height='32' title='Perfil Scopus' alt='Scopus Logo'></a>";
+    }
+    if (scientist_info.researchgate_profile != null) {
+      content =
+        content +
+        "<a href='" +
+        scientist_info.researchgate_profile +
+        "' target='_blank'><img src='" +
+        researchgate_icon +
+        "' width='32' height='32' title='Perfil Research Gate' alt='Research Gate Logo'></a>";
+    }
+    if (scientist_info.academia_profile != null) {
+      content =
+        content +
+        "<a href='" +
+        scientist_info.academia_profile +
+        "' target='_blank'><img src='" +
+        academia_icon +
+        "' width='30' height='30' title='Perfil Academia' alt='Academia Logo'></a>";
+    }
+    if (scientist_info.orcid_profile != null) {
+      content =
+        content +
+        "<a href='" +
+        scientist_info.orcid_profile +
+        "' target='_blank'><img src='" +
+        orcid_icon +
+        "' width='32' height='32' title='Perfil ORCID' alt='ORCID Logo'></a>";
+    }
+    if (scientist_info.institutional_website != null) {
+      content =
+        content +
+        "<a href='" +
+        scientist_info.institutional_website +
+        "' target='_blank'><img src='" +
+        instws_icon +
+        "' width='32' height='32' title='Perfil Web Institucional' alt='Scopus Logo'></a>";
+    }
+    if (scientist_info.personal_website != null) {
+      content =
+        content +
+        "<a href='" +
+        scientist_info.personal_website +
+        "' target='_blank'><img src='" +
+        persws_icon +
+        "' width='32' height='32' title='Página Web Personal' alt='Scopus Logo'></a>";
+    }
+    if (scientist_info.twitter_handler != null) {
+      content =
+        content +
+        "<a href='https://twitter.com/" +
+        scientist_info.twitter_handler +
+        "' target='_blank'><img src='" +
+        twitter_icon +
+        "' width='32' height='32' title='Perfil Twitter' alt='Twitter Logo'></a>";
+    }
+    if (scientist_info.facebook_profile != null) {
+      content =
+        content +
+        "<a href='" +
+        scientist_info.facebook_profile +
+        "' target='_blank'><img src='" +
+        facebook_icon +
+        "' width='31' height='31' title='Perfil Facebook' alt='Facebook Logo'></a>";
+    }
+  }
 
-    } else {
-        content += scientist_info.institution_country + "</span>";
-    }
-    content += "</div>";
-    content += "<div class='text-left'>"
-    content += "<br>Área de investigación<br><b>" + scientist_info.scientific_area + "</b>";
-    if (scientist_info.twitter_handler != null || scientist_info.gscholar_profile != null ||
-        scientist_info.facebook_profile != null || scientist_info.scopus_profile != null ||
-        scientist_info.institutional_website != null || scientist_info.personal_website != null ||
-        scientist_info.orcid_profile != null || scientist_info.linkedin_profile != null ||
-        scientist_info.researchgate_profile != null || scientist_info.academia_profile != null)
-    {
-        content = content + "</br><br>";
-        if (scientist_info.linkedin_profile != null) {
-            content = content + "<a href='" + scientist_info.linkedin_profile +
-                               "' target='_blank'><img src='" + linkedin_icon +"' width='32' height='32' title='Perfil Linkedin' alt='Linkedin Logo'></a>";
-        }
-        if (scientist_info.gscholar_profile != null) {
-            content = content + "<a href='" + scientist_info.gscholar_profile +
-                               "' target='_blank'><img src='" + gscholar_icon +"' width='32' height='32' title='Perfil Google Scholar' alt='Scholar Logo'></a>";
-        }
-        if (scientist_info.scopus_profile != null) {
-            content = content + "<a href='" + scientist_info.scopus_profile +
-                               "' target='_blank'><img src='" + scopus_icon +"' width='32' height='32' title='Perfil Scopus' alt='Scopus Logo'></a>";
-        }
-        if (scientist_info.researchgate_profile != null) {
-            content = content + "<a href='" + scientist_info.researchgate_profile +
-                               "' target='_blank'><img src='" + researchgate_icon +"' width='32' height='32' title='Perfil Research Gate' alt='Research Gate Logo'></a>";
-        }
-        if (scientist_info.academia_profile != null) {
-            content = content + "<a href='" + scientist_info.academia_profile +
-                               "' target='_blank'><img src='" + academia_icon +"' width='30' height='30' title='Perfil Academia' alt='Academia Logo'></a>";
-        }
-        if (scientist_info.orcid_profile != null) {
-            content = content + "<a href='" + scientist_info.orcid_profile +
-                               "' target='_blank'><img src='" + orcid_icon +"' width='32' height='32' title='Perfil ORCID' alt='ORCID Logo'></a>";
-        }
-        if (scientist_info.institutional_website != null) {
-            content = content + "<a href='" + scientist_info.institutional_website +
-                               "' target='_blank'><img src='" + instws_icon +"' width='32' height='32' title='Perfil Web Institucional' alt='Scopus Logo'></a>";
-        }
-        if (scientist_info.personal_website != null) {
-            content = content + "<a href='" + scientist_info.personal_website +
-                               "' target='_blank'><img src='" + persws_icon +"' width='32' height='32' title='Página Web Personal' alt='Scopus Logo'></a>";
-        }
-        if (scientist_info.twitter_handler != null) {
-            content = content + "<a href='https://twitter.com/" + scientist_info.twitter_handler +
-                                "' target='_blank'><img src='" + twitter_icon +"' width='32' height='32' title='Perfil Twitter' alt='Twitter Logo'></a>";
-        }
-        if (scientist_info.facebook_profile != null) {
-            content = content + "<a href='" + scientist_info.facebook_profile +
-                               "' target='_blank'><img src='" + facebook_icon +"' width='31' height='31' title='Perfil Facebook' alt='Facebook Logo'></a>";
-        }
-    }
-
-    content = content + "</div>";
-    return content
+  content = content + "</div>";
+  return content;
 }
-
 
 // Based on
 // https://www.geodatasource.com/developers/javascript
 function distanceInK(lat1, lon1, lat2, lon2) {
-	if ((lat1 == lat2) && (lon1 == lon2)) {
-		return 0;
-	}
-	else {
-		var radlat1 = Math.PI * lat1/180;
-		var radlat2 = Math.PI * lat2/180;
-		var theta = lon1-lon2;
-		var radtheta = Math.PI * theta/180;
-		var dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
-		if (dist > 1) {
-			dist = 1;
-		}
-		dist = Math.acos(dist);
-		dist = dist * 180/Math.PI;
-		dist = dist * 60 * 1.1515;
-		dist = dist * 1.609344;
-		return dist;
-	}
-}
-
-function addMarkersComplaint(complaints, isIndex, map, markers) {
-    for (let i = 0; i < complaints.length; i++) {
-        let marker = L.marker([complaints[i].latitude, complaints[i].longitude]);
-        if (!isIndex) {
-            // marker.bindPopup(generateInfoWindowContentComplaint(complaints[i])).openPopup();
-        }
-        marker.on("click", function (event) {
-            let modalElement = document.getElementById("detailModal");
-            let modalBootstrap = new bootstrap.Modal(modalElement);
-            let content = `<p>Ciudad: ${complaints[i].city.name}</p>`;
-            content += `<p>Tipo de denuncia: ${complaints[i].complaint_type.name}</p>`
-            content += `<p>Descripción: ${complaints[i].description}</p>`;
-            if (complaints[i].photo) {
-                content += `<img src='${complaints[i].photo}' alt='Foto denuncia' class='d-inline-block img-fluid'>`;
-            }
-            modalElement.querySelector('.modal-body p').innerHTML = content;
-            modalBootstrap.show();
-        })
-        markers.addLayer(marker);
+  if (lat1 === lat2 && lon1 === lon2) {
+    return 0;
+  } else {
+    const radlat1 = (Math.PI * lat1) / 180;
+    const radlat2 = (Math.PI * lat2) / 180;
+    const theta = lon1 - lon2;
+    const radtheta = (Math.PI * theta) / 180;
+    let dist =
+      Math.sin(radlat1) * Math.sin(radlat2) +
+      Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+    if (dist > 1) {
+      dist = 1;
     }
-    map.addLayer(markers);
+    dist = Math.acos(dist);
+    dist = (dist * 180) / Math.PI;
+    dist = dist * 60 * 1.1515;
+    dist = dist * 1.609344;
+    return dist;
+  }
 }
 
+async function addMarkersComplaint(complaints, isIndex, map, markers) {
+  const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+  console.log(complaints);
+  for (let i = 0; i < complaints.length; i++) {
+    const marker = new AdvancedMarkerElement({
+      map: map,
+      position: { lat: complaints[i].latitude, lng: complaints[i].longitude },
+      title: "Test",
+      gmpClickable: true,
+    });
+    // if (!isIndex) {
+    //     // marker.bindPopup(generateInfoWindowContentComplaint(complaints[i])).openPopup();
+    // }
+    // marker.on("click", function (event) {
+    //     map.setView(event.latlng, 10);
+    //     const modalElement = document.getElementById("detailModal");
+    //     const modalBootstrap = new bootstrap.Modal(modalElement);
+    //     let content = `
+    //         <p>Ciudad: ${complaints[i].city.name}</p>
+    //         <p>Tipo de denuncia: ${complaints[i].complaint_type.name}</p>
+    //         <p>Descripción: ${complaints[i].description}</p>
+    //     `;
+    //
+    //     if (complaints[i].photo) {
+    //         content += `<img src='${complaints[i].photo}' alt='Foto denuncia' class='d-inline-block img-fluid'>`;
+    //     }
+    //     modalElement.querySelector('.modal-body p').innerHTML = content;
+    //     modalBootstrap.show();
+    // })
+    // markers.addLayer(marker);
+  }
+  // map.addLayer(markers);
+}
 
 function addMarkers(scientists, isIndex, map, markers) {
-
-    /***
+  /***
     map: variable containing the map
     markers: variable containing the group of markers
     ***/
-    
-    // Create markers
-    let inst_lat, inst_lng; 
-    let arr_pos = [];
-    let new_lat, new_lng;
 
-    for (i=0; i < scientists.length; i++) {
-        inst_lat = scientists[i].institution_latitude;
-        inst_lng = scientists[i].institution_longitude;
-        pos = {lat: inst_lat, lng: inst_lng};
+  // Create markers
+  let inst_lat, inst_lng;
+  let arr_pos = [];
+  let new_lat, new_lng;
 
-        // check if a marker with the position pos (or close) was already included in the map, if so,
-        // modify a bit the position
-        for (j = 0; j < arr_pos.length; j++) {
-            distance_km = distanceInK(arr_pos[j].lat, arr_pos[j].lng, pos.lat, pos.lng)
-            if (distance_km < 1) {
-                new_lat = pos.lat + (Math.random() -.5) / 1500;
-                new_lng = pos.lng + (Math.random() -.5) / 1500;
-                pos = {lat: new_lat, lng: new_lng};
-            }
-        }
-        
-        let leafletMarker = L.marker([pos.lat,pos.lng]);
-        if (!isIndex) {
-            leafletMarker.bindPopup(generateInfoWindowContent(scientists[i])).openPopup();
-        }
-        markers.addLayer(leafletMarker);
+  for (i = 0; i < scientists.length; i++) {
+    inst_lat = scientists[i].institution_latitude;
+    inst_lng = scientists[i].institution_longitude;
+    pos = { lat: inst_lat, lng: inst_lng };
+
+    // check if a marker with the position pos (or close) was already included in the map, if so,
+    // modify a bit the position
+    for (j = 0; j < arr_pos.length; j++) {
+      distance_km = distanceInK(
+        arr_pos[j].lat,
+        arr_pos[j].lng,
+        pos.lat,
+        pos.lng,
+      );
+      if (distance_km < 1) {
+        new_lat = pos.lat + (Math.random() - 0.5) / 1500;
+        new_lng = pos.lng + (Math.random() - 0.5) / 1500;
+        pos = { lat: new_lat, lng: new_lng };
+      }
     }
 
-    //leaflet cluster added to map
-    map.addLayer(markers);
+    let leafletMarker = L.marker([pos.lat, pos.lng]);
+    if (!isIndex) {
+      leafletMarker
+        .bindPopup(generateInfoWindowContent(scientists[i]))
+        .openPopup();
+    }
+    markers.addLayer(leafletMarker);
+  }
+
+  //leaflet cluster added to map
+  map.addLayer(markers);
 }
 
 function removeMarkers(markers) {
-    markers.clearLayers();
+  markers.clearLayers();
 }
-function initMap(mapDivId) {
-    /**
+
+async function initMap(mapDivId) {
+  /**
      mapDivId: ID of the map's div in the html code
       **/
-    let map = L.map(mapDivId, {
-        fullscreenControl: true,
-        minZoom: 2
-    }).setView([-23.4425, -58.4438], 7);
+  const position = { lat: -23.4425, lng: -58.4438 };
+  const { Map } = await google.maps.importLibrary("maps");
+  const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
-    return map;
+  const map = new Map(document.getElementById(mapDivId), {
+    zoom: 4,
+    center: position,
+    mapId: "TEST_MAP_ID",
+  });
+
+  return map;
 }
 
 function addMarker(map, latitude, longitude, place_name) {
-    latitude = parseInt(latitude);
-    longitude = parseInt(longitude);
-    var leafletMarker = L.marker([latitude,longitude]).addTo(map).bindPopup(place_name).openPopup();
+  latitude = parseInt(latitude);
+  longitude = parseInt(longitude);
+  var leafletMarker = L.marker([latitude, longitude])
+    .addTo(map)
+    .bindPopup(place_name)
+    .openPopup();
 }
 
 function showCommunicationField() {
-    if(document.getElementById('id_communication_channel').options[document.getElementById('id_communication_channel').selectedIndex].value == "telegram") {
-        document.getElementById('id_phone_number').style.display = '';
-        document.getElementById('id_facebook_profile').style.display = 'none';
-    }
-    if(document.getElementById('id_communication_channel').options[document.getElementById('id_communication_channel').selectedIndex].value == "whatsapp") {
-        document.getElementById('id_phone_number').style.display = '';
-        document.getElementById('id_facebook_profile').style.display = 'none';
-    }
-    if(document.getElementById('id_communication_channel').options[document.getElementById('id_communication_channel').selectedIndex].value == "slack") {
-        document.getElementById('id_phone_number').style.display = 'none';
-        document.getElementById('id_facebook_profile').style.display = 'none';
-    }
-    if(document.getElementById('id_communication_channel').options[document.getElementById('id_communication_channel').selectedIndex].value == "lista_correo") {
-        document.getElementById('id_phone_number').style.display = 'none';
-        document.getElementById('id_facebook_profile').style.display = 'none';
-    }
-    if(document.getElementById('id_communication_channel').options[document.getElementById('id_communication_channel').selectedIndex].value == "facebook") {
-        document.getElementById('id_phone_number').style.display = 'none';
-        document.getElementById('id_facebook_profile').style.display = '';
-    }
+  if (
+    document.getElementById("id_communication_channel").options[
+      document.getElementById("id_communication_channel").selectedIndex
+    ].value == "telegram"
+  ) {
+    document.getElementById("id_phone_number").style.display = "";
+    document.getElementById("id_facebook_profile").style.display = "none";
+  }
+  if (
+    document.getElementById("id_communication_channel").options[
+      document.getElementById("id_communication_channel").selectedIndex
+    ].value == "whatsapp"
+  ) {
+    document.getElementById("id_phone_number").style.display = "";
+    document.getElementById("id_facebook_profile").style.display = "none";
+  }
+  if (
+    document.getElementById("id_communication_channel").options[
+      document.getElementById("id_communication_channel").selectedIndex
+    ].value == "slack"
+  ) {
+    document.getElementById("id_phone_number").style.display = "none";
+    document.getElementById("id_facebook_profile").style.display = "none";
+  }
+  if (
+    document.getElementById("id_communication_channel").options[
+      document.getElementById("id_communication_channel").selectedIndex
+    ].value == "lista_correo"
+  ) {
+    document.getElementById("id_phone_number").style.display = "none";
+    document.getElementById("id_facebook_profile").style.display = "none";
+  }
+  if (
+    document.getElementById("id_communication_channel").options[
+      document.getElementById("id_communication_channel").selectedIndex
+    ].value == "facebook"
+  ) {
+    document.getElementById("id_phone_number").style.display = "none";
+    document.getElementById("id_facebook_profile").style.display = "";
+  }
 }
 
 function showBecalEndDate() {
-    if(document.getElementById('id_has_becal_scholarship').options[document.getElementById('id_has_becal_scholarship').selectedIndex].value == "True") {
-        document.getElementById('id_end_becal_scholarship').style.display = '';
-        document.querySelector('label[for=id_end_becal_scholarship]').style.display = '';
-    } else {
-        document.getElementById('id_end_becal_scholarship').style.display = 'none';
-        document.querySelector('label[for=id_end_becal_scholarship]').style.display = 'none';
-    }
-
+  if (
+    document.getElementById("id_has_becal_scholarship").options[
+      document.getElementById("id_has_becal_scholarship").selectedIndex
+    ].value == "True"
+  ) {
+    document.getElementById("id_end_becal_scholarship").style.display = "";
+    document.querySelector(
+      "label[for=id_end_becal_scholarship]",
+    ).style.display = "";
+  } else {
+    document.getElementById("id_end_becal_scholarship").style.display = "none";
+    document.querySelector(
+      "label[for=id_end_becal_scholarship]",
+    ).style.display = "none";
+  }
 }
 
 function initAutocomplete() {
-    var map = new google.maps.Map(document.getElementById('map-registration'), {
-      center: {lat: 41.389633, lng: 40.116217},
-      zoom: 2,
-      mapTypeId: 'roadmap'
+  var map = new google.maps.Map(document.getElementById("map-registration"), {
+    center: { lat: 41.389633, lng: 40.116217 },
+    zoom: 2,
+    mapTypeId: "roadmap",
+  });
+
+  // Create the search box and link it to the UI element.
+  var input = document.getElementById("pac-input");
+  var searchBox = new google.maps.places.SearchBox(input);
+  map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+
+  // Bias the SearchBox results towards current map's viewport.
+  map.addListener("bounds_changed", function () {
+    searchBox.setBounds(map.getBounds());
+  });
+
+  var markers = [];
+  // Listen for the event fired when the user selects a prediction and retrieve
+  // more details for that place.
+  searchBox.addListener("places_changed", function () {
+    var places = searchBox.getPlaces();
+
+    if (places.length == 0) {
+      return;
+    }
+
+    // Clear out the old markers.
+    markers.forEach(function (marker) {
+      marker.setMap(null);
     });
 
-    // Create the search box and link it to the UI element.
-    var input = document.getElementById('pac-input');
-    var searchBox = new google.maps.places.SearchBox(input);
-    map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
+    markers = [];
 
-    // Bias the SearchBox results towards current map's viewport.
-    map.addListener('bounds_changed', function() {
-      searchBox.setBounds(map.getBounds());
+    // For each place, get the icon, name and location.
+    var bounds = new google.maps.LatLngBounds();
+    places.forEach(function (place) {
+      if (!place.geometry) {
+        console.log("Returned place contains no geometry");
+        return;
+      }
+      var icon = {
+        url: place.icon,
+        size: new google.maps.Size(71, 71),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(17, 34),
+        scaledSize: new google.maps.Size(25, 25),
+      };
+
+      // Set the value of the hidden fields
+      document.getElementById("id_location_name").value = place.name;
+      document.getElementById("id_location_lat").value =
+        place.geometry.location.lat();
+      document.getElementById("id_location_lng").value =
+        place.geometry.location.lng();
+
+      // Create a marker for each place.
+      markers.push(
+        new google.maps.Marker({
+          map: map,
+          title: place.name,
+          position: place.geometry.location,
+        }),
+      );
+
+      if (place.geometry.viewport) {
+        // Only geocodes have viewport.
+        bounds.union(place.geometry.viewport);
+      } else {
+        bounds.extend(place.geometry.location);
+      }
     });
-
-    var markers = [];
-    // Listen for the event fired when the user selects a prediction and retrieve
-    // more details for that place.
-    searchBox.addListener('places_changed', function() {
-        var places = searchBox.getPlaces();
-
-        if (places.length == 0) {
-            return;
-        }
-
-        // Clear out the old markers.
-        markers.forEach(function(marker) {
-            marker.setMap(null);
-        });
-
-        markers = [];
-
-        // For each place, get the icon, name and location.
-        var bounds = new google.maps.LatLngBounds();
-        places.forEach(function(place) {
-            if (!place.geometry) {
-                console.log("Returned place contains no geometry");
-                return;
-            }
-            var icon = {
-                url: place.icon,
-                size: new google.maps.Size(71, 71),
-                origin: new google.maps.Point(0, 0),
-                anchor: new google.maps.Point(17, 34),
-                scaledSize: new google.maps.Size(25, 25)
-            };
-
-            // Set the value of the hidden fields
-            document.getElementById("id_location_name").value = place.name;
-            document.getElementById("id_location_lat").value = place.geometry.location.lat();
-            document.getElementById("id_location_lng").value = place.geometry.location.lng();
-
-            // Create a marker for each place.
-            markers.push(new google.maps.Marker({
-                map: map,
-                title: place.name,
-                position: place.geometry.location
-            }));
-
-            if (place.geometry.viewport) {
-                // Only geocodes have viewport.
-                bounds.union(place.geometry.viewport);
-            } else {
-                bounds.extend(place.geometry.location);
-            }
-        });
-        map.fitBounds(bounds);
-    });
-    return map;
+    map.fitBounds(bounds);
+  });
+  return map;
 }

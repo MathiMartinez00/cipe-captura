@@ -3,9 +3,9 @@
 <script>
 {% block javascript %}
     //leaflet map
-    var map = initMap('map');
+    const map = await initMap('map');
 
-    var markers = L.markerClusterGroup(); // Leaflet's cluster group
+    const markers = L.markerClusterGroup(); // Leaflet's cluster group
 
     addMarkersComplaint({{ complaints|safe }}, false, map, markers);
     
@@ -118,5 +118,4 @@
 * The key parameter will contain your own API key (which is not needed for this tutorial)
 * The callback parameter executes the initMap() function
 -->
-<script defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&loading=async&callback=initMap"></script>
 {% endblock %}

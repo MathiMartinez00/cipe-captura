@@ -1,73 +1,148 @@
 ﻿{% load static %}
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
+  <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156085830-1"></script>
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=UA-156085830-1"
+    ></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'UA-156085830-1');
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+      gtag("config", "UA-156085830-1");
     </script>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-    <meta name="description" content="Sitio con información sobre investigadores paraguayos trabajando en universidades, centros de investigación, y empresas fuera de Paraguay">
+    <meta
+      name="description"
+      content="Sitio con información sobre investigadores paraguayos trabajando en universidades, centros de investigación, y empresas fuera de Paraguay"
+    />
     <meta property="og:title" content="Investigadores Paraguayos en el Mundo" />
-    <meta property="og:url" content="http://investigadoresparaguayosenelmundo.com/" />
-    <meta property="og:description" content="Web con información sobre investigadores paraguayos en el mundo">
-    <meta property="og:image" content="http://investigadoresparaguayosenelmundo.com/static/app/img/og_image.png">
+    <meta
+      property="og:url"
+      content="http://investigadoresparaguayosenelmundo.com/"
+    />
+    <meta
+      property="og:description"
+      content="Web con información sobre investigadores paraguayos en el mundo"
+    />
+    <meta
+      property="og:image"
+      content="http://investigadoresparaguayosenelmundo.com/static/app/img/og_image.png"
+    />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="716" />
-    <meta property="og:image" content="http://investigadoresparaguayosenelmundo.com/static/app/img/og_image_180x107.png">
+    <meta
+      property="og:image"
+      content="http://investigadoresparaguayosenelmundo.com/static/app/img/og_image_180x107.png"
+    />
     <meta property="og:image:width" content="180" />
     <meta property="og:image:height" content="107" />
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="es_ES" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Investigadores Paraguayos en el Mundo" />
-    <meta name="twitter:image" content="http://investigadoresparaguayosenelmundo.com/static/app/img/og_image.png" />
-    <meta name="twitter:description" content="Web con información sobre investigadores paraguayos en el mundo" />
+    <meta
+      name="twitter:title"
+      content="Investigadores Paraguayos en el Mundo"
+    />
+    <meta
+      name="twitter:image"
+      content="http://investigadoresparaguayosenelmundo.com/static/app/img/og_image.png"
+    />
+    <meta
+      name="twitter:description"
+      content="Web con información sobre investigadores paraguayos en el mundo"
+    />
     <title>Chake Denuncias</title>
     <!-- Custom fonts for this theme -->
-    <link href="{% static 'app/vendor/fontawesome-free/css/all.min.css' %}" rel="stylesheet" type="text/css" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css" crossorigin="anonymous">
-    <link href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css" crossorigin="anonymous">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.3.0/css/flag-icon.min.css" rel="stylesheet" type="text/css" crossorigin="anonymous">
+    <link
+      href="{% static 'app/vendor/fontawesome-free/css/all.min.css' %}"
+      rel="stylesheet"
+      type="text/css"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Montserrat:400,700"
+      rel="stylesheet"
+      type="text/css"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic"
+      rel="stylesheet"
+      type="text/css"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.3.0/css/flag-icon.min.css"
+      rel="stylesheet"
+      type="text/css"
+      crossorigin="anonymous"
+    />
     <!-- Fengyuan Chen's Datepicker -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css" integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE=" crossorigin="anonymous" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.css"
+      integrity="sha256-b88RdwbRJEzRx95nCuuva+hO5ExvXXnpX+78h8DjyOE="
+      crossorigin="anonymous"
+    />
     <!-- Theme CSS -->
-    <link href="{% static 'app/css/styles.css' %}" rel="stylesheet">
-    <link href="{% static 'app/css/card.css' %}" rel="stylesheet">
-    <link rel="shortcut icon" type="image/png" href="{% static 'app/favicon.ico' %}"/>
+    <link href="{% static 'app/css/styles.css' %}" rel="stylesheet" />
+    <link href="{% static 'app/css/card.css' %}" rel="stylesheet" />
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="{% static 'app/favicon.ico' %}"
+    />
     <!-- LeafletJS -->
-   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
-    integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-    crossorigin=""/>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+      integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+      crossorigin=""
+    />
     <!-- Make sure you put this AFTER Leaflet's CSS -->
-    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
-    integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
-    crossorigin=""></script>
+    <script
+      src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+      integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+      crossorigin=""
+    ></script>
     <!--CDN para agregar los cluster de Leaflet-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
-    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"
+    />
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
     <!--CDN para el plugin de fullscreen del mapa-->
-    <script src='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js'></script>
-    <link href='https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css' rel='stylesheet' />
+    <script src="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/Leaflet.fullscreen.min.js"></script>
+    <link
+      href="https://api.mapbox.com/mapbox.js/plugins/leaflet-fullscreen/v1.0.1/leaflet.fullscreen.css"
+      rel="stylesheet"
+    />
     <!--CDN para agregar la barra de busqueda-->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet-geosearch@3.0.4/dist/geosearch.css"/>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet-geosearch@3.0.4/dist/geosearch.css"
+    />
     <!-- Make sure you put this AFtER leaflet.js, when using with leaflet -->
     <script src="https://unpkg.com/leaflet-geosearch@3.0.4/dist/geosearch.umd.js"></script>
 
     <style>
-       /* Set the size of the div element that contains the map */
+      /* Set the size of the div element that contains the map */
       .know-more-button {
-        position:absolute;
-        display:block;
+        position: absolute;
+        display: block;
       }
-      #map_header{
+      #map_header {
         width: 100%;
         height: 650px;
       }
@@ -108,72 +183,103 @@
         font-weight: 300;
       }
       .transparentBackground {
-        background-color: rgba(255,255,255, 0.5);
+        background-color: rgba(255, 255, 255, 0.5);
         color: inherit;
       }
       .map {
         position: relative;
-        display:inline-block;
+        display: inline-block;
       }
-      #map{
+      #map {
         width: 100%;
         height: 650px;
       }
       #map-registration {
-        height: 400px;  /* The height is 400 pixels */
+        height: 400px; /* The height is 400 pixels */
       }
     </style>
-</head>
-<body id="page-top">
+  </head>
+  <body id="page-top">
     {% include 'navbar.html' %}
     <div id="myAlert" class="alert text-center collapse" role="alert">
-        <div id="msgReg"></div>
-        <button type="button" class="close alert-dismissible" data-dismiss="alert">
-            <span aria-hidden="true">&times;</span>
-        </button>
+      <div id="msgReg"></div>
+      <button
+        type="button"
+        class="close alert-dismissible"
+        data-dismiss="alert"
+      >
+        <span aria-hidden="true">&times;</span>
+      </button>
     </div>
     <script src="{% static 'app/js/cipe.js' %}"></script>
-    {% block content %}
-    {% endblock %}
+    {% block content %} {% endblock %}
     <!-- Footer -->
     <footer class="footer text-center">
-        <div class="container">
-            <div class="row">
-            <!-- Footer Location -->
-                <div class="col-lg-4 mb-5 mb-lg-0">
-                    <h4 class="text-uppercase mb-4"></h4>
-                    <p class="lead mb-0">Sitio creado y mantenido por<br>Mathias Martinez<br>en marco de un proyecto final de carrera
-                    </p>
-                </div>
-                <!-- Footer Social Icons -->
-                <div class="col-lg-4 mb-5 mb-lg-0">
-                    <h4 class="text-uppercase mb-4">Contacto</h4>
-                    <a class="btn btn-outline-light btn-social mx-1" href="https://www.universidadcatolica.edu.py/" target="_blank">
-                        <i class="fas fa-globe"></i>
-                    </a>
-                </div>
-                <!-- Footer About Text -->
-                <div class="col-lg-4">
-                    <h4 class="text-uppercase mb-4"></h4>
-                    <p class="lead mb-0">Este sitio es un fork de <a href="https://github.com/joausaga/cipe/" target="_blank">CIPE</a>, el código del sitio es
-                        abierto, para más detalles ver <a href="https://github.com/MathiMartinez00/cipe-captura" target="_blank">aquí</a>
-                    </p>
-                </div>
-            </div>
+      <div class="container">
+        <div class="row">
+          <!-- Footer Location -->
+          <div class="col-lg-4 mb-5 mb-lg-0">
+            <h4 class="text-uppercase mb-4"></h4>
+            <p class="lead mb-0">
+              Sitio creado y mantenido por<br />Mathias Martinez<br />en marco
+              de un proyecto final de carrera
+            </p>
+          </div>
+          <!-- Footer Social Icons -->
+          <div class="col-lg-4 mb-5 mb-lg-0">
+            <h4 class="text-uppercase mb-4">Contacto</h4>
+            <a
+              class="btn btn-outline-light btn-social mx-1"
+              href="https://www.universidadcatolica.edu.py/"
+              target="_blank"
+            >
+              <i class="fas fa-globe"></i>
+            </a>
+          </div>
+          <!-- Footer About Text -->
+          <div class="col-lg-4">
+            <h4 class="text-uppercase mb-4"></h4>
+            <p class="lead mb-0">
+              Este sitio es un fork de
+              <a href="https://github.com/joausaga/cipe/" target="_blank"
+                >CIPE</a
+              >, el código del sitio es abierto, para más detalles ver
+              <a
+                href="https://github.com/MathiMartinez00/cipe-captura"
+                target="_blank"
+                >aquí</a
+              >
+            </p>
+          </div>
         </div>
+      </div>
     </footer>
     <!-- Copyright Section -->
     <section class="copyright py-4 text-center text-white">
-        <div class="container">
-            <small></small>
-            <small><div>Icons made by <a href="https://www.flaticon.com/authors/freepik" title="Freepik">Freepik</a> from <a href="https://www.flaticon.com/" title="Flaticon">www.flaticon.com</a></div></small>
-        </div>
+      <div class="container">
+        <small></small>
+        <small
+          ><div>
+            Icons made by
+            <a href="https://www.flaticon.com/authors/freepik" title="Freepik"
+              >Freepik</a
+            >
+            from
+            <a href="https://www.flaticon.com/" title="Flaticon"
+              >www.flaticon.com</a
+            >
+          </div></small
+        >
+      </div>
     </section>
     <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
-    <div class="scroll-to-top d-lg-none position-fixed ">
-        <a class="js-scroll-trigger d-block text-center text-white rounded" href="#page-top">
-            <i class="fa fa-chevron-up"></i>
-        </a>
+    <div class="scroll-to-top d-lg-none position-fixed">
+      <a
+        class="js-scroll-trigger d-block text-center text-white rounded"
+        href="#page-top"
+      >
+        <i class="fa fa-chevron-up"></i>
+      </a>
     </div>
     <!-- Bootstrap core JavaScript -->
     <script src="{% static 'app/vendor/jquery/jquery.min.js' %}"></script>
@@ -185,13 +291,24 @@
     <!-- Custom scripts for this template -->
     <script src="{% static 'app/js/freelancer.min.js' %}"></script>
     <!-- Date picker -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js" integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k=" crossorigin="anonymous"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/datepicker/0.6.5/datepicker.min.js"
+      integrity="sha256-/7FLTdzP6CfC1VBAj/rsp3Rinuuu9leMRGd354hvk0k="
+      crossorigin="anonymous"
+    ></script>
     <!-- Marker cluster library -->
     <script src="{% static 'app/js/markerclusterer.js' %}"></script>
     <script>
-        $(document).ready(function() {
+          (g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
+        key: "{{ GOOGLE_MAPS_API_KEY }}",
+        v: "weekly",
+        // Use the 'v' parameter to indicate the version to use (weekly, beta, alpha, etc.).
+        // Add other bootstrap parameters as needed, using camel case.
+      });
+
+        $(document).ready(async function() {
             {% block javascript %}{% endblock %}
         })
     </script>
-</body>
+  </body>
 </html>
