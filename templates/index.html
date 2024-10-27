@@ -1,156 +1,211 @@
-{% extends 'base.html' %}
-{% load static %}
+{% extends 'base.html' %} {% load static %}
 
 <script>
-    {% block javascript %}
-    //leaflet map
-    var map = initMap('map');
+  {% block javascript %}
+  //leaflet map
+  var map = initMap('map');
 
-    var markers = L.markerClusterGroup(); // Leaflet's cluster group
+  var markers = L.markerClusterGroup(); // Leaflet's cluster group
 
-    addMarkersComplaint({{ complaints|safe }}, true, map, markers);
-    {% endblock %}
+  addMarkersComplaint({{ complaints|safe }}, true, map, markers);
+  {% endblock %}
 </script>
 
 {% block content %}
-<div id="loginAlert" class="alert alert-success text-center collapse" role="alert">
-
+<div
+  id="loginAlert"
+  class="alert alert-success text-center collapse"
+  role="alert"
+>
   <button type="button" class="close alert-dismissible" data-dismiss="alert">
     <span aria-hidden="true">&times;</span>
   </button>
 </div>
 <!-- Masthead -->
 <header class="text-center">
-    <div class="container-fluid px-0" >
-        <div id="map">
-        </div>
-        <div class="container" style="
+  <div class="container-fluid px-0">
+    <div id="map"></div>
+    <div
+      class="container"
+      style="
         position: absolute;
         z-index: 400;
         top: 46%;
         left: 0;
         right: 0;
-        margin: auto;">
-            <div class="py-4 transparentBackground">
-                <h1 class="page-section-heading text-center text-uppercase text-secondary mb-0">Chake Denuncias</h1><br>
-                <a class="btn btn-xl btn-primary" href="{% url 'map' %}">
-                    <i class="fas fa-map mr-2"></i>
-                        Ver Mapa
-                </a>
-            </div>
-        </div>
+        margin: auto;
+      "
+    >
+      <div class="py-4 transparentBackground">
+        <h1
+          class="page-section-heading text-center text-uppercase text-secondary mb-0"
+        >
+          Chake Denuncias
+        </h1>
+        <br />
+        <a class="btn btn-xl btn-primary" href="{% url 'map' %}">
+          <i class="fas fa-map mr-2"></i>
+          Ver Mapa
+        </a>
+      </div>
     </div>
+  </div>
 </header>
 <!-- Seccion Sobre el Sitio -->
 <section class="page-section portfolio" id="sobre">
-    <div class="container">
-        <!-- Sobre el sitio Heading -->
-        <h2 class="page-section-heading text-center text-uppercase text-secondary mb-0">Sobre el sitio</h2>
-        <!-- Icon Divider -->
-        <div class="divider-custom">
-            <div class="divider-custom-line"></div>
-            <div class="divider-custom-icon">
-                <i class="flag-icon flag-icon-py"></i>
-            </div>
-            <div class="divider-custom-line"></div>
+  <div class="container">
+    <!-- Sobre el sitio Heading -->
+    <h2
+      class="page-section-heading text-center text-uppercase text-secondary mb-0"
+    >
+      Sobre el sitio
+    </h2>
+    <!-- Icon Divider -->
+    <div class="divider-custom">
+      <div class="divider-custom-line"></div>
+      <div class="divider-custom-icon">
+        <i class="flag-icon flag-icon-py"></i>
       </div>
-      <div class="row">
-        <div class="col-lg-12 ml-auto">
-            <p class="lead">
-                Chake es una plataforma dedicada a mejorar la calidad de vida en nuestras comunidades al proporcionar un espacio donde los ciudadanos pueden reportar problemas urbanos. Estos reportes se visualizan en un mapa interactivo accesible para todos. La plataforma no solo facilita la denuncia de problemas, sino que también fomenta la transparencia y la colaboración entre ciudadanos y autoridades.
-            </p>
-        </div>
+      <div class="divider-custom-line"></div>
+    </div>
+    <div class="row">
+      <div class="col-lg-12 ml-auto">
+        <p class="lead">
+          Chake es una plataforma dedicada a mejorar la calidad de vida en
+          nuestras comunidades al proporcionar un espacio donde los ciudadanos
+          pueden reportar problemas urbanos. Estos reportes se visualizan en un
+          mapa interactivo accesible para todos. La plataforma no solo facilita
+          la denuncia de problemas, sino que también fomenta la transparencia y
+          la colaboración entre ciudadanos y autoridades.
+        </p>
       </div>
     </div>
-    <br>
+  </div>
+  <br />
 </section>
 <!-- El porque Section -->
 <section class="page-section bg-primary text-white mb-0" id="elporque">
-    <div class="container">
-        <!-- About Section Heading -->
-        <h2 class="page-section-heading text-center text-uppercase text-white">Porqué del sitio</h2>
-        <!-- Icon Divider -->
-        <div class="divider-custom divider-light">
-            <div class="divider-custom-line"></div>
-            <div class="divider-custom-icon">
-                <i class="fas fa-question"></i>
-            </div>
-            <div class="divider-custom-line"></div>
-        </div>
-      <!-- About Section Content -->
-        <div class="row">
-            <div class="col-lg-4 ml-auto">
-                <p class="lead">
-                    Fomentar la transparencia al hacer públicos los reportes ciudadanos, garantizando que las denuncias no sean ignoradas. Esta visibilidad genera una presión positiva para que las autoridades actúen con mayor rapidez y responsabilidad en la resolución de los problemas.
-                </p>
-            </div>
-            <div class="col-lg-4 mr-auto">
-                <p class="lead">
-                    Impulsar la participación ciudadana al proporcionar una herramienta sencilla para que los ciudadanos reporten problemas en su entorno. Esta participación activa fortalece la colaboración entre la comunidad y las autoridades, promoviendo un entorno donde todos contribuyen al bienestar común.
-                </p>
-            </div>
-            <div class="col-lg-4 mr-auto">
-                <p class="lead">
-                    Registrar y visualizar los reportes en tiempo real, proporcionando información precisa y actualizada sobre los problemas en diferentes áreas. Esta información es crucial para la implementación de políticas públicas más efectivas, permitiendo a las autoridades priorizar y abordar las necesidades más urgentes de la comunidad.
-                </p>
-            </div>
-        </div>
+  <div class="container">
+    <!-- About Section Heading -->
+    <h2 class="page-section-heading text-center text-uppercase text-white">
+      Porqué del sitio
+    </h2>
+    <!-- Icon Divider -->
+    <div class="divider-custom divider-light">
+      <div class="divider-custom-line"></div>
+      <div class="divider-custom-icon">
+        <i class="fas fa-question"></i>
+      </div>
+      <div class="divider-custom-line"></div>
     </div>
+    <!-- About Section Content -->
+    <div class="row">
+      <div class="col-lg-4 ml-auto">
+        <p class="lead">
+          Fomentar la transparencia al hacer públicos los reportes ciudadanos,
+          garantizando que las denuncias no sean ignoradas. Esta visibilidad
+          genera una presión positiva para que las autoridades actúen con mayor
+          rapidez y responsabilidad en la resolución de los problemas.
+        </p>
+      </div>
+      <div class="col-lg-4 mr-auto">
+        <p class="lead">
+          Impulsar la participación ciudadana al proporcionar una herramienta
+          sencilla para que los ciudadanos reporten problemas en su entorno.
+          Esta participación activa fortalece la colaboración entre la comunidad
+          y las autoridades, promoviendo un entorno donde todos contribuyen al
+          bienestar común.
+        </p>
+      </div>
+      <div class="col-lg-4 mr-auto">
+        <p class="lead">
+          Registrar y visualizar los reportes en tiempo real, proporcionando
+          información precisa y actualizada sobre los problemas en diferentes
+          áreas. Esta información es crucial para la implementación de políticas
+          públicas más efectivas, permitiendo a las autoridades priorizar y
+          abordar las necesidades más urgentes de la comunidad.
+        </p>
+      </div>
+    </div>
+  </div>
 </section>
 <!-- Stats Section -->
 <section class="page-section mb-0" id="stats">
-    <div class="container">
-        <!-- Stats Section Heading -->
-        <h2 class="page-section-heading text-center text-uppercase">Datos Agregados</h2>
-        <!-- Icon Divider -->
-        <div class="divider-custom">
-            <div class="divider-custom-line"></div>
-            <div class="divider-custom-icon">
-                <i class="fas fa-stream"></i>
-            </div>
-            <div class="divider-custom-line"></div>
-        </div>
-      <!-- Section Content -->
-        <br><br>
-        <div class="row">
-            <div class="col-lg-4 ml-auto">
-                <div class="card">
-                    <img src="{% static 'app/img/ic_launcher.png' %}" alt="Female Scientists" style="width:80%">
-                    <br>
-                    <div class="card_container bg-primary">
-                        <p class="fs-3 text-center text-white m-0">Total de denuncias</p>
-                        <p class="fs-3 card-text text-center text-white">
-                            {{ complaints_stats.complaint_count }}
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 mr-auto">
-                <div class="card">
-                    <img src="{% static 'app/img/building.svg' %}" alt="Male Scientists" style="width:80%">
-                    <br>
-                    <div class="card_container bg-primary">
-                        <p class="fs-3 text-center text-white m-0">Ciudad con más denuncias</p>
-                        <p class="fs-3 card-text text-center text-white">
-                            {{ complaints_stats.max_cities.city.name }} ({{ complaints_stats.max_cities.count }})
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 mr-auto">
-                <div class="card bg-light">
-                  <img src="{% static 'app/img/institution.svg' %}" alt="Institution" style="width:80%">
-                  <br>
-                  <div class="card_container bg-primary">
-                      <p class="fs-3 text-center text-white m-0">Tipo de denuncia más común</p>
-                      <p class="card-text fs-3 text-center text-white">
-                          {{ complaints_stats.max_complaint_types.complaint_type.name }} ({{ complaints_stats.max_complaint_types.count }})
-                      </p>
-                  </div>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <!-- Stats Section Heading -->
+    <h2 class="page-section-heading text-center text-uppercase">
+      Datos Agregados
+    </h2>
+    <!-- Icon Divider -->
+    <div class="divider-custom">
+      <div class="divider-custom-line"></div>
+      <div class="divider-custom-icon">
+        <i class="fas fa-stream"></i>
+      </div>
+      <div class="divider-custom-line"></div>
     </div>
+    <!-- Section Content -->
+    <br /><br />
+    <div class="row">
+      <div class="col-lg-4 ml-auto">
+        <div class="card">
+          <img
+            src="{% static 'app/img/ic_launcher.png' %}"
+            alt="Female Scientists"
+            style="width: 80%"
+          />
+          <br />
+          <div class="card_container bg-primary">
+            <p class="fs-3 text-center text-white m-0">Total de denuncias</p>
+            <p class="fs-3 card-text text-center text-white">
+              {{ complaints_stats.complaint_count }}
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 mr-auto">
+        <div class="card">
+          <img
+            src="{% static 'app/img/building.svg' %}"
+            alt="Male Scientists"
+            style="width: 80%"
+          />
+          <br />
+          <div class="card_container bg-primary">
+            <p class="fs-3 text-center text-white m-0">
+              Ciudad con más denuncias
+            </p>
+            <p class="fs-3 card-text text-center text-white">
+              {{ complaints_stats.max_cities.city.name }} ({{
+              complaints_stats.max_cities.count }})
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-4 mr-auto">
+        <div class="card bg-light">
+          <img
+            src="{% static 'app/img/institution.svg' %}"
+            alt="Institution"
+            style="width: 80%"
+          />
+          <br />
+          <div class="card_container bg-primary">
+            <p class="fs-3 text-center text-white m-0">
+              Tipo de denuncia más común
+            </p>
+            <p class="card-text fs-3 text-center text-white">
+              {{ complaints_stats.max_complaint_types.complaint_type.name }} ({{
+              complaints_stats.max_complaint_types.count }})
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
-<script defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"></script>
+<script
+  defer
+  src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"
+></script>
 {% endblock %}
