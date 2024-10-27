@@ -7,7 +7,7 @@
 
     const markers = L.markerClusterGroup(); // Leaflet's cluster group
 
-    addMarkersComplaint({{ complaints|safe }}, false, map, markers);
+    addMarkersComplaint({{ complaints|safe }}, map);
     
     var exists_becal_scholar = { exists_becal_scholar };
     var becal_cb = document.getElementById("becal");

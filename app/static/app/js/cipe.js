@@ -243,15 +243,14 @@ function distanceInK(lat1, lon1, lat2, lon2) {
   }
 }
 
-async function addMarkersComplaint(complaints, isIndex, map, markers) {
-  const { AdvancedMarkerElement, InfoWindow } = await google.maps.importLibrary(
-    "marker"
-  );
+async function addMarkersComplaint(complaints, map) {
+  const { AdvancedMarkerElement, InfoWindow } =
+    await google.maps.importLibrary("marker");
 
-  for (let i = 0; i < complaints.length; i++) {
+  const markers = complaints.map((complaint) => {
     const marker = new AdvancedMarkerElement({
       map: map,
-      position: { lat: complaints[i].latitude, lng: complaints[i].longitude },
+      position: { lat: complaint.latitude, lng: complaint.longitude },
       title: "Test",
       gmpClickable: true,
     });
@@ -262,13 +261,13 @@ async function addMarkersComplaint(complaints, isIndex, map, markers) {
       const modalElement = document.getElementById("detailModal");
       const modalBootstrap = new bootstrap.Modal(modalElement);
       let content = `
-            <p>Ciudad: ${complaints[i].city.name}</p>
-            <p>Tipo de denuncia: ${complaints[i].complaint_type.name}</p>
-            <p>Descripción: ${complaints[i].description}</p>
+            <p>Ciudad: ${complaint.city.name}</p>
+            <p>Tipo de denuncia: ${complaint.complaint_type.name}</p>
+            <p>Descripción: ${complaint.description}</p>
         `;
 
-      if (complaints[i].photo) {
-        content += `<img src='${complaints[i].photo}' alt='Foto denuncia' class='d-inline-block img-fluid'>`;
+      if (complaint.photo) {
+        content += `<img src='${complaint.photo}' alt='Foto denuncia' class='d-inline-block img-fluid'>`;
       }
       modalElement.querySelector(".modal-body p").innerHTML = content;
       modalBootstrap.show();
@@ -289,7 +288,10 @@ async function addMarkersComplaint(complaints, isIndex, map, markers) {
     marker.content.addEventListener("mouseleave", (e) => {
       infowWindow.close();
     });
-  }
+    return marker;
+  });
+
+  return new markerClusterer.MarkerClusterer({ markers, map });
 }
 
 function addMarkers(scientists, isIndex, map, markers) {
@@ -315,7 +317,7 @@ function addMarkers(scientists, isIndex, map, markers) {
         arr_pos[j].lat,
         arr_pos[j].lng,
         pos.lat,
-        pos.lng
+        pos.lng,
       );
       if (distance_km < 1) {
         new_lat = pos.lat + (Math.random() - 0.5) / 1500;
@@ -417,12 +419,12 @@ function showBecalEndDate() {
   ) {
     document.getElementById("id_end_becal_scholarship").style.display = "";
     document.querySelector(
-      "label[for=id_end_becal_scholarship]"
+      "label[for=id_end_becal_scholarship]",
     ).style.display = "";
   } else {
     document.getElementById("id_end_becal_scholarship").style.display = "none";
     document.querySelector(
-      "label[for=id_end_becal_scholarship]"
+      "label[for=id_end_becal_scholarship]",
     ).style.display = "none";
   }
 }
@@ -489,7 +491,7 @@ function initAutocomplete() {
           map: map,
           title: place.name,
           position: place.geometry.location,
-        })
+        }),
       );
 
       if (place.geometry.viewport) {
