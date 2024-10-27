@@ -1,6 +1,10 @@
 from django.urls import path
-from api.views import ScientistListView, ScientistDetailView, ComplaintListView
+from api.views import ScientistListView, ScientistDetailView, ComplaintListView, ComplaintVoteViewSet
 from rest_framework.authtoken import views
+from rest_framework import routers
+
+router = routers.SimpleRouter()
+router.register(r'complaint-votes', ComplaintVoteViewSet)
 
 urlpatterns = [
     path('scientist/', ScientistListView.as_view(), name='scientist-list'),
@@ -9,3 +13,5 @@ urlpatterns = [
     path('complaints/<int:pk>/', ComplaintListView.as_view(), name='complaint-retrieve-destroy-update'),
     path('complaints/', ComplaintListView.as_view(), name='complaint-list'),
 ]
+
+urlpatterns += router.urls
