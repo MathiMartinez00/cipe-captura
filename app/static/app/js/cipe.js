@@ -243,7 +243,7 @@ function distanceInK(lat1, lon1, lat2, lon2) {
   }
 }
 
-async function addMarkersComplaint(complaints, map) {
+async function addMarkersComplaint(complaints, map, markerClusterer) {
   const { AdvancedMarkerElement, InfoWindow } =
     await google.maps.importLibrary("marker");
 
@@ -288,10 +288,9 @@ async function addMarkersComplaint(complaints, map) {
     marker.content.addEventListener("mouseleave", (e) => {
       infowWindow.close();
     });
+    markerClusterer.addMarker(marker);
     return marker;
   });
-
-  return new markerClusterer.MarkerClusterer({ markers, map });
 }
 
 function addMarkers(scientists, isIndex, map, markers) {
@@ -339,8 +338,9 @@ function addMarkers(scientists, isIndex, map, markers) {
   map.addLayer(markers);
 }
 
-function removeMarkers(markers) {
-  markers.clearLayers();
+function removeMarkers(markerClusterer) {
+  markerClusterer.clearMarkers();
+  markerClusterer.render();
 }
 
 /**
@@ -349,23 +349,13 @@ function removeMarkers(markers) {
 async function initMap(mapDivId) {
   const position = { lat: -23.4425, lng: -58.4438 };
   const { Map } = await google.maps.importLibrary("maps");
-
   const map = new Map(document.getElementById(mapDivId), {
     zoom: 6,
     center: position,
     mapId: "DEMO_MAP_ID",
   });
-
-  return map;
-}
-
-function addMarker(map, latitude, longitude, place_name) {
-  latitude = parseInt(latitude);
-  longitude = parseInt(longitude);
-  var leafletMarker = L.marker([latitude, longitude])
-    .addTo(map)
-    .bindPopup(place_name)
-    .openPopup();
+  const markerCluster = new markerClusterer.MarkerClusterer({ map: map });
+  return { map, markerClusterer: markerCluster };
 }
 
 function showCommunicationField() {
