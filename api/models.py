@@ -61,3 +61,9 @@ class Complaint(models.Model):
 
     def __str__(self):
         return f'Complaint {self.complaint_type.name}'
+
+
+class ComplaintVote(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
