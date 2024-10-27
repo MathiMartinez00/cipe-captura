@@ -245,13 +245,17 @@ function distanceInK(lat1, lon1, lat2, lon2) {
 
 async function addMarkersComplaint(complaints, isIndex, map, markers) {
   const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-  console.log(complaints);
+
   for (let i = 0; i < complaints.length; i++) {
     const marker = new AdvancedMarkerElement({
       map: map,
       position: { lat: complaints[i].latitude, lng: complaints[i].longitude },
       title: "Test",
       gmpClickable: true,
+    });
+    marker.addListener("click", (e) => {
+      map.setZoom(15);
+      map.panTo(marker.position);
     });
     // if (!isIndex) {
     //     // marker.bindPopup(generateInfoWindowContentComplaint(complaints[i])).openPopup();
@@ -300,7 +304,7 @@ function addMarkers(scientists, isIndex, map, markers) {
         arr_pos[j].lat,
         arr_pos[j].lng,
         pos.lat,
-        pos.lng,
+        pos.lng
       );
       if (distance_km < 1) {
         new_lat = pos.lat + (Math.random() - 0.5) / 1500;
@@ -337,7 +341,7 @@ async function initMap(mapDivId) {
   const map = new Map(document.getElementById(mapDivId), {
     zoom: 4,
     center: position,
-    mapId: "TEST_MAP_ID",
+    mapId: "DEMO_MAP_ID",
   });
 
   return map;
@@ -403,12 +407,12 @@ function showBecalEndDate() {
   ) {
     document.getElementById("id_end_becal_scholarship").style.display = "";
     document.querySelector(
-      "label[for=id_end_becal_scholarship]",
+      "label[for=id_end_becal_scholarship]"
     ).style.display = "";
   } else {
     document.getElementById("id_end_becal_scholarship").style.display = "none";
     document.querySelector(
-      "label[for=id_end_becal_scholarship]",
+      "label[for=id_end_becal_scholarship]"
     ).style.display = "none";
   }
 }
@@ -475,7 +479,7 @@ function initAutocomplete() {
           map: map,
           title: place.name,
           position: place.geometry.location,
-        }),
+        })
       );
 
       if (place.geometry.viewport) {
