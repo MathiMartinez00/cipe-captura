@@ -244,7 +244,9 @@ function distanceInK(lat1, lon1, lat2, lon2) {
 }
 
 async function addMarkersComplaint(complaints, isIndex, map, markers) {
-  const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+  const { AdvancedMarkerElement, InfoWindow } = await google.maps.importLibrary(
+    "marker"
+  );
 
   for (let i = 0; i < complaints.length; i++) {
     const marker = new AdvancedMarkerElement({
@@ -253,32 +255,41 @@ async function addMarkersComplaint(complaints, isIndex, map, markers) {
       title: "Test",
       gmpClickable: true,
     });
+
     marker.addListener("click", (e) => {
       map.setZoom(15);
       map.panTo(marker.position);
+      const modalElement = document.getElementById("detailModal");
+      const modalBootstrap = new bootstrap.Modal(modalElement);
+      let content = `
+            <p>Ciudad: ${complaints[i].city.name}</p>
+            <p>Tipo de denuncia: ${complaints[i].complaint_type.name}</p>
+            <p>Descripción: ${complaints[i].description}</p>
+        `;
+
+      if (complaints[i].photo) {
+        content += `<img src='${complaints[i].photo}' alt='Foto denuncia' class='d-inline-block img-fluid'>`;
+      }
+      modalElement.querySelector(".modal-body p").innerHTML = content;
+      modalBootstrap.show();
     });
-    // if (!isIndex) {
-    //     // marker.bindPopup(generateInfoWindowContentComplaint(complaints[i])).openPopup();
-    // }
-    // marker.on("click", function (event) {
-    //     map.setView(event.latlng, 10);
-    //     const modalElement = document.getElementById("detailModal");
-    //     const modalBootstrap = new bootstrap.Modal(modalElement);
-    //     let content = `
-    //         <p>Ciudad: ${complaints[i].city.name}</p>
-    //         <p>Tipo de denuncia: ${complaints[i].complaint_type.name}</p>
-    //         <p>Descripción: ${complaints[i].description}</p>
-    //     `;
-    //
-    //     if (complaints[i].photo) {
-    //         content += `<img src='${complaints[i].photo}' alt='Foto denuncia' class='d-inline-block img-fluid'>`;
-    //     }
-    //     modalElement.querySelector('.modal-body p').innerHTML = content;
-    //     modalBootstrap.show();
-    // })
-    // markers.addLayer(marker);
+
+    const infowWindow = new google.maps.InfoWindow({
+      content: "<div>Hi!<div>",
+      ariaLabel: "Test",
+    });
+
+    marker.content.addEventListener("mouseenter", (e) => {
+      infowWindow.open({
+        anchor: marker,
+        map,
+      });
+    });
+
+    marker.content.addEventListener("mouseleave", (e) => {
+      infowWindow.close();
+    });
   }
-  // map.addLayer(markers);
 }
 
 function addMarkers(scientists, isIndex, map, markers) {
@@ -330,16 +341,15 @@ function removeMarkers(markers) {
   markers.clearLayers();
 }
 
+/**
+ * @param {string} mapDivId - Div's id where the map will be rendered.
+ */
 async function initMap(mapDivId) {
-  /**
-     mapDivId: ID of the map's div in the html code
-      **/
   const position = { lat: -23.4425, lng: -58.4438 };
   const { Map } = await google.maps.importLibrary("maps");
-  const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
   const map = new Map(document.getElementById(mapDivId), {
-    zoom: 4,
+    zoom: 6,
     center: position,
     mapId: "DEMO_MAP_ID",
   });
