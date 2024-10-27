@@ -12,9 +12,10 @@ from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
+from rest_framework.response import Response
 
-from api.models import Complaint
-from api.serializers import ComplaintSerializerRead, ComplaintSerializerWrite
+from api.models import Complaint, ComplaintVote
+from api.serializers import ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer
 from app.models import Scientist
 
 import json
@@ -86,6 +87,13 @@ class GetUserToken(View):
             return JsonResponse({'token': user.usertoken.bearer_token})
 
         return JsonResponse({'message': 'Invalid credentials.'}, status=400)
+
+
+class ComplaintVoteViewSet(viewsets.ModelViewSet):
+    queryset = ComplaintVote.objects.all()
+    serializer_class = ComplaintVoteSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
 
 class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):

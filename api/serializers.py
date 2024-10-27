@@ -1,8 +1,6 @@
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-
-from api.models import Complaint
-
+from api.models import Complaint, ComplaintVote
 import base64
 
 
@@ -38,3 +36,9 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
             photo_file = ContentFile(base64.b64decode(photo_base64_string), name='temp.png')
             complaint.photo.save("test.png", photo_file)
         return complaint
+
+
+class ComplaintVoteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ComplaintVote
+        fields = '__all__'
