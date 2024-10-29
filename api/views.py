@@ -5,21 +5,16 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
-from django.conf import settings
-from django.core.files import File
-from django.core.files.base import ContentFile
 from rest_framework import generics
-from rest_framework.authentication import TokenAuthentication, SessionAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
-from rest_framework.response import Response
-
 from api.models import Complaint, ComplaintVote
 from api.serializers import ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer
 from app.models import Scientist
-
+import logging
 import json
-
+logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ScientistListView(View):
@@ -89,12 +84,19 @@ class GetUserToken(View):
         return JsonResponse({'message': 'Invalid credentials.'}, status=400)
 
 
+@method_decorator(csrf_exempt, name='dispatch')
 class ComplaintVoteViewSet(viewsets.ModelViewSet):
     queryset = ComplaintVote.objects.all()
     serializer_class = ComplaintVoteSerializer
-    permission_classes = [IsAuthenticated]
-    authentication_classes = [TokenAuthentication]
+    permission_classes = []
+    authentication_classes = []
 
+    def perform_create(self, serializer):
+        logger.info(self.request.data)
+        if self.request.user.is_authenticated:
+            serializer.save(user=self.request.user, complaint_id=self.request.data['complaint'])
+        else:
+            serializer.save(user=None, complaint_id=self.request.data['complaint'])
 
 class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Complaint.objects.all()

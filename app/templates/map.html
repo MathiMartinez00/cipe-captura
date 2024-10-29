@@ -107,7 +107,24 @@
         ></button>
       </div>
       <div class="modal-body p-3">
-        <p>Modal body text goes here.</p>
+        <p>¿Se resolvió la denuncia?</p>
+        <div class="btn-group">
+          <button id="vote-complaint-yes" type="button" class="btn btn-success">
+            Sí
+          </button>
+          <button id="vote-complaint-no" type="button" class="btn btn-danger">
+            No
+          </button>
+        </div>
+        <p id="complaint-city"></p>
+        <p id="complaint-complaint-type"></p>
+        <p id="complaint-description"></p>
+        <img
+          id="complaint-photo"
+          class="d-inline-block img-fluid"
+          src="/"
+          alt="Foto de denuncia"
+        />
       </div>
       <div class="modal-footer p-3">
         <button type="button" class="btn btn-primary" data-bs-dismiss="modal">

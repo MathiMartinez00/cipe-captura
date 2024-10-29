@@ -22,6 +22,19 @@ function distanceInK(lat1, lon1, lat2, lon2) {
   }
 }
 
+function voteComplaint(complaint, isYes) {
+  // console.log(complaint, isYes);
+  fetch("/api/complaint-votes/", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      complaint: complaint.id,
+    }),
+  });
+}
+
 async function addMarkersComplaint(complaints, map, markerClusterer) {
   const { AdvancedMarkerElement, InfoWindow } =
     await google.maps.importLibrary("marker");
@@ -39,20 +52,44 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
       map.panTo(marker.position);
       const modalElement = document.getElementById("detailModal");
       const modalBootstrap = new bootstrap.Modal(modalElement);
-      const photoContent = complaint.photo
-        ? `<img src='${complaint.photo}' alt='Foto denuncia' class='d-inline-block img-fluid'>`
-        : "";
-      modalElement.querySelector(".modal-body p").innerHTML = `
-        <p>¿Se resolvió la denuncia?</p>
-        <div class='btn-group'>
-          <button type="button" class="btn btn-success">Sí</button>
-          <button type="button" class="btn btn-danger">No</button>
-        </div>
-        <p>Ciudad: ${complaint.city.name}</p>
-        <p>Tipo de denuncia: ${complaint.complaint_type.name}</p>
-        <p>Descripción: ${complaint.description}</p>
-        ${photoContent}
-      `;
+      const photoElement = document.getElementById("complaint-photo");
+      if (complaint.photo) {
+        photoElement.src = complaint.photo;
+        photoElement.style.visibility = "visible";
+      } else {
+        photoElement.style.visibility = "hidden";
+      }
+      const voteYesButton = document.getElementById("vote-complaint-yes");
+      voteYesButton.addEventListener(
+        "click",
+        () => {
+          voteComplaint(complaint, true);
+        },
+        { once: true },
+      );
+
+      const voteNoButton = document.getElementById("vote-complaint-no");
+      voteNoButton.addEventListener(
+        "click",
+        () => {
+          voteComplaint(complaint, false);
+        },
+        { once: true },
+      );
+
+      const cityElement = document.getElementById("complaint-city");
+      cityElement.innerHTML = `Ciudad: ${complaint.city.name}`;
+
+      const complaintTypeElement = document.getElementById(
+        "complaint-complaint-type",
+      );
+      complaintTypeElement.innerHTML = `Tipo de denuncia: ${complaint.complaint_type.name}`;
+
+      const descriptionElement = document.getElementById(
+        "complaint-description",
+      );
+      descriptionElement.innerHTML = `Descripción: ${complaint.description}`;
+
       modalBootstrap.show();
     });
 
