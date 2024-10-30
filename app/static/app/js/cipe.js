@@ -94,8 +94,9 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
     });
 
     const infowWindow = new google.maps.InfoWindow({
-      content: "<div>Hi!<div>",
-      ariaLabel: "Test",
+      content: `<div>${complaint.complaint_type.name}<div>`,
+      ariaLabel: "Denuncia",
+      headerDisabled: true,
     });
 
     marker.content.addEventListener("mouseenter", (e) => {
