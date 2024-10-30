@@ -59,22 +59,19 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
       } else {
         photoElement.style.visibility = "hidden";
       }
-      const voteYesButton = document.getElementById("vote-complaint-yes");
-      voteYesButton.addEventListener(
-        "click",
-        () => {
-          voteComplaint(complaint, "Y");
+      const voteForm = document.getElementById("vote-complaint-form");
+      voteForm.addEventListener(
+        "submit",
+        (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          if (formData.get("vote-complaint")) {
+            voteComplaint(complaint, formData.get("vote-complaint"));
+          }
         },
-        { once: true },
-      );
-
-      const voteNoButton = document.getElementById("vote-complaint-no");
-      voteNoButton.addEventListener(
-        "click",
-        () => {
-          voteComplaint(complaint, "N");
+        {
+          once: true,
         },
-        { once: true },
       );
 
       const cityElement = document.getElementById("complaint-city");
