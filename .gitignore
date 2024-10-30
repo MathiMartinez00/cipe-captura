@@ -110,3 +110,5 @@ mysql/
 
 /static/
 media/
+
+node_modules/
