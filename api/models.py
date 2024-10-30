@@ -64,6 +64,11 @@ class Complaint(models.Model):
 
 
 class ComplaintVote(models.Model):
+    VOTING_CHOICES = (
+        ('Y', 'Yes'),
+        ('N', 'No'),
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE)
+    vote_type = models.CharField(max_length=1, choices=VOTING_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)

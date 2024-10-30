@@ -92,11 +92,10 @@ class ComplaintVoteViewSet(viewsets.ModelViewSet):
     authentication_classes = []
 
     def perform_create(self, serializer):
-        logger.info(self.request.data)
         if self.request.user.is_authenticated:
-            serializer.save(user=self.request.user, complaint_id=self.request.data['complaint'])
+            serializer.save(user=self.request.user, complaint_id=self.request.data['complaint'], vote_type=self.request.data['vote_type'])
         else:
-            serializer.save(user=None, complaint_id=self.request.data['complaint'])
+            serializer.save(user=None, complaint_id=self.request.data['complaint'], vote_type=self.request.data['vote_type'])
 
 class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
     queryset = Complaint.objects.all()

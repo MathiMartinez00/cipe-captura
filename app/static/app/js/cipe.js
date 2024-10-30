@@ -22,8 +22,7 @@ function distanceInK(lat1, lon1, lat2, lon2) {
   }
 }
 
-function voteComplaint(complaint, isYes) {
-  // console.log(complaint, isYes);
+function voteComplaint(complaint, vote_type) {
   fetch("/api/complaint-votes/", {
     method: "POST",
     headers: {
@@ -31,6 +30,7 @@ function voteComplaint(complaint, isYes) {
     },
     body: JSON.stringify({
       complaint: complaint.id,
+      vote_type: vote_type,
     }),
   });
 }
@@ -63,7 +63,7 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
       voteYesButton.addEventListener(
         "click",
         () => {
-          voteComplaint(complaint, true);
+          voteComplaint(complaint, "Y");
         },
         { once: true },
       );
@@ -72,7 +72,7 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
       voteNoButton.addEventListener(
         "click",
         () => {
-          voteComplaint(complaint, false);
+          voteComplaint(complaint, "N");
         },
         { once: true },
       );
