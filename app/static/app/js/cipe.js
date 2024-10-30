@@ -52,12 +52,15 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
       map.panTo(marker.position);
       const modalElement = document.getElementById("detailModal");
       const modalBootstrap = new bootstrap.Modal(modalElement);
+      const photoDivElement = document.getElementById("complaint-photo-div");
       const photoElement = document.getElementById("complaint-photo");
+      // TODO: Investigate the bug with the photos.
       if (complaint.photo) {
         photoElement.src = complaint.photo;
-        photoElement.style.visibility = "visible";
+        photoDivElement.style.display = "none";
       } else {
-        photoElement.style.visibility = "hidden";
+        photoElement.src = "/";
+        photoDivElement.style.display = "block";
       }
       const voteForm = document.getElementById("vote-complaint-form");
       voteForm.addEventListener(
