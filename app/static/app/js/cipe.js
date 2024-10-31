@@ -43,7 +43,6 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
     const marker = new AdvancedMarkerElement({
       map: map,
       position: { lat: complaint.latitude, lng: complaint.longitude },
-      title: "Test",
       gmpClickable: true,
     });
 
