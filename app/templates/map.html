@@ -143,35 +143,35 @@
       await addMarkersComplaint({{ complaints|safe }}, map, markerClusterer);
 
       $('#filter').on('submit', function(event) {
-          event.preventDefault();
-          $.ajax({
-              url: "filter_map/",
-              type: "POST",
-              data: {
-                  scientific_area : $('#scientific_area').val(),
-                  position: $('#position').val(),
-                  becal: $('#becal').is(':checked'),
-                  csrfmiddlewaretoken: '{{ csrf_token }}',
-              },
-              // handle a successful response
-              success: function(json) {
-                  removeMarkers(markerClusterer);
-                  if (json["scientists"].length > 0) {
-                      addMarkersComplaint(json["scientists"], map, markerClusterer);
-                  }
-                  else {
-                      $('.toast').toast({delay: 3000});
-                      $('.toast').toast('show');
-                  }
-              },
-              // handle a non-successful response
-              error: function(xhr, errmsg, err) {
-                  //$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                  //    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-                  console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-              }
-          });
+        event.preventDefault();
+        $.ajax({
+          url: "filter_map/",
+          type: "POST",
+          data: {
+            scientific_area : $('#scientific_area').val(),
+            position: $('#position').val(),
+            becal: $('#becal').is(':checked'),
+            csrfmiddlewaretoken: '{{ csrf_token }}',
+          },
+          // handle a successful response
+          success: function(json) {
+            removeMarkers(markerClusterer);
+            resetMap(map);
+            if (json["scientists"].length > 0) {
+              addMarkersComplaint(json["scientists"], map, markerClusterer);
+            }
+            else {
+              $('.toast').toast({delay: 3000});
+              $('.toast').toast('show');
+            }
+          },
+          // handle a non-successful response
+          error: function(xhr, errmsg, err) {
+            //$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+            //    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+          }
+        });
       });
-
   {% endblock %}
 </script>

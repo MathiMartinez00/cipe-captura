@@ -35,6 +35,12 @@ function voteComplaint(complaint, vote_type) {
   });
 }
 
+async function resetMap(map) {
+  const position = { lat: -23.4425, lng: -58.4438 };
+  map.setCenter(position);
+  map.setZoom(6);
+}
+
 async function addMarkersComplaint(complaints, map, markerClusterer) {
   const { AdvancedMarkerElement, InfoWindow } =
     await google.maps.importLibrary("marker");
