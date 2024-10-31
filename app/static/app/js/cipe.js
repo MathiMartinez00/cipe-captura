@@ -54,13 +54,13 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
       const modalBootstrap = new bootstrap.Modal(modalElement);
       const photoDivElement = document.getElementById("complaint-photo-div");
       const photoElement = document.getElementById("complaint-photo");
-      // TODO: Investigate the bug with the photos.
+
       if (complaint.photo) {
         photoElement.src = complaint.photo;
-        photoDivElement.style.display = "none";
+        photoDivElement.style.display = "block";
       } else {
         photoElement.src = "/";
-        photoDivElement.style.display = "block";
+        photoDivElement.style.display = "none";
       }
       const voteForm = document.getElementById("vote-complaint-form");
       voteForm.addEventListener(
