@@ -48,7 +48,6 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
     });
 
     marker.addListener("click", (e) => {
-      map.panTo(marker.position);
       const modalElement = document.getElementById("detailModal");
       const modalBootstrap = new bootstrap.Modal(modalElement);
       const photoDivElement = document.getElementById("complaint-photo-div");
