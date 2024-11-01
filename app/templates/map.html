@@ -30,9 +30,9 @@
         <select class="form-select my-1 mr-sm-2" id="position">
           <option value="" selected>Todas</option>
           {% for complaint_type in complaint_types %}
-          <option value="{{ complaint_type.id }}">
-            {{ complaint_type.name }}
-          </option>
+            <option value="{{ complaint_type.id }}">
+              {{ complaint_type.name }}
+            </option>
           {% endfor %}
         </select>
       </div>

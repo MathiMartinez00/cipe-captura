@@ -2,12 +2,10 @@
 
 <script>
   {% block javascript %}
-  //leaflet map
-  var map = initMap('map');
 
-  var markers = L.markerClusterGroup(); // Leaflet's cluster group
-
-  addMarkersComplaint({{ complaints|safe }}, true, map, markers);
+  const { map, markerClusterer } = await initMap('map');
+  
+  await addMarkersComplaint({{ complaints|safe }}, map, markerClusterer);
   {% endblock %}
 </script>
 
@@ -204,8 +202,4 @@
     </div>
   </div>
 </section>
-<script
-  defer
-  src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&callback=initMap"
-></script>
 {% endblock %}
