@@ -1,4 +1,5 @@
 ﻿{% load static %}
+{% load vite %}
 
 <!doctype html>
 <html lang="es">
@@ -16,6 +17,10 @@
       gtag("js", new Date());
       gtag("config", "UA-156085830-1");
     </script>
+
+    {% vite %}
+    {% vite 'app/js/cipe.js' defer='' %}
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
     <meta
@@ -211,7 +216,6 @@
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
-    <script src="{% static 'app/js/cipe.js' %}"></script>
     {% block content %} {% endblock %}
     <!-- Footer -->
     <footer class="footer text-center">
