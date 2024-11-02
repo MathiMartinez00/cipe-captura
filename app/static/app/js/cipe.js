@@ -42,8 +42,9 @@ async function resetMap(map) {
 }
 
 async function addMarkersComplaint(complaints, map, markerClusterer) {
-  const { AdvancedMarkerElement, InfoWindow } =
-    await google.maps.importLibrary("marker");
+  const { AdvancedMarkerElement, InfoWindow } = await google.maps.importLibrary(
+    "marker"
+  );
 
   const markers = complaints.map((complaint) => {
     const marker = new AdvancedMarkerElement({
@@ -77,19 +78,19 @@ async function addMarkersComplaint(complaints, map, markerClusterer) {
         },
         {
           once: true,
-        },
+        }
       );
 
       const cityElement = document.getElementById("complaint-city");
       cityElement.innerHTML = `Ciudad: ${complaint.city.name}`;
 
       const complaintTypeElement = document.getElementById(
-        "complaint-complaint-type",
+        "complaint-complaint-type"
       );
       complaintTypeElement.innerHTML = `Tipo de denuncia: ${complaint.complaint_type.name}`;
 
       const descriptionElement = document.getElementById(
-        "complaint-description",
+        "complaint-description"
       );
       descriptionElement.innerHTML = `Descripción: ${complaint.description}`;
 
@@ -140,7 +141,7 @@ function addMarkers(scientists, isIndex, map, markers) {
         arr_pos[j].lat,
         arr_pos[j].lng,
         pos.lat,
-        pos.lng,
+        pos.lng
       );
       if (distance_km < 1) {
         new_lat = pos.lat + (Math.random() - 0.5) / 1500;
@@ -244,7 +245,7 @@ function initAutocomplete() {
           map: map,
           title: place.name,
           position: place.geometry.location,
-        }),
+        })
       );
 
       if (place.geometry.viewport) {
