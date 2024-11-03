@@ -58,6 +58,7 @@ class Complaint(models.Model):
     photo = models.ImageField(upload_to=complaint_directory_path, null=True, blank=True)
     road_type = models.ForeignKey(RoadType, on_delete=models.CASCADE, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    captura_id = models.IntegerField(null=True, unique=True)
 
     def __str__(self):
         return f'Complaint {self.complaint_type.name}'
