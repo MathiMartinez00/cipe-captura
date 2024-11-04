@@ -105,7 +105,7 @@ class Command(BaseCommand):
 
     def get_processed_ids(self):
         proccessed_ids = Complaint.objects.values_list('captura_id', flat=True)
-        self.stdout.write(proccessed_ids)
+        self.stdout.write(str(proccessed_ids))
         return proccessed_ids
 
 
