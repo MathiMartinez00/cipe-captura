@@ -30,6 +30,7 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
             altitude=self.validated_data['altitude'],
             accuracy=self.validated_data['accuracy'],
             road_type=self.validated_data.get('road_type', None),
+            captura_id=self.validated_data.get('captura_id', None)
         )
         photo_base64_string = self.validated_data.get('photo_base64', None)
         if photo_base64_string:
