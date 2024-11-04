@@ -4,6 +4,7 @@ import requests
 import json
 import os
 import base64
+import logging
 
 CAPTURA_LOGIN = os.getenv("CAPTURA_LOGIN")
 CAPTURA_LIST = os.getenv("CAPTURA_LIST")
@@ -29,6 +30,7 @@ CITY_ID = json.loads(os.getenv('CITY_ID'))
 ROAD_TYPE_ID = json.loads(os.getenv('ROAD_TYPE_ID'))
 COMPLAINT_TYPE_ID = json.loads(os.getenv('COMPLAINT_TYPE_ID'))
 
+logger = logging.getLogger('app')
 
 class Command(BaseCommand):
     """
@@ -105,7 +107,6 @@ class Command(BaseCommand):
 
     def get_processed_ids(self):
         proccessed_ids = Complaint.objects.values_list('captura_id', flat=True)
-        self.stdout.write(str(proccessed_ids))
         return proccessed_ids
 
 
