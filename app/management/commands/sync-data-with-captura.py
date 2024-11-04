@@ -4,13 +4,7 @@ import requests
 import json
 import os
 import base64
-from dotenv import load_dotenv
 
-# Función para cargar variables de entorno desde un archivo específico
-def load_env_file(file_path):
-    load_dotenv(dotenv_path=file_path)
-
-load_env_file(os.path.join(os.path.dirname(__file__), 'captura_data.env'))
 CAPTURA_LOGIN = os.getenv("CAPTURA_LOGIN")
 CAPTURA_LIST = os.getenv("CAPTURA_LIST")
 CAPTURA_IMAGE = os.getenv("CAPTURA_IMAGE")
@@ -27,7 +21,6 @@ COMPLAINT_TYPE = os.getenv("COMPLAINT_TYPE")
 CITY = os.getenv("CITY")
 IMAGE = os.getenv("IMAGE")
 
-load_env_file(os.path.join(os.path.dirname(__file__), 'cipe_data.env'))
 CIPE_POST = os.getenv("CIPE_POST")
 CIPE_TOKEN = os.getenv("CIPE_TOKEN")
 CIPE_USER = os.getenv("CIPE_USER")
@@ -70,7 +63,7 @@ class Command(BaseCommand):
             )
             response.raise_for_status()
             data = response.json()
-            
+
             for item in data:
                 row_id = item["id"]
                 if IMAGE in item["data"] and item["data"][IMAGE] is not None:
@@ -111,7 +104,9 @@ class Command(BaseCommand):
 
 
     def get_processed_ids(self):
-        return Complaint.objects.values_list('captura_id', flat=True)
+        proccessed_ids = Complaint.objects.values_list('captura_id', flat=True)
+        self.stdout.write(proccessed_ids)
+        return proccessed_ids
 
 
     def upload_cipe_data(self, captura_data, cipe_token, processed_ids):
@@ -138,8 +133,8 @@ class Command(BaseCommand):
             complaint_latitude = form["data"][LOCATION]["latitude"]
             complaint_accuracy = form["data"][LOCATION]["accuracy"]
             complaint_longitude = form["data"][LOCATION]["longitude"]
+
             # Realizar la solicitud POST a CIPE
-            
             # Construir el cuerpo de la solicitud
             payload = {
                 "complaint_type": complaint_type,
