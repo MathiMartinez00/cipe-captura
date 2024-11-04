@@ -37,8 +37,6 @@ ROAD_TYPE_ID = json.loads(os.getenv('ROAD_TYPE_ID'))
 COMPLAINT_TYPE_ID = json.loads(os.getenv('COMPLAINT_TYPE_ID'))
 
 
-            
-
 class Command(BaseCommand):
     """
     Function that tries to log in to Captura and returns its' JSESSIONID cookie value
@@ -112,7 +110,7 @@ class Command(BaseCommand):
             raise CommandError("Error al decodificar captura_data:", e)
 
 
-    def get_processed_ids():
+    def get_processed_ids(self):
         return Complaint.objects.values_list('captura_id', flat=True)
 
 
@@ -169,6 +167,7 @@ class Command(BaseCommand):
                 self.stdout.write("Data uploaded to CIPE successfully: %s." % response.text)
             else:
                 self.stdout.write("Couldn't upload data to CIPE: %s." % response.text)
+
 
     def handle(self, *args, **kwargs):
         cookie_jsession_id = self.login_captura()
