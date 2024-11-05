@@ -138,7 +138,7 @@
       // Add other bootstrap parameters as needed, using camel case.
     });
     const { map, markerClusterer } = await initMap('map');
-  
+    console.log({{ complaints|safe }});
     await addMarkersComplaint({{ complaints|safe }}, map, markerClusterer);
   
     $('#filter').on('submit', function(event) {
