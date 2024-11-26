@@ -120,7 +120,7 @@ class Command(BaseCommand):
             if form_id in processed_ids:
                 continue
 
-            self.stdout.write("Trying to upload data with form id: %s.", form_id)
+            self.stdout.write("Trying to upload data with form id: %s.", str(form_id))
             # Obtener los datos del formulario y mapear a IDs
             complaint_description = form["data"].get(DESCRIPTION)
             if complaint_description is None:
