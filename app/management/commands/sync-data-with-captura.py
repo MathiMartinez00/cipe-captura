@@ -47,6 +47,7 @@ class Command(BaseCommand):
             if success:
                 # Convertir el objeto CookieJar a un diccionario de cookies
                 cookie_value = response.cookies.get('JSESSIONID')
+                self.stdout.write("Logged in to captura successfully with ID: %s." % cookie_value)
                 return cookie_value
             else:
                 raise CommandError("Authentication error: Could not log in.")
@@ -79,6 +80,7 @@ class Command(BaseCommand):
                     image_base64 = base64.b64encode(image_response.content).decode('utf-8')
                     item["data"][IMAGE]["image"] = image_base64
 
+            self.stdout.write("Got captura data successfully.")
             return json.dumps({"forms": data})
         except requests.exceptions.RequestException as e:
             raise CommandError("Error al obtener los datos de captura:", e)
@@ -92,6 +94,7 @@ class Command(BaseCommand):
             )
             response.raise_for_status()
             token = response.json().get("token")
+            self.stdout.write("Logged in to cipe successfully: %s.", token)
             return token
         except requests.exceptions.RequestException as e:
             raise CommandError("Error al obtener el token:", e)
@@ -116,6 +119,7 @@ class Command(BaseCommand):
             if form_id in processed_ids:
                 continue
 
+            self.stdout.write("Trying to upload data with form id: %s.", form_id)
             # Obtener los datos del formulario y mapear a IDs
             complaint_description = form["data"].get(DESCRIPTION)
             if complaint_description is None:
