@@ -93,8 +93,9 @@ class Command(BaseCommand):
                 json={"username": CIPE_USER, "password": CIPE_PASSWORD}
             )
             response.raise_for_status()
-            token = response.json().get("token")
-            self.stdout.write("Logged in to cipe successfully: %s.", str(token))
+            response_json = response.json()
+            token = response_json.get("token")
+            self.stdout.write("Logged in to cipe successfully: %s.", str(response_json))
             return token
         except requests.exceptions.RequestException as e:
             raise CommandError("Error al obtener el token:", e)
