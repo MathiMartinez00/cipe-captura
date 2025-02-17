@@ -98,10 +98,17 @@ class ComplaintVoteViewSet(viewsets.ModelViewSet):
             serializer.save(user=None, complaint_id=self.request.data['complaint'], vote_type=self.request.data['vote_type'])
 
 class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
-    queryset = Complaint.objects.all()
-    # serializer_class = ComplaintSerializer
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        queryset = Complaint.objects.all()
+        search_params = self.request.GET
+        if search_params.get('id', None):
+            queryset.filter(id=search_params.get('id'))
+        if search_params.get('complaint_type_id', None):
+            queryset.filter(complaint_type_id=search_params.get('complaint_type_id'))
+        return queryset
 
     def perform_create(self, serializer):
         complaint = serializer.save()
@@ -111,4 +118,3 @@ class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestr
             return ComplaintSerializerRead
         if self.request.method == 'POST':
             return ComplaintSerializerWrite
-
