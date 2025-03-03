@@ -159,39 +159,10 @@ def __get_complaints_statistics():
 
 
 def index(request, *args, **kwargs):
-    complaints_stats = __get_complaints_statistics()
-    scientists, num_scientists, num_institutions, num_countries, num_male_scientists, num_female_scientists, \
-        max_age_male, max_age_female, min_age_male, min_age_female, num_cities = __get_data_map()
-    top_area_m, total_top_area_m = __get_top_scientific_areas({'sex': 'masculino'})
-    top_area_f, total_top_area_f = __get_top_scientific_areas({'sex': 'femenino'})
-    dis_positions = __get_distribution_position()
     complaints = Complaint.objects.all()
     serializer = ComplaintSerializerRead(complaints, many=True)
     context = {
-        'scientists': json.dumps(scientists),
         'complaints': json.dumps(serializer.data),
-        'num_scientists': num_scientists,
-        'num_male_scientists': num_male_scientists,
-        'num_female_scientists': num_female_scientists,
-        'num_institutions': num_institutions,
-        'num_countries': num_countries,
-        'num_cities': num_cities,
-        'top_area_m': top_area_m,
-        'top_area_f': top_area_f,
-        'per_top_area_m': int(round((total_top_area_m[0]/num_male_scientists)*100,0)),
-        'per_top_area_f': int(round((total_top_area_f[0] / num_female_scientists) * 100, 0)),
-        'message': kwargs['msg'] if 'msg' in kwargs else '',
-        'max_age_male': max_age_male,
-        'max_age_female': max_age_female,
-        'min_age_male': min_age_male,
-        'min_age_female': min_age_female,
-        'total_most_common_position': dis_positions[0]['total'],
-        'name_most_common_position': dis_positions[0]['position'],
-        'total_second_common_position': dis_positions[1]['total'],
-        'name_second_most_common_position': dis_positions[1]['position'],
-        'total_third_most_common_position': dis_positions[2]['total'],
-        'name_third_most_common_position': dis_positions[2]['position'],
-        'complaints_stats': complaints_stats,
     }
     return render(request, 'index.html', context)
 
@@ -487,3 +458,7 @@ def view_api_key(request):
         return render(request, 'user-info.html')
 
     return redirect('index')
+
+
+def graphs_page(request):
+    return render(request, 'graphs.html')
