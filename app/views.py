@@ -90,40 +90,6 @@ def __get_data_map(scientific_area='', position=''):
         max_age_male, max_age_female, min_age_male, min_age_female, num_cities
 
 
-def __get_top_scientific_areas(query, k=1):
-    if query:
-        tops = Scientist.objects.filter(**query)
-    else:
-        tops = Scientist.objects.all()
-    tops = tops.values('first_category_scientific_area').annotate(total=Count('first_category_scientific_area')).order_by('-total')[:k]
-    top_areas, total_top_areas = [], []
-    dict_rel_areas = dict(FIRST_CAT_SCIENTIFIC_AREA)
-    for top in tops:
-        fc_scientific_area = top['first_category_scientific_area']
-        top_areas.append(dict_rel_areas[fc_scientific_area])
-        total_top_areas.append(top['total'])
-    return ', '.join(top_areas), total_top_areas
-
-
-def __get_distribution_position():
-    dis_positions = Scientist.objects.all().values('position').annotate(total=Count('position')).order_by('-total')[:3]
-    position_list = []
-    dict_positions = dict(POSITION)
-    for position in dis_positions:
-        if position['position'] != 'otro':
-            dict_position = {
-                'total': position['total']
-            }
-            if position['total'] > 1:
-                # make plural noun
-                plural_noun = dict_positions[position['position']].split()[0] + 's'
-                dict_position['position'] = f"{plural_noun} {' '.join(dict_positions[position['position']].split()[1:])}"
-            else:
-                dict_position['position'] = dict_positions[position['position']]
-            position_list.append(dict_position)
-    return position_list
-
-
 def __get_complaints_statistics():
     complaint_list = list()
     complaints = Complaint.objects.all()
@@ -161,8 +127,10 @@ def __get_complaints_statistics():
 def index(request, *args, **kwargs):
     complaints = Complaint.objects.all()
     serializer = ComplaintSerializerRead(complaints, many=True)
+    complaints_stats = __get_complaints_statistics()
     context = {
         'complaints': json.dumps(serializer.data),
+        'complaints_stats':complaints_stats
     }
     return render(request, 'index.html', context)
 
@@ -460,5 +428,34 @@ def view_api_key(request):
     return redirect('index')
 
 
+def __get_complaints_by_city():
+    complaint_list = list()
+    complaints = Complaint.objects.all()
+    cities_dict = dict()
+    cities = City.objects.all()
+    complaint_types = ComplaintType.objects.all()
+    complaint_types_dict = dict()
+    if complaints and complaint_types and cities:
+        for complaint_type in complaint_types:
+            complaint_types_dict[complaint_type.id] = 0
+        for city in cities:
+            cities_dict[city.id] = 0
+        for complaint in complaints:
+            complaint_list.append(complaint)
+            cities_dict[complaint.city.id] += 1
+            complaint_types_dict[complaint.complaint_type.id] += 1
+        complaint_count = len(complaint_list)
+        cities_ordered = sorted(cities_dict.items(), key=lambda x: x[1], reverse=True)
+        complaints_per_city = [{'count': city[1], 'city': cities.get(pk=city[0]).name} for city in cities_ordered]
+        statistics = {
+            'complaint_count': complaint_count,
+            'complaints_per_city': complaints_per_city,
+        }
+        return statistics
+    return dict()
+
 def graphs_page(request):
-    return render(request, 'graphs.html')
+    complaints_by_city = __get_complaints_by_city()
+    complaint_types = ComplaintType.objects.all()
+    cities = City.objects.all()
+    return render(request, 'graphs.html', { 'stats': complaints_by_city, 'complaint_types': complaint_types, 'cities': cities })

@@ -51,7 +51,7 @@ def get_location_info_from_name(location_name, language='es'):
     address, postal_code, city, region, country = '', '', '', '', ''
     latitude, longitude = 0.0, 0.0
     logger.info(f"Going to look for information of location {location_name}")
-    mydict = {'q': locationName, 'format': 'json', 'limit': '1', 'addressdetails': '[1]'}
+    mydict = {'q': location_name, 'format': 'json', 'limit': '1', 'addressdetails': '[1]'}
     urlencode(mydict)
     query = urlencode(mydict)
     try:
