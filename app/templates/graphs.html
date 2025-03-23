@@ -1,8 +1,7 @@
 {% extends 'base.html' %}
-
+{% load static %}
 
 {% block content %}
-
 {{ stats|json_script:'stats' }}
 
 <div class="toast" style="position: fixed; top: 20px; right: 20px">
@@ -52,11 +51,21 @@
 </div>
 
 <div class="container-fluid">
-  <div class="row mb-3">
-    <div class="col-12">
-      <div id="main" class="w-auto" style="height: 400px"></div>
-      <div id="main2" class="w-auto" style="height: 400px"></div>
-    </div>
+  <p class="fw-bold fs-3 text-center">Denuncias por ciudadades</p>
+  <div id="main" class="w-auto" style="height: 400px"></div>
+
+  <p class="fw-bold fs-3 text-center">Denuncias por tipo de denuncia</p>
+  <div id="main2" class="w-auto" style="height: 400px"></div>
+  
+  <div class="d-flex justify-content-center mb-4 gap-4">
+    <button class="btn btn-primary">
+      <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
+      Descargar CSV
+    </button>
+    <button class="btn btn-primary">
+      <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
+      Descargar JSON
+    </button>
   </div>
 </div>
 {% endblock %}
@@ -64,11 +73,10 @@
 <script>
 {% block javascript %}
   const stats = JSON.parse(document.querySelector('#stats').textContent);
-  const complaints_per_city_graph = echarts.init(document.querySelector('#main'));
+
+  const mainDiv = document.querySelector('#main');
+  const complaints_per_city_graph = echarts.init(mainDiv);
   const complaints_per_city_graph_options = {
-    title: {
-      text: 'Denuncias por ciudades'
-    },
     tooltip: {},
     legend: {
       data: stats.complaints_per_city.map((complaint) => complaint.city)
@@ -84,11 +92,9 @@
   };
   complaints_per_city_graph.setOption(complaints_per_city_graph_options);
 
-  const complaints_per_complaint_type = echarts.init(document.querySelector('#main2'));
+  const mainDiv2 = document.querySelector('#main2');
+  const complaints_per_complaint_type = echarts.init(mainDiv2);
   const complaints_per_complaint_type_options = {
-    title: {
-      text: 'Denuncias por tipo de denuncia'
-    },
     tooltip: {},
     legend: {
       data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
