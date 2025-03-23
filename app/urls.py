@@ -13,5 +13,9 @@ urlpatterns = [
     path('user-login/', views.user_login, name='user_login'),
     path('user-logout/', views.user_logout, name='user_logout'),
     path('view-user-info/', views.view_api_key, name='view_api_key'),
-    path('graphs/', views.graphs_page, name='graphs')
+    path('graphs/', views.graphs_page, name='graphs'),
+    path('reports/csv/complaints-per-city', views.complaints_per_city_csv_report, name='complaints-per-city-csv-report'),
+    path('reports/json/complaints-per-city', views.complaints_per_city_json_report, name='complaints-per-city-json-report'),
+    path('reports/csv/complaints-per-complaint-type', views.complaints_per_complaint_type_csv_report, name='complaints-per-complaint-type-csv-report'),
+    path('reports/json/complaints-per-complaint-type', views.complaints_per_complaint_type_json_report, name='complaints-per-complaint-type-json-report'),
 ]

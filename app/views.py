@@ -1,6 +1,6 @@
 import logging
 import json
-
+import csv
 from api.models import City, ComplaintType, Complaint
 from api.serializers import ComplaintSerializerRead
 from app.constants import SCIENTIFIC_AREA, POSITION, FIRST_CAT_SCIENTIFIC_AREA
@@ -10,7 +10,7 @@ from app.utils import get_location_info_from_coordinates, load_countries_iso2
 from django.db.models import Count, Max, Sum
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 
@@ -461,5 +461,38 @@ def graphs_page(request):
     complaint_stats = __get_complaint_stats()
     complaint_types = ComplaintType.objects.all()
     cities = City.objects.all()
-    print(complaint_stats)
     return render(request, 'graphs.html', { 'stats': complaint_stats, 'complaint_types': complaint_types, 'cities': cities })
+
+def complaints_per_city_csv_report(request):
+    complaint_stats = __get_complaint_stats()
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="complaints_per_city.csv"'},
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(["city", "complaint_count"])
+    writer.writerows([[complaints_per_city['city'], complaints_per_city['count']] for complaints_per_city in complaint_stats['complaints_per_city']])
+
+    return response
+
+def complaints_per_city_json_report(request):
+    complaint_stats = __get_complaint_stats()
+    return JsonResponse(complaint_stats['complaints_per_city'], safe=False)
+
+def complaints_per_complaint_type_csv_report(request):
+    complaint_stats = __get_complaint_stats()
+    response = HttpResponse(
+        content_type="text/csv",
+        headers={"Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
+    )
+
+    writer = csv.writer(response)
+    writer.writerow(["city", "complaint_count"])
+    writer.writerows([[complaints_per_complaint_type['complaint_type'], complaints_per_complaint_type['count']] for complaints_per_complaint_type in complaint_stats['complaints_per_complaint_type']])
+
+    return response
+
+def complaints_per_complaint_type_json_report(request):
+    complaint_stats = __get_complaint_stats()
+    return JsonResponse(complaint_stats['complaints_per_complaint_type'], safe=False)

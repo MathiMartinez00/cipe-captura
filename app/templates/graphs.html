@@ -54,17 +54,36 @@
   <p class="fw-bold fs-3 text-center">Denuncias por ciudadades</p>
   <div id="main" class="w-auto" style="height: 400px"></div>
 
-  <p class="fw-bold fs-3 text-center">Denuncias por tipo de denuncia</p>
-  <div id="main2" class="w-auto" style="height: 400px"></div>
-  
   <div class="d-flex justify-content-center mb-4 gap-4">
     <button class="btn btn-primary">
-      <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
-      Descargar CSV
+      <a href="{% url 'complaints-per-city-csv-report' %}" download>
+        <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
+        Descargar CSV
+      </a>
     </button>
     <button class="btn btn-primary">
-      <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
-      Descargar JSON
+      <a href="{% url 'complaints-per-city-json-report' %}" target="_blank">
+        <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
+        Descargar JSON
+      </a>
+    </button>
+  </div>
+
+  <p class="fw-bold fs-3 text-center">Denuncias por tipo de denuncia</p>
+  <div id="main2" class="w-auto" style="height: 400px"></div>
+
+  <div class="d-flex justify-content-center mb-4 gap-4">
+    <button class="btn btn-primary">
+      <a href="{% url 'complaints-per-complaint-type-csv-report' %}" download>
+        <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
+        Descargar CSV
+      </a>
+    </button>
+    <button class="btn btn-primary">
+      <a href="{% url 'complaints-per-complaint-type-json-report' %}" target="_blank">
+        <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
+        Descargar JSON
+      </a>
     </button>
   </div>
 </div>
