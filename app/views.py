@@ -428,7 +428,7 @@ def view_api_key(request):
     return redirect('index')
 
 
-def __get_complaints_by_city():
+def __get_complaint_stats():
     complaint_list = list()
     complaints = Complaint.objects.all()
     cities_dict = dict()
@@ -447,15 +447,19 @@ def __get_complaints_by_city():
         complaint_count = len(complaint_list)
         cities_ordered = sorted(cities_dict.items(), key=lambda x: x[1], reverse=True)
         complaints_per_city = [{'count': city[1], 'city': cities.get(pk=city[0]).name} for city in cities_ordered]
+        complaint_types_ordered = sorted(complaint_types_dict.items(), key=lambda x: x[1], reverse=True)
+        complaints_per_complaint_type = [{'count': complaint_type[1], 'complaint_type': complaint_types.get(pk=complaint_type[0]).name} for complaint_type in complaint_types_ordered]
         statistics = {
             'complaint_count': complaint_count,
             'complaints_per_city': complaints_per_city,
+            'complaints_per_complaint_type': complaints_per_complaint_type,
         }
         return statistics
     return dict()
 
 def graphs_page(request):
-    complaints_by_city = __get_complaints_by_city()
+    complaint_stats = __get_complaint_stats()
     complaint_types = ComplaintType.objects.all()
     cities = City.objects.all()
-    return render(request, 'graphs.html', { 'stats': complaints_by_city, 'complaint_types': complaint_types, 'cities': cities })
+    print(complaint_stats)
+    return render(request, 'graphs.html', { 'stats': complaint_stats, 'complaint_types': complaint_types, 'cities': cities })

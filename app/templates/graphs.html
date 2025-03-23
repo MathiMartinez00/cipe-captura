@@ -54,7 +54,8 @@
 <div class="container-fluid">
   <div class="row mb-3">
     <div class="col-12">
-      <div id="main" style="height: 400px; width: auto;"></div>
+      <div id="main" class="w-auto" style="height: 400px"></div>
+      <div id="main2" class="w-auto" style="height: 400px"></div>
     </div>
   </div>
 </div>
@@ -63,8 +64,8 @@
 <script>
 {% block javascript %}
   const stats = JSON.parse(document.querySelector('#stats').textContent);
-  const graph = echarts.init(document.querySelector('#main'));
-  const option = {
+  const complaints_per_city_graph = echarts.init(document.querySelector('#main'));
+  const complaints_per_city_graph_options = {
     title: {
       text: 'Denuncias por ciudades'
     },
@@ -81,6 +82,26 @@
       source: stats.complaints_per_city.map((complaint) => [complaint.city, complaint.count])
     }
   };
-  graph.setOption(option);
+  complaints_per_city_graph.setOption(complaints_per_city_graph_options);
+
+  const complaints_per_complaint_type = echarts.init(document.querySelector('#main2'));
+  const complaints_per_complaint_type_options = {
+    title: {
+      text: 'Denuncias por tipo de denuncia'
+    },
+    tooltip: {},
+    legend: {
+      data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
+    },
+    xAxis: {
+      data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
+    },
+    yAxis: {},
+    series: [{ type: 'bar' }],
+    dataset: {
+      source: stats.complaints_per_complaint_type.map((complaint) => [complaint.complaint_type, complaint.count])
+    }
+  };
+  complaints_per_complaint_type.setOption(complaints_per_complaint_type_options);
 {% endblock %}
 </script>
