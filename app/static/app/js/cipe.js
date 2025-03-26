@@ -208,7 +208,7 @@ async function initMap(mapDivId) {
     center: position,
     mapId: "DEMO_MAP_ID",
   });
-  const markerCluster = new markerClusterer.MarkerClusterer({ map: map });
+  const markerCluster = new markerClusterer.MarkerClusterer({ map });
   return { map, markerClusterer: markerCluster };
 }
 
