@@ -211,41 +211,14 @@ def success_registration(request):
 
 
 def map_scientists(request):
-    scientists, _, _, _, _, _, _, _, _, _, _ = __get_data_map()
-    value_scientific_areas = []
-    value_positions = []
-    exists_becal_scholar = False
-    for scientist in scientists:
-        if scientist['scientific_area'] not in value_scientific_areas:
-            value_scientific_areas.append(scientist['scientific_area'])
-        if scientist['position'] not in value_positions:
-            value_positions.append(scientist['position'])
-        if not exists_becal_scholar and scientist.get('becal_fellow'):
-            exists_becal_scholar = True
-    scientific_areas = []
-    for value_scientific_area in value_scientific_areas:
-        for scientific_area in SCIENTIFIC_AREA:
-            if scientific_area[1] == value_scientific_area:
-                scientific_areas.append(scientific_area)
-                break
-    positions = []
-    for value_position in value_positions:
-        for position in POSITION:
-            if position[1] == value_position:
-                positions.append(position)
-
     cities = City.objects.all()
     complaint_types = ComplaintType.objects.all()
     complaints = Complaint.objects.all()
     serializer = ComplaintSerializerRead(complaints, many=True)
     context = {
-        'scientists': json.dumps(scientists),
-        'scientific_areas': scientific_areas,
         'cities': cities,
         'complaint_types': complaint_types,
         'complaints': json.dumps(serializer.data),
-        'positions': positions,
-        'exists_becal_scholar': exists_becal_scholar
     }
     return render(request, 'map.html', context)
 

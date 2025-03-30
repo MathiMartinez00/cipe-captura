@@ -61,7 +61,7 @@ class Complaint(models.Model):
     captura_id = models.IntegerField(null=True, unique=True)
 
     def __str__(self):
-        return f'Complaint {self.complaint_type.name}'
+        return f'Complaint {self.complaint_type.name} - {self.pk}'
 
 
 class ComplaintVote(models.Model):
@@ -70,6 +70,9 @@ class ComplaintVote(models.Model):
         ('N', 'No'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE)
+    complaint = models.ForeignKey(Complaint, on_delete=models.CASCADE, related_name='votes')
     vote_type = models.CharField(max_length=1, choices=VOTING_CHOICES)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Vote for complaint {self.complaint.pk}'

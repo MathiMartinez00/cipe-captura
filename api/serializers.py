@@ -1,16 +1,32 @@
+import base64
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 from api.models import Complaint, ComplaintVote
-import base64
-
+from django.db.models import Count
 
 class ComplaintSerializerRead(serializers.ModelSerializer):
     photo_base64 = serializers.CharField(required=False, allow_blank=True)
+    votes = serializers.SerializerMethodField()
 
     class Meta:
         model = Complaint
         fields = '__all__'
         depth = 1
+
+    def get_votes(self, obj):
+        votes = obj.votes.all()
+        if votes:
+            votes_count = {
+                'Y': votes.filter(vote_type='Y').count(),
+                'N': votes.filter(vote_type='N').count(),
+            }
+            return votes_count
+        else:
+            return {
+                'Y': 0,
+                'N': 0,
+            }
+            
 
 
 class ComplaintSerializerWrite(serializers.ModelSerializer):
