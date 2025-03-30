@@ -15,53 +15,46 @@
             map: map,
         });
         markerClusterer.addMarker(newMarker);
+        $('#id_location_lat').val(latLng.lat);
+        $('#id_location_lng').val(latLng.lng);
         map.panTo(latLng);
+        map.setZoom(18);
     }
     
     map.addListener("click", (e) => {
         placeMarkerAndPanTo(e.latLng, map);
     });
     
-    // hide label of data picker
-    document.querySelector('label[for=id_end_becal_scholarship]').style.display = 'none';
-    var regResult = parseInt("{{ registration_result }}");
-    var msg = "{{ msg }}";
-    var is_edit_form = parseInt("{{ edit }}");
+    const regResult = parseInt("{{ registration_result }}");
+    const msg = "{{ msg }}";
+    const is_edit_form = parseInt("{{ edit }}");
     if (is_edit_form == 1) {
         document.getElementById("form_title").innerHTML = 'Editar Registro de Investigador';
-        var institution = {{ institution|safe }};
+        const institution = {{ institution|safe }};
         if ('latitude' in institution && 'longitude' in institution && 'name' in institution) {
             addMarker(map, institution['latitude'], institution['longitude'], institution['name']);
         }
     }
     if (regResult >= 0) {
         document.getElementById("msgReg").innerHTML = msg;
-        if (regResult==1) {
+        if (regResult === 1) {
             alertClassName = "alert-danger";
         }
-        if (regResult==0) {
+        if (regResult === 0) {
             alertClassName = "alert-success";
         }
         element = document.getElementById("myAlert");
         arr = element.className.split(" ");
-        if (arr.indexOf(alertClassName) == -1) {
+        if (arr.indexOf(alertClassName) === -1) {
             element.className += " " + alertClassName;
         }
         $("#myAlert").show();
         window.setTimeout(function() {
-            $("#myAlert").fadeTo(300, 0).slideUp(500, function(){
+            $("#myAlert").fadeTo(300, 0).slideUp(500, function() {
                 $(this).remove();
             });
         }, 4000);
     }
-
-    $("#id_end_becal_scholarship").datepicker({
-      format:'dd/mm/yyyy',
-    });
-    
-    $("#id_birth_date").datepicker({
-      format:'dd/mm/yyyy',
-    });
 {% endblock %}
 </script>
 
@@ -73,12 +66,12 @@
                 <div class="divider-custom">
                     <div class="divider-custom-line"></div>
                 </div>
-                <form method="POST" onkeydown="return event.key != 'Enter';"> 
+                <form method="POST" onkeydown="return event.key != 'Enter';" enctype="multipart/form-data"> 
                     {% csrf_token %}
                     <div class="control-group">
                         <div class="form-group floating-label-form-group controls mb-0 pb-2">
                             {{ form.as_p }}
-                            <p style="font-size:1.5em;color:#6c757d;margin-top:2em">Ubicación * (busque en el mapa)</p>
+                            <p style="font-size:1.5em;color:#6c757d;">Ubicación * (seleccione en el mapa)</p>
                             <div id="map-registration"></div>
                         </div>
                     </div>
@@ -86,7 +79,7 @@
                         <span class="badge text-bg-secondary">* Campo Requerido</span>
                     </div>
                     <div class="my-4 form-group d-flex justify-content-center">
-                        <button type="submit" class="btn btn-primary btn-xl" id="submitButton">Registrarse</button>
+                        <button type="submit" class="btn btn-primary btn-xl" id="submitButton">Denunciar</button>
                     </div>
                 </form>
             </div>

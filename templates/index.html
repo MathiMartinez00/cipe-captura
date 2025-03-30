@@ -10,7 +10,7 @@
   });
   const { map, markerClusterer } = await initMap('map');
   
-  await addMarkersComplaint({{ complaints|safe }}, map, markerClusterer);
+  await addComplaintMarkers({{ complaints|safe }}, map, markerClusterer);
   {% endblock %}
 </script>
 

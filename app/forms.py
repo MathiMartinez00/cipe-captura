@@ -31,16 +31,15 @@ class RegistrationForm(forms.Form):
     city = forms.ModelChoiceField(queryset=City.objects.all(), label="Ciudad *", empty_label="Ciudad", widget=forms.Select(attrs={
         'class': 'form-control',
     }))
-    road_type = forms.ModelChoiceField(queryset=RoadType.objects.all(), label="Tipo de calle", empty_label="Tipo de calle", widget=forms.Select(attrs={
+    road_type = forms.ModelChoiceField(queryset=RoadType.objects.all(), required=False, label="Tipo de calle", empty_label="Tipo de calle", widget=forms.Select(attrs={
         'class': 'form-control',
     }))
     description = forms.CharField(label="Descripción", widget=forms.Textarea(attrs={
         'class': 'form-control',
     }))
-    photo = forms.FileField(label="Foto", widget=forms.FileInput(attrs={
+    photo = forms.ImageField(label="Foto", required=False, widget=forms.FileInput(attrs={
         'class': 'form-control',
     }))
-    location_name = forms.CharField(widget=forms.HiddenInput(), required=False)
     location_lat = forms.CharField(widget=forms.HiddenInput(), required=True)
     location_lng = forms.CharField(widget=forms.HiddenInput(), required=True)
 

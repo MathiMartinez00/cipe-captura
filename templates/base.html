@@ -152,14 +152,15 @@
   </head>
   <body id="page-top">
     {% include 'navbar.html' %}
-    <div id="myAlert" class="alert text-center collapse" role="alert">
+    <div id="myAlert" class="alert text-center collapse alert-dismissible" role="alert">
       <div id="msgReg"></div>
       <button
         type="button"
-        class="close alert-dismissible"
-        data-dismiss="alert"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Close"
       >
-        <span aria-hidden="true">&times;</span>
+        <span aria-hidden="true"></span>
       </button>
     </div>
     <script src="{% static 'app/js/cipe.js' %}"></script>

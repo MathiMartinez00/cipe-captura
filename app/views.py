@@ -171,47 +171,28 @@ def registration(request):
     msg = ''
     registration_error = -1
     created = False
-    form = RegistrationForm(request.POST or None)
+    form = RegistrationForm(request.POST or None, request.FILES or None)
     if request.method == "POST":
-        if form.is_valid() and form.cleaned_data['location_lat'] != '' and form.cleaned_data['location_lng'] != '' and \
-           form.cleaned_data['location_name'] != '':
-            try:
-                Scientist.objects.get(email=form.cleaned_data['email'], ci=form.cleaned_data['ci'])
-                msg = f"Investigador con email {form.cleaned_data['email']} y cédula de identidad " \
-                      f"{form.cleaned_data['ci']} ya existente"
-                registration_error = 1
-            except Scientist.DoesNotExist:
-                # Save institution data
-                inst_dict = {
-                    'latitude': form.cleaned_data['location_lat'],
-                    'longitude': form.cleaned_data['location_lng'],
-                    'name': form.cleaned_data['location_name']
-                }
-                inst_obj = __create_update_institution(inst_dict)
-                # Remove institution data from form object
-                del form.cleaned_data['location_lat']
-                del form.cleaned_data['location_lng']
-                del form.cleaned_data['location_name']
-                # Get/Create Scientist
-                scientist_obj = Scientist.objects.create(**form.cleaned_data)
-                scientist_obj.save()
-                logger.info(f"Scientist {scientist_obj} created!")
-                affiliation_obj, created = Affiliation.objects.get_or_create(scientist=scientist_obj,
-                                                                             institution=inst_obj,
-                                                                             defaults={'scientist': scientist_obj,
-                                                                                       'institution': inst_obj})
-                msg = f"Registro exitoso! Luego de su aprobación, los datos podrán ser " \
-                      f"visualizados en el mapa de investigadores."
-                form = RegistrationForm()
-                registration_error = 0
+        if form.is_valid():
+            complaint = Complaint.objects.create(
+                complaint_type=form.cleaned_data['complaint_type'],
+                description=form.cleaned_data['description'],
+                city=form.cleaned_data['city'],
+                latitude=form.cleaned_data['location_lat'],
+                longitude=form.cleaned_data['location_lng'],
+                road_type=form.cleaned_data['road_type'],
+                photo=form.cleaned_data['photo'],
+                altitude=0,
+                accuracy=0,
+                captura_id=None,
+            )
+            msg=f"Denuncia realizada correctamente."
+            logger.info(f"Complaint {complaint} created!")
+            registration_error = 0
+            created = True
         else:
-            if form.cleaned_data['location_name'] == '' or form.cleaned_data['location_lat'] == '' or \
-               form.cleaned_data['location_lng'] == '':
-                msg = f"Datos de registro incompletos, favor indique una institución"
-                logger.info(f"Registration Error: Missing institution. Form details {form}")
-            else:
-                msg = "Datos inválidos, favor compruebe los errores"
-                logger.info(f"Registration Error: The form is not valid. Form details {form}")
+            msg = "Datos inválidos, favor compruebe los errores"
+            logger.info(f"Registration Error: The form is not valid. Form details {form}")
             registration_error = 1
     context = {
         'form': form,
@@ -221,7 +202,7 @@ def registration(request):
         'registration_result': registration_error
     }
     if created:
-        logger.info(f"Affiliation {affiliation_obj} created!")
+        logger.info(f"Complaint created!")
     return render(request, 'register.html', context)
 
 
