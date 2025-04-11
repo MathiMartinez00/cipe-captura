@@ -53,7 +53,7 @@
     </div>
   </div>
 </div>
-<div class="modal" id="detailModal">
+<div class="modal" id="detailModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -65,7 +65,7 @@
           aria-label="Close"
         ></button>
       </div>
-      <div class="modal-body p-3">
+      <div class="modal-body p-3 d-flex flex-column gap-2">
         <form
           id="vote-complaint-form"
           class="d-flex row row-cols-lg-auto g-3 align-items-center"
@@ -99,10 +99,10 @@
             <button class="btn btn-primary" type="submit">Enviar</button>
           </div>
         </form>
-        <p id="complaint-datetime"></p>
-        <p id="complaint-city"></p>
-        <p id="complaint-complaint-type"></p>
-        <p id="complaint-description"></p>
+        <div id="complaint-datetime"></div>
+        <div id="complaint-city"></div>
+        <div id="complaint-complaint-type"></div>
+        <div id="complaint-description"></div>
         <div id="complaint-photo-div">
           <p>Foto de denuncia:</p>
           <img

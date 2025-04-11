@@ -68,9 +68,14 @@ async function resetMap(map) {
 
 async function addComplaintMarkers(complaints, map, markerClusterer) {
   const { AdvancedMarkerElement, InfoWindow, PinElement } =
-    await google.maps.importLibrary("marker");
+  await google.maps.importLibrary("marker");
+  
+  const modalElement = document.getElementById("detailModal");
+  const modalBootstrap = bootstrap.Modal.getOrCreateInstance(modalElement, {
+    backdrop: 'static',
+  });
 
-  const markers = complaints.map((complaint) => {
+  complaints.map((complaint) => {
     const glyphPotholeSvgPinElement = new PinElement({
       glyph: 'B',
       glyphColor: 'white',
@@ -82,12 +87,8 @@ async function addComplaintMarkers(complaints, map, markerClusterer) {
       content: glyphPotholeSvgPinElement.element,
     });
 
-    marker.addListener("click", (e) => {
-      console.log("Marker clicked!");
-      const modalElement = document.getElementById("detailModal");
-      const modalBootstrap = new bootstrap.Modal(modalElement, {
-        backdrop: 'static',
-      });
+
+    marker.addEventListener("gmp-click", (e) => {
       const photoDivElement = document.getElementById("complaint-photo-div");
       const photoElement = document.getElementById("complaint-photo");
 
@@ -129,7 +130,6 @@ async function addComplaintMarkers(complaints, map, markerClusterer) {
       const datetimeElement = document.getElementById("complaint-datetime");
       datetimeElement.innerHTML = `Fecha de creación: ${new Date(complaint.created_at).toLocaleString()}`
 
-      modalElement.addEventListener('hidePrevented.bs.modal', () => console.log("hidePrevented called"));
       modalBootstrap.show();
     });
 
