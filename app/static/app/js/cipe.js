@@ -83,8 +83,11 @@ async function addComplaintMarkers(complaints, map, markerClusterer) {
     });
 
     marker.addListener("click", (e) => {
+      console.log("Marker clicked!");
       const modalElement = document.getElementById("detailModal");
-      const modalBootstrap = new bootstrap.Modal(modalElement);
+      const modalBootstrap = new bootstrap.Modal(modalElement, {
+        backdrop: 'static',
+      });
       const photoDivElement = document.getElementById("complaint-photo-div");
       const photoElement = document.getElementById("complaint-photo");
 
@@ -123,6 +126,10 @@ async function addComplaintMarkers(complaints, map, markerClusterer) {
       );
       descriptionElement.innerHTML = `Descripción: ${complaint.description}`;
 
+      const datetimeElement = document.getElementById("complaint-datetime");
+      datetimeElement.innerHTML = `Fecha de creación: ${new Date(complaint.created_at).toLocaleString()}`
+
+      modalElement.addEventListener('hidePrevented.bs.modal', () => console.log("hidePrevented called"));
       modalBootstrap.show();
     });
 
