@@ -1,33 +1,32 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="toast" style="position: fixed; top: 20px; right: 20px">
+<div class="toast bg-white" style="position: fixed; top: 20px; right: 20px">
   <div class="toast-header">
     <strong class="mr-auto text-primary">Aviso</strong>
-    <button type="button" class="ml-2 mb-1 close" data-dismiss="toast">
-      &times;
-    </button>
+    <button type="button" class="ml-2 mb-1 btn-close" data-bs-dismiss="toast"></button>
   </div>
   <div class="toast-body">
     No existen registros que correspondan con los filtros seleccionados
   </div>
 </div>
+<!-- TODO: Tomar el campo de fecha en el endpoint. -->
 <div class="container">
   <div class="row align-items-center mb-3 mt-3 justify-content-center">
     <form class="row align-items-end" method="POST" id="filter">
       {% csrf_token %}
-      <div class="col">
-        <label class="my-1 mr-2" for="scientific_area">Ciudad</label>
-        <select class="form-select my-1 mr-sm-2" id="scientific_area">
+      <div class="col-sm">
+        <label class="my-1 mr-2" for="city">Ciudad</label>
+        <select class="form-select my-1 mr-sm-2" id="city" name="city">
           <option selected value="">Todas</option>
           {% for city in cities %}
           <option value="{{ city.id }}">{{ city.name }}</option>
           {% endfor %}
         </select>
       </div>
-      <div class="col">
-        <label class="my-1 mr-2" for="position">Tipo denuncia</label>
-        <select class="form-select my-1 mr-sm-2" id="position">
+      <div class="col-sm">
+        <label class="my-1 mr-2" for="complaint_type">Tipo denuncia</label>
+        <select class="form-select my-1 mr-sm-2" id="complaint_type" name="complaint_type">
           <option value="" selected>Todas</option>
           {% for complaint_type in complaint_types %}
             <option value="{{ complaint_type.id }}">
@@ -36,12 +35,12 @@
           {% endfor %}
         </select>
       </div>
-      <div class="col">
-        <div class="custom-control custom-checkbox" style="display: none">
-          <input type="checkbox" class="custom-control-input" id="becal" />
-          <label class="custom-control-label mr-3" for="becal">Becal</label>
-        </div>
-        <button type="submit" class="btn btn-primary my-1">Filtrar</button>
+      <div class="col-sm">
+        <label class="my-1 mr-2" for="date">Fecha</label>
+        <input type="date" id="date" class="form-control" name="date" />
+      </div>
+      <div class="col-sm">
+        <button type="submit" class="btn btn-primary mt-3 mb-1">Filtrar</button>
       </div>
     </form>
   </div>
@@ -140,19 +139,19 @@
         url: "filter_map/",
         type: "POST",
         data: {
-          scientific_area : $('#scientific_area').val(),
-          position: $('#position').val(),
-          becal: $('#becal').is(':checked'),
+          city: $('#city').val(),
+          complaint_type: $('#complaint_type').val(),
           csrfmiddlewaretoken: '{{ csrf_token }}',
+          date: $('#date').val(),
         },
         // handle a successful response
         success: function(json) {
           removeMarkers(markerClusterer);
           resetMap(map);
-          if (json["scientists"].length > 0) {
-            addComplaintMarkers(json["scientists"], map, markerClusterer);
-          }
-          else {
+          if (json["complaints"].length > 0) {
+            addComplaintMarkers(json["complaints"], map, markerClusterer);
+          } else {
+            // TODO: Este no se puede cerrar manualmente.
             $('.toast').toast({delay: 3000});
             $('.toast').toast('show');
           }

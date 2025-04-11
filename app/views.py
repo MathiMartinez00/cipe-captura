@@ -225,20 +225,20 @@ def map_scientists(request):
 
 def filter_map(request):
     if request.method == 'POST':
-        position = request.POST.get('position')
-        scientific_area = request.POST.get('scientific_area')
-        becal = request.POST.get('becal')
-        scientists, _, _, _, _, _, _, _, _, _, _ = __get_data_map(scientific_area, position)
-        response_data = {
-            'scientists': scientists,
-        }
+        complaint_type = request.POST.get('complaint_type')
+        city = request.POST.get('city')
+        date = request.POST.get('date')
         complaints = Complaint.objects.all()
-        if position:
-            complaints = complaints.filter(complaint_type_id=position)
-        if scientific_area:
-            complaints = complaints.filter(city_id=scientific_area)
+        if complaint_type:
+            complaints = complaints.filter(complaint_type_id=complaint_type)
+        if city:
+            complaints = complaints.filter(city_id=city)
+        if date:
+            complaints = complaints.filter(created_at=date)
         serializer = ComplaintSerializerRead(complaints, many=True)
-        response_data['scientists'] = serializer.data
+        response_data = {
+            'complaints': serializer.data,
+        }
         return HttpResponse(json.dumps(response_data), content_type='application/json')
     else:
         return HttpResponse(

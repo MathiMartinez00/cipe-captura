@@ -87,7 +87,6 @@ async function addComplaintMarkers(complaints, map, markerClusterer) {
       content: glyphPotholeSvgPinElement.element,
     });
 
-
     marker.addEventListener("gmp-click", (e) => {
       const photoDivElement = document.getElementById("complaint-photo-div");
       const photoElement = document.getElementById("complaint-photo");
