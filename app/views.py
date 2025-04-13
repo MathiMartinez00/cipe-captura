@@ -3,10 +3,9 @@ import json
 import csv
 from api.models import City, ComplaintType, Complaint
 from api.serializers import ComplaintSerializerRead
-from app.constants import SCIENTIFIC_AREA, POSITION, FIRST_CAT_SCIENTIFIC_AREA
 from app.forms import RegistrationForm, RegistrationEditForm, UserRegistrationForm
 from app.models import Institution, Scientist, Affiliation
-from app.utils import get_location_info_from_coordinates, load_countries_iso2
+from app.utils import get_location_info_from_coordinates, load_countries_iso2, ComplaintsStatsReporter
 from django.db.models import Count, Max, Sum
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect
@@ -17,78 +16,6 @@ from django.contrib.auth import authenticate, login, logout
 
 logger = logging.getLogger(__name__)
 countries_iso2 = load_countries_iso2()
-
-
-def __get_data_map(scientific_area='', position=''):
-    query = {'approved': True}
-    if scientific_area != '':
-        query['scientific_area'] = scientific_area
-    if position != '':
-        query['position'] = position
-    scientist_objs = Scientist.objects.filter(**query)
-    scientists = []
-    institutions = []
-    countries = set()
-    cities = set()
-    num_male_scientists, num_female_scientists = 0, 0
-    min_age_male, max_age_male, min_age_female, max_age_female = 100, -1, 100, -1
-    for scientist_obj in scientist_objs:
-        scientist_institution = Affiliation.objects.select_related().get(scientist=scientist_obj, current=True).institution
-        institution_country_iso3166 = ''
-        if countries_iso2.get(scientist_institution.country.lower()):
-            institution_country_iso3166 = countries_iso2.get(scientist_institution.country.lower())
-        else:
-            print(f"could not find {scientist_institution.country.lower()}")
-        scientists.append(
-            {'name': str(scientist_obj),
-             'first_name': scientist_obj.first_name,
-             'last_name': scientist_obj.last_name,
-             'sex': scientist_obj.sex,
-             'scientific_area': scientist_obj.get_scientific_area_display(),
-             'position':  scientist_obj.get_position_display(),
-             'twitter_handler': scientist_obj.twitter_handler if scientist_obj.twitter_handler != '' or None else None,
-             'facebook_profile': scientist_obj.facebook_profile if scientist_obj.facebook_profile != '' or None else None,
-             'gscholar_profile': scientist_obj.gscholar_profile if scientist_obj.gscholar_profile != '' or None else None,
-             'scopus_profile': scientist_obj.scopus_profile if scientist_obj.scopus_profile != '' or None else None,
-             'linkedin_profile': scientist_obj.linkedin_profile if scientist_obj.linkedin_profile != '' or None else None,
-             'researchgate_profile': scientist_obj.researchgate_profile if scientist_obj.researchgate_profile != '' or None else None,
-             'academia_profile': scientist_obj.academia_profile if scientist_obj.academia_profile != '' or None else None,
-             'institutional_website': scientist_obj.institutional_website if scientist_obj.institutional_website != '' or None else None,
-             'personal_website': scientist_obj.personal_website if scientist_obj.personal_website != '' or None else None,
-             'orcid_profile': scientist_obj.orcid_profile if scientist_obj.orcid_profile != '' or None else None,
-             'becal_fellow': scientist_obj.has_becal_scholarship,
-             'institution_name': scientist_institution.name,
-             'institution_latitude': scientist_institution.latitude,
-             'institution_longitude': scientist_institution.longitude,
-             'institution_country': scientist_institution.country,
-             'institution_country_iso2': institution_country_iso3166,
-             'institution_city': scientist_institution.city
-             },
-        )
-        institutions.append(scientist_institution.name)
-        countries.add(scientist_institution.country)
-        cities.add(scientist_institution.city)
-        if scientist_obj.sex == 'femenino':
-            num_female_scientists += 1
-            if scientist_obj.rough_age > max_age_female:
-                max_age_female = scientist_obj.rough_age
-            if scientist_obj.rough_age < min_age_female:
-                min_age_female = scientist_obj.rough_age
-        elif scientist_obj.sex == 'masculino':
-            num_male_scientists += 1
-            if scientist_obj.rough_age > max_age_male:
-                max_age_male = scientist_obj.rough_age
-            if scientist_obj.rough_age < min_age_male:
-                min_age_male = scientist_obj.rough_age
-        if scientist_obj.first_name == 'prueba':
-            print(scientists[-1])
-    num_scientists = len(scientists)
-    num_institutions = len(set(institutions))
-    num_countries = len(countries)
-    num_cities = len(cities)
-    return scientists, num_scientists, num_institutions, num_countries, num_male_scientists, num_female_scientists, \
-        max_age_male, max_age_female, min_age_male, min_age_female, num_cities
-
 
 def __get_complaints_statistics():
     complaint_list = list()
@@ -381,72 +308,20 @@ def view_api_key(request):
 
     return redirect('index')
 
-
-def __get_complaint_stats():
-    complaint_list = list()
-    complaints = Complaint.objects.all()
-    cities_dict = dict()
-    cities = City.objects.all()
-    complaint_types = ComplaintType.objects.all()
-    complaint_types_dict = dict()
-    if complaints and complaint_types and cities:
-        for complaint_type in complaint_types:
-            complaint_types_dict[complaint_type.id] = 0
-        for city in cities:
-            cities_dict[city.id] = 0
-        for complaint in complaints:
-            complaint_list.append(complaint)
-            cities_dict[complaint.city.id] += 1
-            complaint_types_dict[complaint.complaint_type.id] += 1
-        complaint_count = len(complaint_list)
-        cities_ordered = sorted(cities_dict.items(), key=lambda x: x[1], reverse=True)
-        complaints_per_city = [{'count': city[1], 'city': cities.get(pk=city[0]).name} for city in cities_ordered]
-        complaint_types_ordered = sorted(complaint_types_dict.items(), key=lambda x: x[1], reverse=True)
-        complaints_per_complaint_type = [{'count': complaint_type[1], 'complaint_type': complaint_types.get(pk=complaint_type[0]).name} for complaint_type in complaint_types_ordered]
-        statistics = {
-            'complaint_count': complaint_count,
-            'complaints_per_city': complaints_per_city,
-            'complaints_per_complaint_type': complaints_per_complaint_type,
-        }
-        return statistics
-    return dict()
-
 def graphs_page(request):
-    complaint_stats = __get_complaint_stats()
+    complaint_stats = ComplaintsStatsReporter().get_complaints_stats()
     complaint_types = ComplaintType.objects.all()
     cities = City.objects.all()
     return render(request, 'graphs.html', { 'stats': complaint_stats, 'complaint_types': complaint_types, 'cities': cities })
 
 def complaints_per_city_csv_report(request):
-    complaint_stats = __get_complaint_stats()
-    response = HttpResponse(
-        content_type="text/csv",
-        headers={"Content-Disposition": 'attachment; filename="complaints_per_city.csv"'},
-    )
-
-    writer = csv.writer(response)
-    writer.writerow(["city", "complaint_count"])
-    writer.writerows([[complaints_per_city['city'], complaints_per_city['count']] for complaints_per_city in complaint_stats['complaints_per_city']])
-
-    return response
+    return ComplaintsStatsReporter().generate_complaints_per_city_csv_report()
 
 def complaints_per_city_json_report(request):
-    complaint_stats = __get_complaint_stats()
-    return JsonResponse(complaint_stats['complaints_per_city'], safe=False)
+    return ComplaintsStatsReporter().generate_complaints_per_city_json_report()
 
 def complaints_per_complaint_type_csv_report(request):
-    complaint_stats = __get_complaint_stats()
-    response = HttpResponse(
-        content_type="text/csv",
-        headers={"Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
-    )
-
-    writer = csv.writer(response)
-    writer.writerow(["city", "complaint_count"])
-    writer.writerows([[complaints_per_complaint_type['complaint_type'], complaints_per_complaint_type['count']] for complaints_per_complaint_type in complaint_stats['complaints_per_complaint_type']])
-
-    return response
+    return ComplaintsStatsReporter().generate_complaints_per_complaint_count_csv_report()
 
 def complaints_per_complaint_type_json_report(request):
-    complaint_stats = __get_complaint_stats()
-    return JsonResponse(complaint_stats['complaints_per_complaint_type'], safe=False)
+    return ComplaintsStatsReporter().generate_complaints_per_complaint_count_json_report()

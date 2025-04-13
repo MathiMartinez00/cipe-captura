@@ -1,5 +1,5 @@
 from django.db import IntegrityError
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -9,11 +9,14 @@ from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
+from rest_framework.views import APIView
 from api.models import Complaint, ComplaintVote
 from api.serializers import ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer
 from app.models import Scientist
+from app.utils import ComplaintsStatsReporter
 import logging
 import json
+import csv
 logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -118,3 +121,28 @@ class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestr
             return ComplaintSerializerRead
         if self.request.method == 'POST':
             return ComplaintSerializerWrite
+
+
+class DownloadComplaintsPerCityReportView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request):
+        format = request.query_params.get('report-format', 'csv')
+        complaints_reporter = ComplaintsStatsReporter()
+        if format == 'csv':
+            return complaints_reporter.generate_complaints_per_city_csv_report()
+        elif format == 'json':
+            return complaints_reporter.generate_complaints_per_city_json_report()
+        
+class DownloadComplaintsPerComplaintTypeReportView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request, format=None):
+        format = request.query_params.get('report-format', 'csv')
+        complaints_reporter = ComplaintsStatsReporter()
+        if format == 'csv':
+            return complaints_reporter.generate_complaints_per_complaint_count_csv_report()
+        elif format == 'json':
+            return complaints_reporter.generate_complaints_per_complaint_count_json_report()

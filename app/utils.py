@@ -5,6 +5,8 @@ import urllib.request
 import json
 from django.conf import settings
 from urllib.parse import urlencode
+from api.models import Complaint, ComplaintType, City
+from django.http import HttpResponse, JsonResponse
 
 gmaps = googlemaps.Client(key=f"{settings.GOOGLE_MAPS_API_KEY}")
 logger = logging.getLogger(__name__)
@@ -79,3 +81,66 @@ def get_location_info_from_name(location_name, language='es'):
     except Exception as e:
         logger.error(f"Error when doing geo-coding {e}")
         return False, address, postal_code, city, region, country, latitude, longitude
+
+class ComplaintsStatsReporter:
+    def get_complaints_stats(self):
+        complaint_list = list()
+        complaints = Complaint.objects.all()
+        cities_dict = dict()
+        cities = City.objects.all()
+        complaint_types = ComplaintType.objects.all()
+        complaint_types_dict = dict()
+        if complaints and complaint_types and cities:
+            for complaint_type in complaint_types:
+                complaint_types_dict[complaint_type.id] = 0
+            for city in cities:
+                cities_dict[city.id] = 0
+            for complaint in complaints:
+                complaint_list.append(complaint)
+                cities_dict[complaint.city.id] += 1
+                complaint_types_dict[complaint.complaint_type.id] += 1
+            complaint_count = len(complaint_list)
+            cities_ordered = sorted(cities_dict.items(), key=lambda x: x[1], reverse=True)
+            complaints_per_city = [{'count': city[1], 'city': cities.get(pk=city[0]).name} for city in cities_ordered]
+            complaint_types_ordered = sorted(complaint_types_dict.items(), key=lambda x: x[1], reverse=True)
+            complaints_per_complaint_type = [{'count': complaint_type[1], 'complaint_type': complaint_types.get(pk=complaint_type[0]).name} for complaint_type in complaint_types_ordered]
+            statistics = {
+                'complaint_count': complaint_count,
+                'complaints_per_city': complaints_per_city,
+                'complaints_per_complaint_type': complaints_per_complaint_type,
+            }
+            return statistics
+        
+    def generate_complaints_per_city_csv_report(self):
+        complaint_stats = self.get_complaints_stats()
+        response = HttpResponse(
+            content_type="text/csv",
+            headers={"Content-Disposition": 'attachment; filename="complaints_per_city.csv"'},
+        )
+
+        writer = csv.writer(response)
+        writer.writerow(["city", "complaint_count"])
+        writer.writerows([[complaints_per_city['city'], complaints_per_city['count']] for complaints_per_city in complaint_stats['complaints_per_city']])
+
+        return response
+    
+    def generate_complaints_per_city_json_report(self):
+        complaint_stats = self.get_complaints_stats()
+        return JsonResponse(complaint_stats['complaints_per_city'], safe=False)
+    
+    def generate_complaints_per_complaint_count_csv_report(self):
+        complaint_stats = self.get_complaints_stats()
+        response = HttpResponse(
+            content_type="text/csv",
+            headers={"Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
+        )
+
+        writer = csv.writer(response)
+        writer.writerow(["city", "complaint_count"])
+        writer.writerows([[complaints_per_complaint_type['complaint_type'], complaints_per_complaint_type['count']] for complaints_per_complaint_type in complaint_stats['complaints_per_complaint_type']])
+
+        return response
+
+    def generate_complaints_per_complaint_count_json_report(self):
+        complaint_stats = self.get_complaints_stats()
+        return JsonResponse(complaint_stats['complaints_per_complaint_type'], safe=False)
