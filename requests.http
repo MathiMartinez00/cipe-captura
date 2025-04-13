@@ -1,0 +1,28 @@
+GET http://localhost:8000/api/reports/complaints-per-city?report-format=csv
+Authorization: Token cdb90db31f4fd2840395e849e8580715e2d5dcb6
+
+###
+
+GET http://localhost:8000/api/reports/complaints-per-complaint-type/?report-format=csv
+Authorization: Token cdb90db31f4fd2840395e849e8580715e2d5dcb6
+
+###
+
+POST http://localhost:8000/api/complaint-votes/
+Authorization: Token cdb90db31f4fd2840395e849e8580715e2d5dcb6
+Content-Type: application/json
+
+{
+    "complaint": "1",
+    "vote_type": "Y"
+}
+
+###
+
+GET http://localhost:8000/api/complaint-votes/
+Authorization: Token cdb90db31f4fd2840395e849e8580715e2d5dcb6
+
+###
+
+GET http://localhost:8000/api/complaints?start-date=2025-04-13&end-date=2025-04-13
+Authorization: Token cdb90db31f4fd2840395e849e8580715e2d5dcb6
