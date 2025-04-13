@@ -45,6 +45,18 @@ def lambda_handler(event, context):
             'body': json.dumps(response.json())
         }
 
+    if event['requestContext']['path'] == '/reports/complaints-per-city':
+        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/reports/complaints-per-city', headers={
+            'Authorization': event['headers']['Authorization']
+        })
+
+        return {
+            'isBase64Encoded': False,
+            'statusCode': response.status_code,
+            'headers': { 'Content-Type': 'text/csv', "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
+            'body': 'XD'
+        }
+
     return {
         'isBase64Encoded': False,
         'statusCode': response.status_code,
