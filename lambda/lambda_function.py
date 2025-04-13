@@ -2,6 +2,22 @@ import requests
 import os
 import json
 
+def get_json_response(response):
+    return {
+        'isBase64Encoded': False,
+        'statusCode': response.status_code,
+        'headers': { 'Content-Type': 'application/json' },
+        'body': response.text
+    }
+
+def get_raw_response(response):
+    return {
+        'isBase64Encoded': False,
+        'statusCode': response.status_code,
+        'headers': { 'Content-Type': 'application/json' },
+        'body': response.text
+    }
+
 def lambda_handler(event, context):
 
     if event['requestContext']['path'] == '/complaints':
@@ -34,23 +50,24 @@ def lambda_handler(event, context):
         }
 
     if event['requestContext']['path'] == '/complaint-votes':
-        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaint-votes', headers={
-            'Authorization': event['headers']['Authorization']
-        })
-
-        return {
-            'isBase64Encoded': False,
-            'statusCode': response.status_code,
-            'headers': { 'Content-Type': 'application/json' },
-            'body': json.dumps(response.json())
-        }
+        if event['httpMethod'] == 'GET':
+            response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaint-votes/', headers=event['headers'])
+            return get_json_response(response)
+        elif event['httpMethod'] == 'POST':
+            response = requests.post(f'{os.environ.get('REST_DOMAIN')}/api/complaint-votes/', headers=event['headers'], data=event['body'])
+            return get_json_response(response)
+        else:
+            return {
+                'isBase64Encoded': False,
+                'statusCode': 405,
+            }
 
     if event['requestContext']['path'] == '/reports/complaints-per-city':
         format = 'csv'
         if event['queryStringParameters']:
             format = event['queryStringParameters'].get('report-format')
 
-        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/reports/complaints-per-city', headers={
+        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/reports/complaints-per-city/', headers={
             'Authorization': event['headers']['Authorization']
         }, params=event['queryStringParameters'])
 
