@@ -110,12 +110,16 @@ class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestr
         complaint_id = search_params.get('id', None)
         complaint_type_id = search_params.get('complaint-type-id', None)
         date = search_params.get('date', None)
+        start_date = search_params.get('start-date', None)
+        end_date = search_params.get('end-date', None)
         if complaint_id:
             queryset = queryset.filter(id=complaint_id)
         if complaint_type_id:
             queryset = queryset.filter(complaint_type_id=complaint_type_id)
         if date:
             queryset = queryset.filter(created_at__date=date)
+        if start_date and end_date:
+            queryset = queryset.filter(created_at__date__gte=start_date, created_at__date__lte=end_date)
         return queryset
 
     def perform_create(self, serializer):
