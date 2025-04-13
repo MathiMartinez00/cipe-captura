@@ -10,11 +10,12 @@
   });
   const { map, markerClusterer } = await initMap('map');
   
-  await addComplaintMarkers({{ complaints|safe }}, map, markerClusterer);
+  await addComplaintMarkers({{ complaints|safe }}, map, markerClusterer, false);
   {% endblock %}
 </script>
 
 {% block content %}
+<div id="detailModal"></div>
 <div
   id="loginAlert"
   class="alert alert-success text-center collapse"

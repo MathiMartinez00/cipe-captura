@@ -131,7 +131,7 @@
       // Add other bootstrap parameters as needed, using camel case.
     });
     const { map, markerClusterer } = await initMap('map');
-    await addComplaintMarkers({{ complaints|safe }}, map, markerClusterer);
+    await addComplaintMarkers({{ complaints|safe }}, map, markerClusterer, true);
   
     $('#filter').on('submit', function(event) {
       event.preventDefault();
@@ -149,7 +149,7 @@
           removeMarkers(markerClusterer);
           resetMap(map);
           if (json["complaints"].length > 0) {
-            addComplaintMarkers(json["complaints"], map, markerClusterer);
+            addComplaintMarkers(json["complaints"], map, markerClusterer, true);
           } else {
             // TODO: Este no se puede cerrar manualmente.
             $('.toast').toast({delay: 3000});

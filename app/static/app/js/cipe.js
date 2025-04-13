@@ -66,7 +66,7 @@ async function resetMap(map) {
   map.setZoom(6);
 }
 
-async function addComplaintMarkers(complaints, map, markerClusterer) {
+async function addComplaintMarkers(complaints, map, markerClusterer, isMarkerInteractive) {
   const { AdvancedMarkerElement, InfoWindow, PinElement } =
   await google.maps.importLibrary("marker");
   
@@ -87,50 +87,52 @@ async function addComplaintMarkers(complaints, map, markerClusterer) {
       content: glyphPotholeSvgPinElement.element,
     });
 
-    marker.addEventListener("gmp-click", (e) => {
-      const photoDivElement = document.getElementById("complaint-photo-div");
-      const photoElement = document.getElementById("complaint-photo");
-
-      if (complaint.photo) {
-        photoElement.src = complaint.photo;
-        photoDivElement.style.display = "block";
-      } else {
-        photoElement.src = "/";
-        photoDivElement.style.display = "none";
-      }
-      const voteForm = document.getElementById("vote-complaint-form");
-      voteForm.addEventListener(
-        "submit",
-        (e) => {
-          e.preventDefault();
-          const formData = new FormData(e.target);
-          if (formData.get("vote-complaint")) {
-            voteComplaint(complaint, formData.get("vote-complaint"));
-          }
-        },
-        {
-          once: true,
-        },
-      );
-
-      const cityElement = document.getElementById("complaint-city");
-      cityElement.innerHTML = `Ciudad: ${complaint.city.name}`;
-
-      const complaintTypeElement = document.getElementById(
-        "complaint-complaint-type",
-      );
-      complaintTypeElement.innerHTML = `Tipo de denuncia: ${complaint.complaint_type.name}`;
-
-      const descriptionElement = document.getElementById(
-        "complaint-description",
-      );
-      descriptionElement.innerHTML = `Descripción: ${complaint.description}`;
-
-      const datetimeElement = document.getElementById("complaint-datetime");
-      datetimeElement.innerHTML = `Fecha de creación: ${new Date(complaint.created_at).toLocaleString()}`
-
-      modalBootstrap.show();
-    });
+    if (isMarkerInteractive) {
+      marker.addEventListener("gmp-click", (e) => {
+        const photoDivElement = document.getElementById("complaint-photo-div");
+        const photoElement = document.getElementById("complaint-photo");
+  
+        if (complaint.photo) {
+          photoElement.src = complaint.photo;
+          photoDivElement.style.display = "block";
+        } else {
+          photoElement.src = "/";
+          photoDivElement.style.display = "none";
+        }
+        const voteForm = document.getElementById("vote-complaint-form");
+        voteForm.addEventListener(
+          "submit",
+          (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            if (formData.get("vote-complaint")) {
+              voteComplaint(complaint, formData.get("vote-complaint"));
+            }
+          },
+          {
+            once: true,
+          },
+        );
+  
+        const cityElement = document.getElementById("complaint-city");
+        cityElement.innerHTML = `Ciudad: ${complaint.city.name}`;
+  
+        const complaintTypeElement = document.getElementById(
+          "complaint-complaint-type",
+        );
+        complaintTypeElement.innerHTML = `Tipo de denuncia: ${complaint.complaint_type.name}`;
+  
+        const descriptionElement = document.getElementById(
+          "complaint-description",
+        );
+        descriptionElement.innerHTML = `Descripción: ${complaint.description}`;
+  
+        const datetimeElement = document.getElementById("complaint-datetime");
+        datetimeElement.innerHTML = `Fecha de creación: ${new Date(complaint.created_at).toLocaleString()}`
+  
+        modalBootstrap.show();
+      });
+    }
 
     const infowWindow = new google.maps.InfoWindow({
       content: `<div>${complaint.complaint_type.name}<div>`,
