@@ -144,3 +144,6 @@ class ComplaintsStatsReporter:
     def generate_complaints_per_complaint_count_json_report(self):
         complaint_stats = self.get_complaints_stats()
         return JsonResponse(complaint_stats['complaints_per_complaint_type'], safe=False)
+    
+    def get_error_response(self):
+        return JsonResponse(data={'error': 'Invalid format'}, status=400)

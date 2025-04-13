@@ -46,16 +46,28 @@ def lambda_handler(event, context):
         }
 
     if event['requestContext']['path'] == '/reports/complaints-per-city':
+        format = 'csv'
+        if event['queryStringParameters']:
+            format = event['queryStringParameters'].get('report-format')
+
         response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/reports/complaints-per-city', headers={
             'Authorization': event['headers']['Authorization']
-        })
+        }, params=event['queryStringParameters'])
 
-        return {
-            'isBase64Encoded': False,
-            'statusCode': response.status_code,
-            'headers': { 'Content-Type': 'text/csv', "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
-            'body': 'XD'
-        }
+        if format == 'csv':
+            return {
+                'isBase64Encoded': False,
+                'statusCode': response.status_code,
+                'headers': { 'Content-Type': 'text/csv', "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
+                'body': response.text
+            }
+        else:
+            return {
+                'isBase64Encoded': False,
+                'statusCode': response.status_code,
+                'headers': { 'Content-Type': 'application/json' },
+                'body': json.dumps(response.json())
+            }
 
     return {
         'isBase64Encoded': False,

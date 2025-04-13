@@ -134,6 +134,8 @@ class DownloadComplaintsPerCityReportView(APIView):
             return complaints_reporter.generate_complaints_per_city_csv_report()
         elif format == 'json':
             return complaints_reporter.generate_complaints_per_city_json_report()
+        else:
+            return complaints_reporter.get_error_response()
         
 class DownloadComplaintsPerComplaintTypeReportView(APIView):
     permission_classes = [IsAuthenticated]
@@ -146,3 +148,5 @@ class DownloadComplaintsPerComplaintTypeReportView(APIView):
             return complaints_reporter.generate_complaints_per_complaint_count_csv_report()
         elif format == 'json':
             return complaints_reporter.generate_complaints_per_complaint_count_json_report()
+        else:
+            return complaints_reporter.get_error_response()
