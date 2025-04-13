@@ -106,15 +106,20 @@ class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestr
 
     def get_queryset(self):
         queryset = Complaint.objects.all()
-        search_params = self.request.GET
-        if search_params.get('id', None):
-            queryset.filter(id=search_params.get('id'))
-        if search_params.get('complaint_type_id', None):
-            queryset.filter(complaint_type_id=search_params.get('complaint_type_id'))
+        search_params = self.request.query_params
+        complaint_id = search_params.get('id', None)
+        complaint_type_id = search_params.get('complaint-type-id', None)
+        date = search_params.get('date', None)
+        if complaint_id:
+            queryset = queryset.filter(id=complaint_id)
+        if complaint_type_id:
+            queryset = queryset.filter(complaint_type_id=complaint_type_id)
+        if date:
+            queryset = queryset.filter(created_at__date=date)
         return queryset
 
     def perform_create(self, serializer):
-        complaint = serializer.save()
+        serializer.save()
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
