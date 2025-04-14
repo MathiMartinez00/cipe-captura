@@ -1,7 +1,7 @@
 import base64
 from django.core.files.base import ContentFile
 from rest_framework import serializers
-from api.models import Complaint, ComplaintVote
+from api.models import Complaint, ComplaintVote, City
 from django.db.models import Count
 
 class ComplaintSerializerRead(serializers.ModelSerializer):
@@ -58,4 +58,10 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
 class ComplaintVoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComplaintVote
-        fields = '__all__'
+        fields = ['id', 'name']
+
+
+class CitySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
+        fields = ['id', 'name']

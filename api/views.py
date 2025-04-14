@@ -1,5 +1,5 @@
 from django.db import IntegrityError
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
@@ -10,13 +10,13 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework.views import APIView
-from api.models import Complaint, ComplaintVote
-from api.serializers import ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer
+from rest_framework.response import Response
+from api.models import Complaint, ComplaintVote, City
+from api.serializers import ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer, CitySerializer
 from app.models import Scientist
 from app.utils import ComplaintsStatsReporter
 import logging
 import json
-import csv
 logger = logging.getLogger(__name__)
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -159,3 +159,15 @@ class DownloadComplaintsPerComplaintTypeReportView(APIView):
             return complaints_reporter.generate_complaints_per_complaint_count_json_report()
         else:
             return complaints_reporter.get_error_response()
+        
+class CityListView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request):
+        city_id = request.query_params.get('id', None)
+        queryset = City.objects.all()
+        if city_id:
+            queryset = queryset.filter(id=city_id)
+        city_serializar = CitySerializer(queryset, many=True)
+        return Response(city_serializar.data)
