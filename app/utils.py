@@ -83,9 +83,15 @@ def get_location_info_from_name(location_name, language='es'):
         return False, address, postal_code, city, region, country, latitude, longitude
 
 class ComplaintsStatsReporter:
+    def __init__(self, start_date=None, end_date=None):
+        self.start_date = start_date
+        self.end_date = end_date
+
     def get_complaints_stats(self):
         complaint_list = list()
         complaints = Complaint.objects.all()
+        if self.start_date and self.end_date:
+            complaints = complaints.filter(created_at__date__gte=self.start_date, created_at__date__lte=self.end_date)
         cities_dict = dict()
         cities = City.objects.all()
         complaint_types = ComplaintType.objects.all()
@@ -113,37 +119,49 @@ class ComplaintsStatsReporter:
         
     def generate_complaints_per_city_csv_report(self):
         complaint_stats = self.get_complaints_stats()
-        response = HttpResponse(
-            content_type="text/csv",
-            headers={"Content-Disposition": 'attachment; filename="complaints_per_city.csv"'},
-        )
+        if complaint_stats:
+            response = HttpResponse(
+                content_type="text/csv",
+                headers={"Content-Disposition": 'attachment; filename="complaints_per_city.csv"'},
+            )
 
-        writer = csv.writer(response)
-        writer.writerow(["city", "complaint_count"])
-        writer.writerows([[complaints_per_city['city'], complaints_per_city['count']] for complaints_per_city in complaint_stats['complaints_per_city']])
+            writer = csv.writer(response)
+            writer.writerow(["city", "complaint_count"])
+            writer.writerows([[complaints_per_city['city'], complaints_per_city['count']] for complaints_per_city in complaint_stats['complaints_per_city']])
 
-        return response
+            return response
+        
+        return JsonResponse(data={'error': 'No complaint data found'}, status=404)
     
     def generate_complaints_per_city_json_report(self):
         complaint_stats = self.get_complaints_stats()
-        return JsonResponse(complaint_stats['complaints_per_city'], safe=False)
+        if complaint_stats:
+            return JsonResponse(complaint_stats['complaints_per_city'], safe=False)
+        
+        return JsonResponse(data={'error': 'No complaint data found'}, status=404)
     
     def generate_complaints_per_complaint_count_csv_report(self):
         complaint_stats = self.get_complaints_stats()
-        response = HttpResponse(
-            content_type="text/csv",
-            headers={"Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
-        )
+        if complaint_stats:
+            response = HttpResponse(
+                content_type="text/csv",
+                headers={"Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
+            )
 
-        writer = csv.writer(response)
-        writer.writerow(["city", "complaint_count"])
-        writer.writerows([[complaints_per_complaint_type['complaint_type'], complaints_per_complaint_type['count']] for complaints_per_complaint_type in complaint_stats['complaints_per_complaint_type']])
+            writer = csv.writer(response)
+            writer.writerow(["city", "complaint_count"])
+            writer.writerows([[complaints_per_complaint_type['complaint_type'], complaints_per_complaint_type['count']] for complaints_per_complaint_type in complaint_stats['complaints_per_complaint_type']])
 
-        return response
+            return response
+        
+        return JsonResponse(data={'error': 'No complaint data found'}, status=404)
 
     def generate_complaints_per_complaint_count_json_report(self):
         complaint_stats = self.get_complaints_stats()
-        return JsonResponse(complaint_stats['complaints_per_complaint_type'], safe=False)
+        if complaint_stats:
+            return JsonResponse(complaint_stats['complaints_per_complaint_type'], safe=False)
+        
+        return JsonResponse(data={'error': 'No complaint data found'}, status=404)
     
     def get_error_response(self):
         return JsonResponse(data={'error': 'Invalid format'}, status=400)

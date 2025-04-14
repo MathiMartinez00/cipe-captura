@@ -138,7 +138,9 @@ class DownloadComplaintsPerCityReportView(APIView):
 
     def get(self, request):
         format = request.query_params.get('report-format', 'csv')
-        complaints_reporter = ComplaintsStatsReporter()
+        start_date = request.query_params.get('start-date', None)
+        end_date = request.query_params.get('end-date', None)
+        complaints_reporter = ComplaintsStatsReporter(start_date, end_date)
         if format == 'csv':
             return complaints_reporter.generate_complaints_per_city_csv_report()
         elif format == 'json':
@@ -152,7 +154,9 @@ class DownloadComplaintsPerComplaintTypeReportView(APIView):
 
     def get(self, request, format=None):
         format = request.query_params.get('report-format', 'csv')
-        complaints_reporter = ComplaintsStatsReporter()
+        start_date = request.query_params.get('start-date', None)
+        end_date = request.query_params.get('end-date', None)
+        complaints_reporter = ComplaintsStatsReporter(start_date, end_date)
         if format == 'csv':
             return complaints_reporter.generate_complaints_per_complaint_count_csv_report()
         elif format == 'json':
