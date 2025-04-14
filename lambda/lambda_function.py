@@ -91,6 +91,28 @@ def lambda_handler(event, context):
                 'body': json.dumps(response.json())
             }
         
+    if event['requestContext']['path'] == '/reports/complaints-per-complaint-type':
+        format = 'csv'
+        if event['queryStringParameters']:
+            format = event['queryStringParameters'].get('report-format')
+
+        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/reports/complaints-per-complaint-type/', headers=event['headers'], params=event['queryStringParameters'])
+
+        if format == 'csv':
+            return {
+                'isBase64Encoded': False,
+                'statusCode': response.status_code,
+                'headers': { 'Content-Type': 'text/csv', "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
+                'body': response.text
+            }
+        else:
+            return {
+                'isBase64Encoded': False,
+                'statusCode': response.status_code,
+                'headers': { 'Content-Type': 'application/json' },
+                'body': json.dumps(response.json())
+            }
+
     if event['requestContext']['path'] == '/complaint-types':
         response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaint-types/', headers=event['headers'], params=event['queryStringParameters'])
         return get_json_response(response)
