@@ -7,7 +7,7 @@ def get_json_response(response):
         'isBase64Encoded': False,
         'statusCode': response.status_code,
         'headers': { 'Content-Type': 'application/json' },
-        'body': json.dumps(response.text)
+        'body': response.text
     }
 
 def get_raw_response(response):
@@ -21,11 +21,11 @@ def get_raw_response(response):
 def lambda_handler(event, context):
 
     if event['requestContext']['path'] == '/users/token':
-        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaints', data=event['body'])
+        response = requests.post(f'{os.environ.get('REST_DOMAIN')}/api/users/token/', headers=event['headers'], data=event['body'])
         return get_json_response(response)
 
     if event['requestContext']['path'] == '/complaints':
-        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaints', headers={
+        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaints/', headers={
             'Authorization': event['headers']['Authorization']
         })
         if event['queryStringParameters'] is None:
