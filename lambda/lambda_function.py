@@ -25,28 +25,32 @@ def lambda_handler(event, context):
         return get_json_response(response)
 
     if event['requestContext']['path'] == '/complaints':
-        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaints/', headers={
-            'Authorization': event['headers']['Authorization']
-        })
-        if event['queryStringParameters'] is None:
-            return get_raw_response(response)
+        if event['httpMethod'] == 'GET':
+            response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaints/', headers={
+                'Authorization': event['headers']['Authorization']
+            })
+            if event['queryStringParameters'] is None:
+                return get_raw_response(response)
 
-        complaints = response.json()
-        matched_complaints = []
+            complaints = response.json()
+            matched_complaints = []
 
-        for complaint in complaints:
-            for (key, value) in event['queryStringParameters'].items():
-                if key == 'id' and str(complaint['id']) == str(value):
-                    matched_complaints.append(complaint) 
-                if key == 'complaint_type_id' and str(complaint['complaint_type']['id']) == str(value):
-                    matched_complaints.append(complaint) 
-     
-        return {
-            'isBase64Encoded': False,
-            'statusCode': response.status_code,
-            'headers': { 'Content-Type': 'application/json' },
-            'body': json.dumps(matched_complaints)
-        }
+            for complaint in complaints:
+                for (key, value) in event['queryStringParameters'].items():
+                    if key == 'id' and str(complaint['id']) == str(value):
+                        matched_complaints.append(complaint) 
+                    if key == 'complaint_type_id' and str(complaint['complaint_type']['id']) == str(value):
+                        matched_complaints.append(complaint) 
+        
+            return {
+                'isBase64Encoded': False,
+                'statusCode': response.status_code,
+                'headers': { 'Content-Type': 'application/json' },
+                'body': json.dumps(matched_complaints)
+            }
+        elif event['httpMethod'] == 'POST':
+            response = requests.post(f'{os.environ.get('REST_DOMAIN')}/api/complaints/', headers=event['headers'], data=event['body'])
+            return get_json_response(response)
 
     if event['requestContext']['path'] == '/complaint-votes':
         if event['httpMethod'] == 'GET':
@@ -59,6 +63,8 @@ def lambda_handler(event, context):
             return {
                 'isBase64Encoded': False,
                 'statusCode': 405,
+                'headers': {'Content-Type': 'application/json'},
+                'body': json.dumps({'error': 'Method not supported'})
             }
 
     if event['requestContext']['path'] == '/reports/complaints-per-city':

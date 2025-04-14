@@ -10,7 +10,7 @@ class ComplaintSerializerRead(serializers.ModelSerializer):
 
     class Meta:
         model = Complaint
-        fields = '__all__'
+        fields = ['id', 'complaint_type', 'description', 'city', 'latitude', 'longitude', 'road_type', 'created_at', 'photo_base64', 'votes']
         depth = 1
 
     def get_votes(self, obj):
@@ -34,7 +34,7 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
 
     class Meta:
         model = Complaint
-        fields = '__all__'
+        fields = ['complaint_type', 'description', 'city', 'latitude', 'longitude', 'road_type', 'created_at', 'photo_base64']
 
     def save(self):
         complaint = Complaint.objects.create(
@@ -43,8 +43,8 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
             city=self.validated_data['city'],
             latitude=self.validated_data['latitude'],
             longitude=self.validated_data['longitude'],
-            altitude=self.validated_data['altitude'],
-            accuracy=self.validated_data['accuracy'],
+            altitude=0,
+            accuracy=0,
             road_type=self.validated_data.get('road_type', None),
             captura_id=self.validated_data.get('captura_id', None)
         )
