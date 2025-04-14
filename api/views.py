@@ -11,8 +11,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from api.models import Complaint, ComplaintVote, City
-from api.serializers import ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer, CitySerializer
+from api.models import Complaint, ComplaintVote, City, ComplaintType
+from api.serializers import ComplaintTypeSerializer, ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer, CitySerializer
 from app.models import Scientist
 from app.utils import ComplaintsStatsReporter
 import logging
@@ -170,4 +170,16 @@ class CityListView(APIView):
         if city_id:
             queryset = queryset.filter(id=city_id)
         city_serializar = CitySerializer(queryset, many=True)
+        return Response(city_serializar.data)
+    
+class ComplaintTypeListView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def get(self, request):
+        city_id = request.query_params.get('id', None)
+        queryset = ComplaintType.objects.all()
+        if city_id:
+            queryset = queryset.filter(id=city_id)
+        city_serializar = ComplaintTypeSerializer(queryset, many=True)
         return Response(city_serializar.data)
