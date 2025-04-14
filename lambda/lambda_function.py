@@ -90,10 +90,18 @@ def lambda_handler(event, context):
                 'headers': { 'Content-Type': 'application/json' },
                 'body': json.dumps(response.json())
             }
+        
+    if event['requestContext']['path'] == '/complaint-types':
+        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaint-types/', headers=event['headers'], params=event['queryStringParameters'])
+        return get_json_response(response)
+    
+    if event['requestContext']['path'] == '/cities':
+        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/cities/', headers=event['headers'], params=event['queryStringParameters'])
+        return get_json_response(response)
 
     return {
         'isBase64Encoded': False,
-        'statusCode': response.status_code,
+        'statusCode': 404,
         'headers': { 'Content-Type': 'application/json' },
-        'body': response.text
+        'body': json.dumps({'error': 'Not Found'})
     }
