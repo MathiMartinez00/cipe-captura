@@ -1,12 +1,10 @@
 import logging
 import json
-import csv
 from api.models import City, ComplaintType, Complaint
-from api.serializers import ComplaintSerializerRead
+from api.serializers import ComplaintSerializerRead, ComplaintTypeSerializer, CitySerializer
 from app.forms import RegistrationForm, RegistrationEditForm, UserRegistrationForm
 from app.models import Institution, Scientist, Affiliation
 from app.utils import get_location_info_from_coordinates, load_countries_iso2, ComplaintsStatsReporter
-from django.db.models import Count, Max, Sum
 from django.forms.models import model_to_dict
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, JsonResponse
@@ -309,9 +307,18 @@ def view_api_key(request):
     return redirect('index')
 
 def graphs_page(request):
-    complaint_stats = ComplaintsStatsReporter().get_complaints_stats()
+    format = request.GET.get('format', None)
+    start_date = request.GET.get('start-date', None)
+    end_date = request.GET.get('end-date', None)
+    
     complaint_types = ComplaintType.objects.all()
     cities = City.objects.all()
+    if format == 'json' and start_date and end_date:
+        complaint_stats = ComplaintsStatsReporter(start_date, end_date).get_complaints_stats()
+        complaint_types_serializer = ComplaintTypeSerializer(complaint_types, many=True)
+        cities_serializer = CitySerializer(cities, many=True)
+        return JsonResponse({ 'stats': complaint_stats, 'complaint_types': complaint_types_serializer.data, 'cities': cities_serializer.data }, status=200, safe=False)
+    complaint_stats = ComplaintsStatsReporter().get_complaints_stats()
     return render(request, 'graphs.html', { 'stats': complaint_stats, 'complaint_types': complaint_types, 'cities': cities })
 
 def complaints_per_city_csv_report(request):

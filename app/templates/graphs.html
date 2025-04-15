@@ -3,8 +3,32 @@
 
 {% block content %}
 {{ stats|json_script:'stats' }}
-
+<div class="toast bg-white" style="position: fixed; top: 20px; right: 20px">
+  <div class="toast-header">
+    <strong class="mr-auto text-primary">Aviso</strong>
+    <button type="button" class="ml-2 mb-1 btn-close" data-bs-dismiss="toast"></button>
+  </div>
+  <div class="toast-body">
+    No existen registros que correspondan con los filtros seleccionados
+  </div>
+</div>
 <div class="container-fluid">
+  <div class="container">
+    <form class="row row-cols-1 row-cols-lg-3 align-items-center my-3" id="filter" method="POST">
+      <div class="col-sm">
+        <label class="my-1 mr-2" for="start-date">Fecha inicio</label>
+        <input type="date" id="start-date" class="form-control my-1 mr-sm-2" name="start-date" />
+      </div>
+      <div class="col-sm">
+        <label class="my-1 mr-2" for="end-date">Fecha fin</label>
+        <input type="date" id="end-date" class="form-control my-1 mr-sm-2" name="end-date" />
+      </div>
+      <div class="col-sm align-self-end">
+        <button type="submit" class="btn btn-primary mt-3 mb-1">Filtrar</button>
+      </div>
+    </form>
+  </div>
+
   <div class="fw-bold fs-3 text-center mt-4 text-secondary">Denuncias por ciudadades</div>
   <div class="divider-custom">
     <div class="divider-custom-line"></div>
@@ -51,42 +75,83 @@
 
 <script>
 {% block javascript %}
+  // TODO: Ver tema colorcitos
   const stats = JSON.parse(document.querySelector('#stats').textContent);
 
   const mainDiv = document.querySelector('#main');
   const complaints_per_city_graph = echarts.init(mainDiv);
-  const complaints_per_city_graph_options = {
-    tooltip: {},
-    legend: {
-      data: stats.complaints_per_city.map((complaint) => complaint.city)
-    },
-    xAxis: {
-      data: stats.complaints_per_city.map((complaint) => complaint.city)
-    },
-    yAxis: {},
-    series: [{ type: 'bar' }],
-    dataset: {
-      source: stats.complaints_per_city.map((complaint) => [complaint.city, complaint.count])
-    }
-  };
-  complaints_per_city_graph.setOption(complaints_per_city_graph_options);
+
+  function generate_complaints_per_city_graph(stats) {
+    const complaints_per_city_graph_options = {
+      tooltip: {},
+      legend: {
+        data: stats.complaints_per_city.map((complaint) => complaint.city)
+      },
+      xAxis: {
+        data: stats.complaints_per_city.map((complaint) => complaint.city)
+      },
+      yAxis: {},
+      series: [{ type: 'bar' }],
+      dataset: {
+        source: stats.complaints_per_city.map((complaint) => [complaint.city, complaint.count])
+      }
+    };
+    complaints_per_city_graph.setOption(complaints_per_city_graph_options);
+  }
 
   const mainDiv2 = document.querySelector('#main2');
   const complaints_per_complaint_type = echarts.init(mainDiv2);
-  const complaints_per_complaint_type_options = {
-    tooltip: {},
-    legend: {
-      data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
-    },
-    xAxis: {
-      data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
-    },
-    yAxis: {},
-    series: [{ type: 'bar' }],
-    dataset: {
-      source: stats.complaints_per_complaint_type.map((complaint) => [complaint.complaint_type, complaint.count])
-    }
-  };
-  complaints_per_complaint_type.setOption(complaints_per_complaint_type_options);
+
+  function generate_complaints_per_complaint_types_graph(stats) {
+    const complaints_per_complaint_type_options = {
+      tooltip: {},
+      legend: {
+        data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
+      },
+      xAxis: {
+        data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
+      },
+      yAxis: {},
+      series: [{ type: 'bar' }],
+      dataset: {
+        source: stats.complaints_per_complaint_type.map((complaint) => [complaint.complaint_type, complaint.count])
+      }
+    };
+    complaints_per_complaint_type.setOption(complaints_per_complaint_type_options);
+  }
+
+  generate_complaints_per_city_graph(stats);
+  generate_complaints_per_complaint_types_graph(stats);
+
+  $('#filter').on('submit', function(event) {
+    event.preventDefault();
+    $.ajax({
+      url: "/app/graphs/",
+      type: "GET",
+      data: {
+        "start-date": $('#start-date').val(),
+        "end-date": $('#end-date').val(),
+        csrfmiddlewaretoken: '{{ csrf_token }}',
+        "format": "json",
+      },
+      // handle a successful response
+      success: function(json) {
+        if (json.stats) {
+          generate_complaints_per_city_graph(json.stats);
+          generate_complaints_per_complaint_types_graph(json.stats);
+        } else {
+          // TODO: Este no se puede cerrar manualmente.
+          $('.toast').toast({delay: 3000});
+          $('.toast').toast('show');
+        }
+      },
+      // handle a non-successful response
+      error: function(xhr, errmsg, err) {
+        //$('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+        //    " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+        console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+      }
+    });
+  });
 {% endblock %}
 </script>
