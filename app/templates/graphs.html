@@ -84,17 +84,18 @@
   function generate_complaints_per_city_graph(stats) {
     const complaints_per_city_graph_options = {
       tooltip: {},
-      legend: {
-        data: stats.complaints_per_city.map((complaint) => complaint.city)
-      },
+      legend: {},
       xAxis: {
         data: stats.complaints_per_city.map((complaint) => complaint.city)
       },
       yAxis: {},
-      series: [{ type: 'bar' }],
-      dataset: {
-        source: stats.complaints_per_city.map((complaint) => [complaint.city, complaint.count])
-      }
+      series: [{ 
+        type: 'bar',
+        data: stats.complaints_per_city.map((complaint) => ({ 
+          value: complaint.count,
+          itemStyle: { color: complaint.color },
+        })),
+      }],
     };
     complaints_per_city_graph.setOption(complaints_per_city_graph_options);
   }
@@ -105,17 +106,18 @@
   function generate_complaints_per_complaint_types_graph(stats) {
     const complaints_per_complaint_type_options = {
       tooltip: {},
-      legend: {
-        data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
-      },
+      legend: {},
       xAxis: {
         data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
       },
       yAxis: {},
-      series: [{ type: 'bar' }],
-      dataset: {
-        source: stats.complaints_per_complaint_type.map((complaint) => [complaint.complaint_type, complaint.count])
-      }
+      series: [{ 
+        type: 'bar',
+        data: stats.complaints_per_complaint_type.map((complaint) => ({ 
+          value: complaint.count,
+          itemStyle: { color: complaint.color },
+        })),
+      }],
     };
     complaints_per_complaint_type.setOption(complaints_per_complaint_type_options);
   }
