@@ -30,21 +30,32 @@
   <div class="container-fluid px-0">
     <div id="map"></div>
     <div
-      class="container"
+      class="container position-absolute start-0 end-0 m-auto d-none d-lg-block"
       style="
-        position: absolute;
         z-index: 400;
         top: 46%;
-        left: 0;
-        right: 0;
-        margin: auto;
       "
     >
       <div class="py-4 transparentBackground">
         <h1
           class="page-section-heading text-center text-uppercase text-secondary mb-0"
         >
-          Chake Denuncias
+          Rohecha Denuncias
+        </h1>
+        <br />
+        <a class="btn btn-xl btn-primary" href="{% url 'map' %}">
+          <i class="fas fa-map mr-2"></i>
+          Ver Mapa
+        </a>
+      </div>
+    </div>
+    <div
+      class="d-block d-lg-none">
+      <div class="py-4 transparentBackground">
+        <h1
+          class="page-section-heading text-center text-uppercase text-secondary mb-0"
+        >
+          Rohecha Denuncias
         </h1>
         <br />
         <a class="btn btn-xl btn-primary" href="{% url 'map' %}">
@@ -56,7 +67,7 @@
   </div>
 </header>
 <!-- Seccion Sobre el Sitio -->
-<section class="page-section portfolio" id="sobre">
+<section class="page-section portfolio py-2 py-lg-4" id="sobre">
   <div class="container">
     <!-- Sobre el sitio Heading -->
     <h2
@@ -75,7 +86,7 @@
     <div class="row">
       <div class="col-lg-12 ml-auto">
         <p class="lead">
-          Chake es una plataforma dedicada a mejorar la calidad de vida en
+          Rohecha es una plataforma dedicada a mejorar la calidad de vida en
           nuestras comunidades al proporcionar un espacio donde los ciudadanos
           pueden reportar problemas urbanos. Estos reportes se visualizan en un
           mapa interactivo accesible para todos. La plataforma no solo facilita
