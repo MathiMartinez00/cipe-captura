@@ -5,7 +5,10 @@
 {{ stats|json_script:'stats' }}
 
 <div class="container-fluid">
-  <div class="fw-bold fs-3 text-center mt-4">Denuncias por ciudadades</div>
+  <div class="fw-bold fs-3 text-center mt-4 text-secondary">Denuncias por ciudadades</div>
+  <div class="divider-custom">
+    <div class="divider-custom-line"></div>
+  </div>
   <div id="main" class="w-auto" style="height: 400px"></div>
 
   <div class="d-flex justify-content-center mb-4 gap-4">
@@ -23,7 +26,10 @@
     </button>
   </div>
 
-  <p class="fw-bold fs-3 text-center">Denuncias por tipo de denuncia</p>
+  <p class="fw-bold fs-3 text-center text-secondary">Denuncias por tipo de denuncia</p>
+  <div class="divider-custom">
+    <div class="divider-custom-line"></div>
+  </div>
   <div id="main2" class="w-auto" style="height: 400px"></div>
 
   <div class="d-flex justify-content-center mb-4 gap-4">
