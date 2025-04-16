@@ -77,7 +77,9 @@ async function addComplaintMarkers(complaints, map, markerClusterer, isMarkerInt
 
   complaints.map((complaint) => {
     const glyphPotholeSvgPinElement = new PinElement({
-      glyph: 'B',
+      glyph: complaint.complaint_type.code[0],
+      background: complaint.complaint_type.color,
+      borderColor: complaint.complaint_type.color,
       glyphColor: 'white',
     });
     const marker = new AdvancedMarkerElement({
@@ -132,24 +134,24 @@ async function addComplaintMarkers(complaints, map, markerClusterer, isMarkerInt
   
         modalBootstrap.show();
       });
+      const infowWindow = new google.maps.InfoWindow({
+        content: `<div>${complaint.complaint_type.name}<div>`,
+        ariaLabel: "Denuncia",
+        headerDisabled: true,
+      });
+  
+      marker.content.addEventListener("mouseenter", (e) => {
+        infowWindow.open({
+          anchor: marker,
+          map,
+        });
+      });
+  
+      marker.content.addEventListener("mouseleave", (e) => {
+        infowWindow.close();
+      });
     }
 
-    const infowWindow = new google.maps.InfoWindow({
-      content: `<div>${complaint.complaint_type.name}<div>`,
-      ariaLabel: "Denuncia",
-      headerDisabled: true,
-    });
-
-    marker.content.addEventListener("mouseenter", (e) => {
-      infowWindow.open({
-        anchor: marker,
-        map,
-      });
-    });
-
-    marker.content.addEventListener("mouseleave", (e) => {
-      infowWindow.close();
-    });
     markerClusterer.addMarker(marker);
     return marker;
   });
