@@ -8,7 +8,7 @@
     // Use the 'v' parameter to indicate the version to use (weekly, beta, alpha, etc.).
     // Add other bootstrap parameters as needed, using camel case.
   });
-  const { map, markerClusterer } = await initMap('map');
+  const { map, markerClusterer } = await initMap('map', false);
   
   await addComplaintMarkers({{ complaints|safe }}, map, markerClusterer, false);
   {% endblock %}

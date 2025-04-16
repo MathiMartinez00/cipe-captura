@@ -134,6 +134,7 @@ async function addComplaintMarkers(complaints, map, markerClusterer, isMarkerInt
   
         modalBootstrap.show();
       });
+
       const infowWindow = new google.maps.InfoWindow({
         content: `<div>${complaint.complaint_type.name}<div>`,
         ariaLabel: "Denuncia",
@@ -209,15 +210,75 @@ function removeMarkers(markerClusterer) {
 
 /**
  * @param {string} mapDivId - Div's id where the map will be rendered.
+ * @param {boolean} isHomePage
  */
-async function initMap(mapDivId) {
-  const position = { lat: -23.4425, lng: -58.4438 };
+async function initMap(mapDivId, isHomePage) {
+  const position = { lat: -25.3, lng: -57.63333 };
   const { Map } = await google.maps.importLibrary("maps");
   const map = new Map(document.getElementById(mapDivId), {
-    zoom: 6,
+    zoom: 12,
     center: position,
     mapId: "DEMO_MAP_ID",
   });
   const markerCluster = new markerClusterer.MarkerClusterer({ map });
+
+  const infowWindow = new google.maps.InfoWindow({
+    ariaLabel: "Aviso",
+    headerDisabled: true,
+  });
+
+  const locationButton = document.createElement("button");
+  locationButton.textContent = "Mostrar ubicación actual";
+  locationButton.style.backgroundColor = '#fff';
+  locationButton.style.border = '0';
+  locationButton.style.borderRadius = '2px';
+  locationButton.style.boxShadow = '0 1px 4px -1px rgba(0, 0, 0, 0.3)';
+  locationButton.style.margin = '10px';
+  locationButton.style.padding = '0 0.5em';
+  locationButton.style.font = '400 18px Roboto, Arial, sans-serif';
+  locationButton.style.overflow = 'hidden';
+  locationButton.style.height = '40px';
+  locationButton.style.cursor = 'pointer';
+
+  if (isHomePage) {
+    map.controls[google.maps.ControlPosition.TOP_CENTER].push(locationButton);
+  }
+
+  locationButton.addEventListener("click", () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const pos = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          };
+
+          map.setCenter(pos);
+          const zoomLevel = map.getZoom();
+          if (zoomLevel === undefined || zoomLevel <= 15) {
+            map.setZoom(15);
+          }
+        },
+        () => {
+          handleLocationError(true, infowWindow, map.getCenter());
+        }
+      )
+    } else {
+      handleLocationError(false, infoWindow, map.getCenter());
+    }
+  });
   return { map, markerClusterer: markerCluster };
+}
+
+function handleLocationError(
+  browserHasGeolocation,
+  infoWindow,
+  pos
+) {
+  infoWindow.setPosition(pos);
+  infoWindow.setContent(
+    browserHasGeolocation
+      ? "Error: No se pudo obtener la ubicación."
+      : "Error: Tu navegador no ."
+  )
 }

@@ -3,7 +3,7 @@
 <script>
 {% block javascript %}
     // Google Maps Map instance
-    const { map, markerClusterer } = await initMap('map-registration');
+    const { map, markerClusterer } = await initMap('map-registration', true);
     const { AdvancedMarkerElement, PinElement } = await google.maps.importLibrary(
         "marker",
     );
