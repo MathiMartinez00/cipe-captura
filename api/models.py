@@ -24,6 +24,7 @@ def create_auth_token(sender, instance=None, created=False, **kwargs):
 class ComplaintType(models.Model):
     name = models.CharField(max_length=64)
     code = models.CharField(max_length=8)
+    color = models.CharField(max_length=18)
 
     def __str__(self):
         return self.name
@@ -31,6 +32,8 @@ class ComplaintType(models.Model):
 
 class City(models.Model):
     name = models.CharField(max_length=64)
+    code = models.CharField(max_length=8)
+    color = models.CharField(max_length=18)
 
     def __str__(self):
         return self.name

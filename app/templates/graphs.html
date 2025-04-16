@@ -75,7 +75,7 @@
 
 <script>
 {% block javascript %}
-  // TODO: Ver tema colorcitos
+  // TODO: See if there's a way to display both the shorthand and label on click/hover.
   const stats = JSON.parse(document.querySelector('#stats').textContent);
 
   const mainDiv = document.querySelector('#main');
@@ -86,7 +86,7 @@
       tooltip: {},
       legend: {},
       xAxis: {
-        data: stats.complaints_per_city.map((complaint) => complaint.city)
+        data: stats.complaints_per_city.map((complaint) => complaint.city),
       },
       yAxis: {},
       series: [{ 
@@ -108,7 +108,7 @@
       tooltip: {},
       legend: {},
       xAxis: {
-        data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type)
+        data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type),
       },
       yAxis: {},
       series: [{ 

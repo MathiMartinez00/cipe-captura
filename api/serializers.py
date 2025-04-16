@@ -64,9 +64,9 @@ class ComplaintVoteSerializer(serializers.ModelSerializer):
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'code']
 
 class ComplaintTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComplaintType
-        fields = ['id', 'name']
+        fields = ['id', 'name', 'code']
