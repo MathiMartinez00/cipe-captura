@@ -130,6 +130,8 @@ class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestr
             return ComplaintSerializerRead
         if self.request.method == 'POST':
             return ComplaintSerializerWrite
+        else:
+            return ComplaintSerializerRead
 
 
 class DownloadComplaintsPerCityReportView(APIView):
@@ -167,6 +169,7 @@ class DownloadComplaintsPerComplaintTypeReportView(APIView):
 class CityListView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
+    serializer_class = CitySerializer
 
     def get(self, request):
         city_id = request.query_params.get('id', None)
@@ -179,6 +182,7 @@ class CityListView(APIView):
 class ComplaintTypeListView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
+    serializer_class = ComplaintTypeSerializer
 
     def get(self, request):
         city_id = request.query_params.get('id', None)

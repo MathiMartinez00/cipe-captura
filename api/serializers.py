@@ -3,6 +3,11 @@ from django.core.files.base import ContentFile
 from rest_framework import serializers
 from api.models import Complaint, ComplaintVote, City, ComplaintType
 from django.db.models import Count
+from typing import TypedDict
+
+class VoteCount(TypedDict):
+    Y: int
+    N: int
 
 class ComplaintSerializerRead(serializers.ModelSerializer):
     photo_base64 = serializers.CharField(required=False, allow_blank=True)
@@ -13,7 +18,7 @@ class ComplaintSerializerRead(serializers.ModelSerializer):
         fields = ['id', 'complaint_type', 'description', 'city', 'latitude', 'longitude', 'road_type', 'created_at', 'photo_base64', 'votes']
         depth = 1
 
-    def get_votes(self, obj):
+    def get_votes(self, obj) -> VoteCount:
         votes = obj.votes.all()
         if votes:
             votes_count = {
@@ -58,7 +63,7 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
 class ComplaintVoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComplaintVote
-        fields = ['id', 'name']
+        fields = ['id', 'vote_type']
 
 
 class CitySerializer(serializers.ModelSerializer):
