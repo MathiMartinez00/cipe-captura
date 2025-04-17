@@ -1,0 +1,1094 @@
+openapi: 3.0.3
+info:
+  title: Rohecha API
+  version: 1.0.0
+  description: API REST de la aplicación Rohecha para consultar denuncias
+paths:
+  /api/cities/:
+    get:
+      operationId: api_cities_retrieve
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/City'
+          description: ''
+  /api/cities{format}:
+    get:
+      operationId: api_cities_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/City'
+          description: ''
+  /api/complaint-types/:
+    get:
+      operationId: api_complaint_types_retrieve
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintType'
+          description: ''
+  /api/complaint-types{format}:
+    get:
+      operationId: api_complaint_types_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintType'
+          description: ''
+  /api/complaint-votes/:
+    get:
+      operationId: api_complaint_votes_list
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ComplaintVote'
+          description: ''
+    post:
+      operationId: api_complaint_votes_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintVote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintVote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintVote'
+        required: true
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintVote'
+          description: ''
+  /api/complaint-votes/{id}/:
+    get:
+      operationId: api_complaint_votes_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this complaint vote.
+        required: true
+      tags:
+      - api
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintVote'
+          description: ''
+    put:
+      operationId: api_complaint_votes_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this complaint vote.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintVote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintVote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintVote'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintVote'
+          description: ''
+    patch:
+      operationId: api_complaint_votes_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this complaint vote.
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintVote'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintVote'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintVote'
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintVote'
+          description: ''
+    delete:
+      operationId: api_complaint_votes_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this complaint vote.
+        required: true
+      tags:
+      - api
+      responses:
+        '204':
+          description: No response body
+  /api/complaints/:
+    get:
+      operationId: api_complaints_list
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    post:
+      operationId: api_complaints_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerWrite'
+          description: ''
+    put:
+      operationId: api_complaints_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    patch:
+      operationId: api_complaints_partial_update
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    delete:
+      operationId: api_complaints_destroy
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/complaints{format}:
+    get:
+      operationId: api_complaints_formatted_list_2
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    post:
+      operationId: api_complaints_formatted_create_2
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerWrite'
+          description: ''
+    put:
+      operationId: api_complaints_formatted_update_2
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    patch:
+      operationId: api_complaints_formatted_partial_update_2
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    delete:
+      operationId: api_complaints_formatted_destroy_2
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/complaints/{id}/:
+    get:
+      operationId: api_complaints_list_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    post:
+      operationId: api_complaints_create_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerWrite'
+          description: ''
+    put:
+      operationId: api_complaints_update_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    patch:
+      operationId: api_complaints_partial_update_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    delete:
+      operationId: api_complaints_destroy_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/complaints/{id}{format}:
+    get:
+      operationId: api_complaints_formatted_list
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    post:
+      operationId: api_complaints_formatted_create
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerWrite'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerWrite'
+          description: ''
+    put:
+      operationId: api_complaints_formatted_update
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ComplaintSerializerRead'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    patch:
+      operationId: api_complaints_formatted_partial_update
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedComplaintSerializerRead'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ComplaintSerializerRead'
+          description: ''
+    delete:
+      operationId: api_complaints_formatted_destroy
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/reports/complaints-per-city/:
+    get:
+      operationId: api_reports_complaints_per_city_retrieve
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/reports/complaints-per-city{format}:
+    get:
+      operationId: api_reports_complaints_per_city_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/reports/complaints-per-complaint-type/:
+    get:
+      operationId: api_reports_complaints_per_complaint_type_retrieve
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/reports/complaints-per-complaint-type{format}:
+    get:
+      operationId: api_reports_complaints_per_complaint_type_formatted_retrieve
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/users/token/:
+    post:
+      operationId: api_users_token_create
+      tags:
+      - api
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+  /api/users/token{format}:
+    post:
+      operationId: api_users_token_formatted_create
+      parameters:
+      - in: path
+        name: format
+        schema:
+          type: string
+          enum:
+          - .json
+        required: true
+      tags:
+      - api
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthToken'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthToken'
+          description: ''
+components:
+  schemas:
+    AuthToken:
+      type: object
+      properties:
+        username:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        token:
+          type: string
+          readOnly: true
+      required:
+      - password
+      - token
+      - username
+    City:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 64
+        code:
+          type: string
+          maxLength: 8
+      required:
+      - code
+      - id
+      - name
+    ComplaintSerializerRead:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        complaint_type:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        road_type:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        photo_base64:
+          type: string
+        votes:
+          type: object
+          properties:
+            Y:
+              type: integer
+            N:
+              type: integer
+          required:
+          - N
+          - Y
+          readOnly: true
+      required:
+      - city
+      - complaint_type
+      - created_at
+      - id
+      - latitude
+      - longitude
+      - road_type
+      - votes
+    ComplaintSerializerWrite:
+      type: object
+      properties:
+        complaint_type:
+          type: integer
+        description:
+          type: string
+          nullable: true
+        city:
+          type: integer
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        road_type:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        photo_base64:
+          type: string
+      required:
+      - city
+      - complaint_type
+      - created_at
+      - latitude
+      - longitude
+    ComplaintType:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 64
+        code:
+          type: string
+          maxLength: 8
+      required:
+      - code
+      - id
+      - name
+    ComplaintVote:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        vote_type:
+          $ref: '#/components/schemas/VoteTypeEnum'
+      required:
+      - id
+      - vote_type
+    Nested:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 64
+        code:
+          type: string
+          maxLength: 8
+        color:
+          type: string
+          maxLength: 18
+      required:
+      - code
+      - color
+      - id
+      - name
+    PatchedComplaintSerializerRead:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        complaint_type:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        description:
+          type: string
+          nullable: true
+        city:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        latitude:
+          type: number
+          format: double
+        longitude:
+          type: number
+          format: double
+        road_type:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        photo_base64:
+          type: string
+        votes:
+          type: object
+          properties:
+            Y:
+              type: integer
+            N:
+              type: integer
+          required:
+          - N
+          - Y
+          readOnly: true
+    PatchedComplaintVote:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        vote_type:
+          $ref: '#/components/schemas/VoteTypeEnum'
+    VoteTypeEnum:
+      enum:
+      - Y
+      - N
+      type: string
+      description: |-
+        * `Y` - Yes
+        * `N` - No
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

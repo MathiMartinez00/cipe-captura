@@ -8,7 +8,7 @@ from django.contrib.auth.hashers import check_password
 from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
-from rest_framework import viewsets
+from rest_framework import viewsets, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from api.models import Complaint, ComplaintVote, City, ComplaintType
@@ -88,7 +88,7 @@ class GetUserToken(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ComplaintVoteViewSet(viewsets.ModelViewSet):
+class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
     queryset = ComplaintVote.objects.all()
     serializer_class = ComplaintVoteSerializer
     permission_classes = []
@@ -100,7 +100,7 @@ class ComplaintVoteViewSet(viewsets.ModelViewSet):
         else:
             serializer.save(user=None, complaint_id=self.request.data['complaint'], vote_type=self.request.data['vote_type'])
 
-class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveUpdateDestroyAPIView):
+class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveAPIView):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 

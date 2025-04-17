@@ -193,4 +193,10 @@ SPECTACULAR_SETTINGS = {
     'DESCRIPTION': 'API REST de la aplicación Rohecha para consultar denuncias',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
+    'SERVERS': [
+        {
+            'url': 'https://097l4f27wj.execute-api.us-east-1.amazonaws.com/',
+            'description': 'API Gateway con conexión a función Lambda',
+        }
+    ]
 }
