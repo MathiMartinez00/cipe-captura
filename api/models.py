@@ -27,7 +27,7 @@ class ComplaintType(models.Model):
     color = models.CharField(max_length=18)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.code}'
 
 
 class City(models.Model):
@@ -36,7 +36,7 @@ class City(models.Model):
     color = models.CharField(max_length=18)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.code}'
 
 
 class RoadType(models.Model):

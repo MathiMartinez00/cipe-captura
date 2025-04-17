@@ -120,9 +120,19 @@ class ComplaintsStatsReporter:
                 complaint_types_dict[complaint.complaint_type.id] += 1
             complaint_count = len(complaint_list)
             cities_ordered = sorted(cities_dict.items(), key=lambda x: x[1], reverse=True)
-            complaints_per_city = [{'count': city[1], 'city': cities.get(pk=city[0]).code, 'color': self.colors.get(index, '#9e0142')} for index, city in enumerate(cities_ordered)]
+            complaints_per_city = [{
+                'count': city[1],
+                'city_name': cities.get(pk=city[0]).name,
+                'city_code': cities.get(pk=city[0]).code,
+                'color': self.colors.get(index, '#9e0142')
+            } for index, city in enumerate(cities_ordered)]
             complaint_types_ordered = sorted(complaint_types_dict.items(), key=lambda x: x[1], reverse=True)
-            complaints_per_complaint_type = [{'count': complaint_type[1], 'complaint_type': complaint_types.get(pk=complaint_type[0]).code, 'color': complaint_types.get(pk=complaint_type[0]).color} for index, complaint_type in enumerate(complaint_types_ordered)]
+            complaints_per_complaint_type = [{
+                'count': complaint_type[1],
+                'complaint_type_name': complaint_types.get(pk=complaint_type[0]).name,
+                'complaint_type_code': complaint_types.get(pk=complaint_type[0]).code,
+                'color': complaint_types.get(pk=complaint_type[0]).color
+            } for index, complaint_type in enumerate(complaint_types_ordered)]
             statistics = {
                 'complaint_count': complaint_count,
                 'complaints_per_city': complaints_per_city,

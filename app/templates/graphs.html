@@ -86,12 +86,13 @@
       tooltip: {},
       legend: {},
       xAxis: {
-        data: stats.complaints_per_city.map((complaint) => complaint.city),
+        data: stats.complaints_per_city.map((complaint) => complaint.city_code),
       },
       yAxis: {},
       series: [{ 
         type: 'bar',
         data: stats.complaints_per_city.map((complaint) => ({ 
+          name: complaint.city_name,
           value: complaint.count,
           itemStyle: { color: complaint.color },
         })),
@@ -108,12 +109,13 @@
       tooltip: {},
       legend: {},
       xAxis: {
-        data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type),
+        data: stats.complaints_per_complaint_type.map((complaint) => complaint.complaint_type_code),
       },
       yAxis: {},
       series: [{ 
         type: 'bar',
         data: stats.complaints_per_complaint_type.map((complaint) => ({ 
+          name: complaint.complaint_type_name,
           value: complaint.count,
           itemStyle: { color: complaint.color },
         })),
