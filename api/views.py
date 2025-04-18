@@ -15,6 +15,8 @@ from api.models import Complaint, ComplaintVote, City, ComplaintType
 from api.serializers import ComplaintTypeSerializer, ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer, CitySerializer
 from app.models import Scientist
 from app.utils import ComplaintsStatsReporter
+from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view
+from drf_spectacular.types import OpenApiTypes
 import logging
 import json
 logger = logging.getLogger(__name__)
@@ -88,11 +90,26 @@ class GetUserToken(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixins.RetrieveModelMixin, viewsets.GenericViewSet):
+@extend_schema_view(
+    list=extend_schema(
+        description='Lista las votaciones de las denuncias.',
+        parameters=[
+            OpenApiParameter('complaint-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id de la denuncia.')
+        ]
+    )
+)
+class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = ComplaintVote.objects.all()
     serializer_class = ComplaintVoteSerializer
     permission_classes = []
     authentication_classes = []
+
+    def get_queryset(self):
+        queryset = ComplaintVote.objects.all()
+        complaint_id = self.request.query_params.get('complaint-id', None)
+        if complaint_id:
+            queryset = queryset.filter(complaint_id=complaint_id)
+        return queryset
 
     def perform_create(self, serializer):
         if self.request.user.is_authenticated:
@@ -100,10 +117,23 @@ class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, mixin
         else:
             serializer.save(user=None, complaint_id=self.request.data['complaint'], vote_type=self.request.data['vote_type'])
 
-class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveAPIView):
+
+@extend_schema_view(
+    list=extend_schema(
+        description='Lista todas las denuncias.',
+        parameters=[
+            OpenApiParameter('id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id de la denuncia.'),
+            OpenApiParameter('complaint-type-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id del tipo de denuncia.'),
+            OpenApiParameter('start-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Inicio de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd.', default='2024-11-05'),
+            OpenApiParameter('end-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Fin de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd.', default='2024-11-05'),
+            OpenApiParameter('date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Día de la denuncia. Utilizado cuando se busca solo por un día. Debe seguir el formato YYYY-mm-dd.', default='2024-11-05'),
+        ],
+    )
+)
+class ComplaintListView(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
-
+    
     def get_queryset(self):
         queryset = Complaint.objects.all()
         search_params = self.request.query_params
@@ -122,6 +152,9 @@ class ComplaintListView(generics.ListCreateAPIView, generics.RetrieveAPIView):
             queryset = queryset.filter(created_at__date__gte=start_date, created_at__date__lte=end_date)
         return queryset
 
+    @extend_schema(
+        description='Prueba',
+    )
     def perform_create(self, serializer):
         serializer.save()
 
@@ -138,6 +171,11 @@ class DownloadComplaintsPerCityReportView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".')
+        ]
+    )
     def get(self, request):
         format = request.query_params.get('report-format', 'csv')
         start_date = request.query_params.get('start-date', None)
@@ -154,6 +192,11 @@ class DownloadComplaintsPerComplaintTypeReportView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".')
+        ]
+    )
     def get(self, request, format=None):
         format = request.query_params.get('report-format', 'csv')
         start_date = request.query_params.get('start-date', None)
@@ -171,6 +214,11 @@ class CityListView(APIView):
     authentication_classes = [TokenAuthentication]
     serializer_class = CitySerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter('id', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Id de la ciudad.')
+        ]
+    )
     def get(self, request):
         city_id = request.query_params.get('id', None)
         queryset = City.objects.all()
@@ -184,6 +232,11 @@ class ComplaintTypeListView(APIView):
     authentication_classes = [TokenAuthentication]
     serializer_class = ComplaintTypeSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter('id', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Id del tipo de denuncia.')
+        ]
+    )
     def get(self, request):
         city_id = request.query_params.get('id', None)
         queryset = ComplaintType.objects.all()

@@ -9,31 +9,6 @@ class VoteCount(TypedDict):
     Y: int
     N: int
 
-class ComplaintSerializerRead(serializers.ModelSerializer):
-    photo_base64 = serializers.CharField(required=False, allow_blank=True)
-    votes = serializers.SerializerMethodField()
-
-    class Meta:
-        model = Complaint
-        fields = ['id', 'complaint_type', 'description', 'city', 'latitude', 'longitude', 'road_type', 'created_at', 'photo_base64', 'votes']
-        depth = 1
-
-    def get_votes(self, obj) -> VoteCount:
-        votes = obj.votes.all()
-        if votes:
-            votes_count = {
-                'Y': votes.filter(vote_type='Y').count(),
-                'N': votes.filter(vote_type='N').count(),
-            }
-            return votes_count
-        else:
-            return {
-                'Y': 0,
-                'N': 0,
-            }
-            
-
-
 class ComplaintSerializerWrite(serializers.ModelSerializer):
     photo_base64 = serializers.CharField(required=False, allow_blank=True)
 
@@ -75,3 +50,28 @@ class ComplaintTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComplaintType
         fields = ['id', 'name', 'code']
+
+class ComplaintSerializerRead(serializers.ModelSerializer):
+    photo_base64 = serializers.CharField(required=False, allow_blank=True)
+    votes = serializers.SerializerMethodField()
+    city = CitySerializer()
+    complaint_type = ComplaintTypeSerializer()
+
+    class Meta:
+        model = Complaint
+        fields = ['id', 'complaint_type', 'description', 'city', 'latitude', 'longitude', 'created_at', 'photo_base64', 'votes']
+        depth = 1
+
+    def get_votes(self, obj) -> VoteCount:
+        votes = obj.votes.all()
+        if votes:
+            votes_count = {
+                'Y': votes.filter(vote_type='Y').count(),
+                'N': votes.filter(vote_type='N').count(),
+            }
+            return votes_count
+        else:
+            return {
+                'Y': 0,
+                'N': 0,
+            }
