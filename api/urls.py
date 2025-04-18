@@ -1,15 +1,15 @@
 from django.urls import path
-from api.views import ComplaintTypeListView, ComplaintListView, ComplaintVoteViewSet, DownloadComplaintsPerCityReportView, DownloadComplaintsPerComplaintTypeReportView, CityListView
+from api.views import ComplaintTypeListView, ComplaintListCreateView, ComplaintVoteViewSet, DownloadComplaintsPerCityReportView, DownloadComplaintsPerComplaintTypeReportView, CityListView, GetUserTokenView
 from rest_framework.authtoken import views
 from rest_framework import routers
 from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 
 router = routers.SimpleRouter()
 router.register(r'complaint-votes', ComplaintVoteViewSet)
-router.register(r'complaints', ComplaintListView, 'complaints')
+router.register(r'complaints', ComplaintListCreateView, 'complaints')
 
 urlpatterns = [
-    path('users/token/', views.obtain_auth_token, name='get-user-token'),
+    path('users/token/', GetUserTokenView.as_view(), name='get-user-token'),
     path('cities/', CityListView.as_view(), name='city-list'),
     path('complaint-types/', ComplaintTypeListView.as_view(), name='complaint-type-list'),
     path('reports/complaints-per-city/', DownloadComplaintsPerCityReportView.as_view(), name='api-complaints-per-city-report'),

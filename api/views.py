@@ -5,17 +5,18 @@ from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 from django.contrib.auth.models import User
 from django.contrib.auth.hashers import check_password
-from rest_framework import generics
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, mixins
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 from api.models import Complaint, ComplaintVote, City, ComplaintType
-from api.serializers import ComplaintTypeSerializer, ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer, CitySerializer
+from api.serializers import ComplaintTypeSerializer, ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer, CitySerializer, AuthTokenRequestSerializer
 from app.models import Scientist
 from app.utils import ComplaintsStatsReporter
-from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view
+from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
 import logging
 import json
@@ -71,31 +72,47 @@ class ScientistDetailView(View):
 
 
 @method_decorator(csrf_exempt, name='dispatch')
-class GetUserToken(View):
-    requires_auth = False
+class GetUserTokenView(ObtainAuthToken):
+    permission_classes = []
+    authentication_classes = []
 
+    @extend_schema(
+        description='Retorna el token de un usuario.',
+        examples=[
+            OpenApiExample(
+                'Ejemplo',
+                description="Consigue el token del usuario 'username' con la contraseña 'password'.",
+                value={
+                    'username': 'username',
+                    'password': 'password',
+                },
+                media_type='application/json',
+                request_only=True
+            )
+        ],
+        request={'application/json': AuthTokenRequestSerializer}
+    )
     def post(self, request, *args, **kwargs):
-        try:
-            credentials = json.loads(request.body)
-            user = User.objects.get(username=credentials['username'])
-        except User.DoesNotExist:
-            return JsonResponse({'error': 'Invalid credentials.'}, status=400)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
-
-        if check_password(credentials['password'], user.password):
-            return JsonResponse({'token': user.usertoken.bearer_token})
-
-        return JsonResponse({'message': 'Invalid credentials.'}, status=400)
+        serializer = self.serializer_class(data=request.data,
+                                           context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        return Response({
+            'token': token.key,
+        })
 
 
 @method_decorator(csrf_exempt, name='dispatch')
 @extend_schema_view(
     list=extend_schema(
-        description='Lista las votaciones de las denuncias.',
+        description="Lista los votos de las denuncias. Los votos tienen el campo 'vote_type' para indicar si las denuncias ya fueron resueltas (vote_type='Y') o no (vote_type='N').",
         parameters=[
             OpenApiParameter('complaint-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id de la denuncia.')
         ]
+    ),
+    create=extend_schema(
+        description="Crea un voto para una denuncia. El voto tiene el campo 'vote_type' para indicar si ya se resolvió la denuncia (vote_type='Y') o no (vote_type='N')."
     )
 )
 class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -128,9 +145,12 @@ class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, views
             OpenApiParameter('end-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Fin de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd.', default='2024-11-05'),
             OpenApiParameter('date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Día de la denuncia. Utilizado cuando se busca solo por un día. Debe seguir el formato YYYY-mm-dd.', default='2024-11-05'),
         ],
+    ),
+    create=extend_schema(
+        description="Crea una denuncia. Para adjuntar una foto a una denuncia, se debe utilizar el campo 'photo_base64' el cual debe tener una codificación en base64 de la foto."
     )
 )
-class ComplaintListView(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
+class ComplaintListCreateView(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
     
@@ -172,6 +192,7 @@ class DownloadComplaintsPerCityReportView(APIView):
     authentication_classes = [TokenAuthentication]
 
     @extend_schema(
+        description="Genera el reporte de las denuncias hechas por ciudad. El formato puede ser csv (report-format='csv') o json (report-format='json').",
         parameters=[
             OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".')
         ]
@@ -193,6 +214,7 @@ class DownloadComplaintsPerComplaintTypeReportView(APIView):
     authentication_classes = [TokenAuthentication]
 
     @extend_schema(
+        description="Genera el reporte de las denuncias hechas por tipo de denuncia. El formato puede ser csv (report-format='csv') o json (report-format='json').",
         parameters=[
             OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".')
         ]
@@ -208,13 +230,15 @@ class DownloadComplaintsPerComplaintTypeReportView(APIView):
             return complaints_reporter.generate_complaints_per_complaint_count_json_report()
         else:
             return complaints_reporter.get_error_response()
-        
+
+
 class CityListView(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication]
     serializer_class = CitySerializer
 
     @extend_schema(
+        description='Lista las ciudades.',
         parameters=[
             OpenApiParameter('id', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Id de la ciudad.')
         ]
@@ -233,9 +257,11 @@ class ComplaintTypeListView(APIView):
     serializer_class = ComplaintTypeSerializer
 
     @extend_schema(
+        description='Lista los tipos de denuncia.',
         parameters=[
             OpenApiParameter('id', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Id del tipo de denuncia.')
-        ]
+        ],
+
     )
     def get(self, request):
         city_id = request.query_params.get('id', None)

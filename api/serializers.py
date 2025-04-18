@@ -2,7 +2,7 @@ import base64
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 from api.models import Complaint, ComplaintVote, City, ComplaintType
-from django.db.models import Count
+from drf_spectacular.utils import extend_schema_serializer, OpenApiExample
 from typing import TypedDict
 
 class VoteCount(TypedDict):
@@ -35,10 +35,23 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
         return complaint
 
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Ejemplo de votación',
+            description='Crea una votación para indicar que la denuncia con id 0 SI se resolvió.',
+            value={
+                'vote_type': 'Y',
+                'complaint_id': 0,
+            },
+            request_only=True
+        ),
+    ]
+)
 class ComplaintVoteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComplaintVote
-        fields = ['id', 'vote_type']
+        fields = ['id', 'vote_type', 'complaint_id']
 
 
 class CitySerializer(serializers.ModelSerializer):
@@ -75,3 +88,7 @@ class ComplaintSerializerRead(serializers.ModelSerializer):
                 'Y': 0,
                 'N': 0,
             }
+        
+class AuthTokenRequestSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField()
