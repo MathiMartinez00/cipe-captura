@@ -7,6 +7,7 @@ from django.conf import settings
 from urllib.parse import urlencode
 from api.models import Complaint, ComplaintType, City
 from django.http import HttpResponse, JsonResponse
+from typing import TypedDict
 
 gmaps = googlemaps.Client(key=f"{settings.GOOGLE_MAPS_API_KEY}")
 logger = logging.getLogger(__name__)
@@ -82,6 +83,24 @@ def get_location_info_from_name(location_name, language='es'):
         logger.error(f"Error when doing geo-coding {e}")
         return False, address, postal_code, city, region, country, latitude, longitude
 
+class ComplaintsPerCityReportDict(TypedDict):
+    count: int
+    city_name: str
+    city_code: str
+    color: str
+
+class ComplaintsPerComplaintTypeDict(TypedDict):
+    count: int
+    complaint_type_name: str
+    complaint_type_code: str
+    color: str
+
+class ComplaintsStatsDict(TypedDict):
+    complaint_count: int
+    complaints_per_city: list[ComplaintsPerCityReportDict]
+    complaints_per_complaint_type: list[ComplaintsPerComplaintTypeDict]
+
+
 class ComplaintsStatsReporter:
     # If adding more colors is necessary, you can do so here: https://supercolorpalette.com/?scp=G0-hsl-BE7023-BA8426-B7962A-B4A62D-ACB030-99AD34-87A937-77A63A-69A33E-5D9F41
     colors = {
@@ -100,7 +119,7 @@ class ComplaintsStatsReporter:
         self.start_date = start_date
         self.end_date = end_date
 
-    def get_complaints_stats(self):
+    def get_complaints_stats(self) -> ComplaintsStatsDict:
         complaint_list = list()
         complaints = Complaint.objects.all()
         if self.start_date and self.end_date:
@@ -149,8 +168,8 @@ class ComplaintsStatsReporter:
             )
 
             writer = csv.writer(response)
-            writer.writerow(["city", "complaint_count"])
-            writer.writerows([[complaints_per_city['city'], complaints_per_city['count']] for complaints_per_city in complaint_stats['complaints_per_city']])
+            writer.writerow(["city_name", "city_code", "complaint_count"])
+            writer.writerows([[complaint['city_name'], complaint['city_code'], complaint['count']] for complaint in complaint_stats['complaints_per_city']])
 
             return response
         
@@ -172,8 +191,8 @@ class ComplaintsStatsReporter:
             )
 
             writer = csv.writer(response)
-            writer.writerow(["city", "complaint_count"])
-            writer.writerows([[complaints_per_complaint_type['complaint_type'], complaints_per_complaint_type['count']] for complaints_per_complaint_type in complaint_stats['complaints_per_complaint_type']])
+            writer.writerow(["complaint_type_name", "complaint_type_code", "complaint_count"])
+            writer.writerows([[complaint['complaint_type_name'], complaint['complaint_type_code'], complaint['count']] for complaint in complaint_stats['complaints_per_complaint_type']])
 
             return response
         
