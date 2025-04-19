@@ -106,7 +106,7 @@ def registration(request):
                 latitude=form.cleaned_data['location_lat'],
                 longitude=form.cleaned_data['location_lng'],
                 road_type=None,
-                photo=form.cleaned_data['photo'],
+                photo=request.FILES['photo'],
                 altitude=0,
                 accuracy=0,
                 captura_id=None,
@@ -135,7 +135,7 @@ def success_registration(request):
     return render(request, 'success.html')
 
 
-def map_scientists(request):
+def complaints_map_view(request):
     cities = City.objects.all()
     complaint_types = ComplaintType.objects.all()
     complaints = Complaint.objects.all()

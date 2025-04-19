@@ -65,14 +65,13 @@ class ComplaintTypeSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'code']
 
 class ComplaintSerializerRead(serializers.ModelSerializer):
-    photo_base64 = serializers.CharField(required=False, allow_blank=True)
     votes = serializers.SerializerMethodField()
     city = CitySerializer()
     complaint_type = ComplaintTypeSerializer()
 
     class Meta:
         model = Complaint
-        fields = ['id', 'complaint_type', 'description', 'city', 'latitude', 'longitude', 'created_at', 'photo_base64', 'votes']
+        fields = ['id', 'complaint_type', 'description', 'city', 'latitude', 'longitude', 'photo', 'created_at', 'votes']
         depth = 1
 
     def get_votes(self, obj) -> VoteCount:
