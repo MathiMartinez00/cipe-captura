@@ -196,7 +196,7 @@ SPECTACULAR_SETTINGS = {
     'SERVERS': [
         {
             'url': 'https://097l4f27wj.execute-api.us-east-1.amazonaws.com/',
-            'description': 'API Gateway con conexión a función Lambda',
+            'description': 'API Serverless',
         }
     ]
 }

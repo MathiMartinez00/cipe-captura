@@ -15,12 +15,17 @@ def get_json_response(response):
         'body': response.text
     }
 
-def get_raw_response(response):
+def get_method_not_supported_response():
     return {
         'isBase64Encoded': False,
-        'statusCode': response.status_code,
-        'headers': { 'Content-Type': 'application/json' },
-        'body': response.text
+        'statusCode': 405,
+        'headers': { 
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Headers': 'Content-Type',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+        },
+        'body': json.dumps({'error': 'Method not supported'})
     }
 
 def lambda_handler(event, context):
@@ -45,18 +50,13 @@ def lambda_handler(event, context):
             response = requests.post(f'{os.environ.get('REST_DOMAIN')}/api/complaint-votes/', headers=event['headers'], data=event['body'])
             return get_json_response(response)
         else:
-            return {
-                'isBase64Encoded': False,
-                'statusCode': 405,
-                'headers': {'Content-Type': 'application/json'},
-                'body': json.dumps({'error': 'Method not supported'})
-            }
+            return get_method_not_supported_response()
 
     if event['resource'] == '/reports/complaints-per-city':
-        format = 'csv'
+        format = 'json'
         if event['queryStringParameters']:
             format = event['queryStringParameters'].get('report-format')
-
+        
         response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/reports/complaints-per-city/', headers=event['headers'], params=event['queryStringParameters'])
 
         if format == 'csv':
@@ -64,19 +64,19 @@ def lambda_handler(event, context):
                 'isBase64Encoded': False,
                 'statusCode': response.status_code,
                 'headers': { 
-                    'Content-Type': 'text/csv', 
-                    "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"',
+                    'Content-Type': 'text/csv; charset=utf-8',
+                    "Content-Disposition": 'attachment; filename="complaints_per_city.csv"',
                     'Access-Control-Allow-Headers': 'Content-Type',
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
                 },
-                'body': response.text
+                'body': response.text.encode('latin1').decode('utf-8')
             }
         else:
             return get_json_response(response)
         
     if event['resource'] == '/reports/complaints-per-complaint-type':
-        format = 'csv'
+        format = 'json'
         if event['queryStringParameters']:
             format = event['queryStringParameters'].get('report-format')
 
@@ -87,13 +87,13 @@ def lambda_handler(event, context):
                 'isBase64Encoded': False,
                 'statusCode': response.status_code,
                 'headers': { 
-                    'Content-Type': 'text/csv', 
+                    'Content-Type': 'text/csv; charset=utf-8', 
                     "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"',
                     'Access-Control-Allow-Headers': 'Content-Type',
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
                 },
-                'body': response.text
+                'body': response.text.encode('latin1').decode('utf-8')
             }
         else:
             return get_json_response(response)
