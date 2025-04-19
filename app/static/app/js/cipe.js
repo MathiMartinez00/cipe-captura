@@ -230,6 +230,7 @@ async function initMap(mapDivId, isHomePage) {
   });
 
   const locationButton = document.createElement("button");
+  locationButton.type = "button";
   locationButton.textContent = "Mostrar ubicación actual";
   locationButton.style.backgroundColor = '#fff';
   locationButton.style.border = '0';
