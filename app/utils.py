@@ -163,7 +163,7 @@ class ComplaintsStatsReporter:
         complaint_stats = self.get_complaints_stats()
         if complaint_stats:
             response = HttpResponse(
-                content_type="text/csv",
+                content_type="text/csv; charset=utf-8",
                 headers={"Content-Disposition": 'attachment; filename="complaints_per_city.csv"'},
             )
 
@@ -186,7 +186,7 @@ class ComplaintsStatsReporter:
         complaint_stats = self.get_complaints_stats()
         if complaint_stats:
             response = HttpResponse(
-                content_type="text/csv",
+                content_type="text/csv; charset=utf-8",
                 headers={"Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
             )
 
