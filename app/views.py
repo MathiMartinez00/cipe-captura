@@ -105,7 +105,7 @@ def registration(request):
                 city=form.cleaned_data['city'],
                 latitude=form.cleaned_data['location_lat'],
                 longitude=form.cleaned_data['location_lng'],
-                road_type=form.cleaned_data['road_type'],
+                road_type=None,
                 photo=form.cleaned_data['photo'],
                 altitude=0,
                 accuracy=0,
