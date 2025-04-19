@@ -31,28 +31,8 @@ def lambda_handler(event, context):
 
     if event['resource'] == '/complaints':
         if event['httpMethod'] == 'GET':
-            response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaints/', headers={
-                'Authorization': event['headers']['Authorization']
-            })
-            if event['queryStringParameters'] is None:
-                return get_raw_response(response)
-
-            complaints = response.json()
-            matched_complaints = []
-
-            for complaint in complaints:
-                for (key, value) in event['queryStringParameters'].items():
-                    if key == 'id' and str(complaint['id']) == str(value):
-                        matched_complaints.append(complaint) 
-                    if key == 'complaint_type_id' and str(complaint['complaint_type']['id']) == str(value):
-                        matched_complaints.append(complaint) 
-        
-            return {
-                'isBase64Encoded': False,
-                'statusCode': response.status_code,
-                'headers': { 'Content-Type': 'application/json' },
-                'body': json.dumps(matched_complaints)
-            }
+            response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaints/', headers=event['headers'], params=event['queryStringParameters'])
+            return get_json_response(response)
         elif event['httpMethod'] == 'POST':
             response = requests.post(f'{os.environ.get('REST_DOMAIN')}/api/complaints/', headers=event['headers'], data=event['body'])
             return get_json_response(response)
@@ -77,24 +57,23 @@ def lambda_handler(event, context):
         if event['queryStringParameters']:
             format = event['queryStringParameters'].get('report-format')
 
-        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/reports/complaints-per-city/', headers={
-            'Authorization': event['headers']['Authorization']
-        }, params=event['queryStringParameters'])
+        response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/reports/complaints-per-city/', headers=event['headers'], params=event['queryStringParameters'])
 
         if format == 'csv':
             return {
                 'isBase64Encoded': False,
                 'statusCode': response.status_code,
-                'headers': { 'Content-Type': 'text/csv', "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
+                'headers': { 
+                    'Content-Type': 'text/csv', 
+                    "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+                },
                 'body': response.text
             }
         else:
-            return {
-                'isBase64Encoded': False,
-                'statusCode': response.status_code,
-                'headers': { 'Content-Type': 'application/json' },
-                'body': json.dumps(response.json())
-            }
+            return get_json_response(response)
         
     if event['resource'] == '/reports/complaints-per-complaint-type':
         format = 'csv'
@@ -107,16 +86,17 @@ def lambda_handler(event, context):
             return {
                 'isBase64Encoded': False,
                 'statusCode': response.status_code,
-                'headers': { 'Content-Type': 'text/csv', "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"'},
+                'headers': { 
+                    'Content-Type': 'text/csv', 
+                    "Content-Disposition": 'attachment; filename="complaints_per_complaint_type.csv"',
+                    'Access-Control-Allow-Headers': 'Content-Type',
+                    'Access-Control-Allow-Origin': '*',
+                    'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
+                },
                 'body': response.text
             }
         else:
-            return {
-                'isBase64Encoded': False,
-                'statusCode': response.status_code,
-                'headers': { 'Content-Type': 'application/json' },
-                'body': json.dumps(response.json())
-            }
+            return get_json_response(response)
 
     if event['resource'] == '/complaint-types':
         response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaint-types/', headers=event['headers'], params=event['queryStringParameters'])
