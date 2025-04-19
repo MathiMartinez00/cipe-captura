@@ -219,6 +219,8 @@ async function initMap(mapDivId, isHomePage) {
     zoom: 12,
     center: position,
     mapId: "DEMO_MAP_ID",
+    mapTypeControl: false,
+    streetViewControl: false,
   });
   const markerCluster = new markerClusterer.MarkerClusterer({ map });
 

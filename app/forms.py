@@ -31,9 +31,9 @@ class RegistrationForm(forms.Form):
     city = forms.ModelChoiceField(queryset=City.objects.all(), label="Ciudad *", empty_label="Ciudad", widget=forms.Select(attrs={
         'class': 'form-control',
     }))
-    road_type = forms.ModelChoiceField(queryset=RoadType.objects.all(), required=False, label="Tipo de calle", empty_label="Tipo de calle", widget=forms.Select(attrs={
-        'class': 'form-control',
-    }))
+    # road_type = forms.ModelChoiceField(queryset=RoadType.objects.all(), required=False, label="Tipo de calle", empty_label="Tipo de calle", widget=forms.Select(attrs={
+    #     'class': 'form-control',
+    # }))
     description = forms.CharField(label="Descripción *", widget=forms.Textarea(attrs={
         'class': 'form-control',
     }))

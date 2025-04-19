@@ -14,7 +14,7 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
 
     class Meta:
         model = Complaint
-        fields = ['complaint_type', 'description', 'city', 'latitude', 'longitude', 'road_type', 'created_at', 'photo_base64']
+        fields = ['complaint_type', 'description', 'city', 'latitude', 'longitude', 'created_at', 'photo_base64']
 
     def save(self):
         complaint = Complaint.objects.create(
@@ -25,7 +25,7 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
             longitude=self.validated_data['longitude'],
             altitude=0,
             accuracy=0,
-            road_type=self.validated_data.get('road_type', None),
+            road_type=None,
             captura_id=self.validated_data.get('captura_id', None)
         )
         photo_base64_string = self.validated_data.get('photo_base64', None)
