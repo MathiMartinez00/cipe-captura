@@ -36,6 +36,7 @@ class RegistrationForm(forms.Form):
     # }))
     description = forms.CharField(label="Descripción *", widget=forms.Textarea(attrs={
         'class': 'form-control',
+        'rows': '4',
     }))
     photo = forms.ImageField(label="Foto", required=False, widget=forms.FileInput(attrs={
         'class': 'form-control',
