@@ -147,9 +147,9 @@
         // handle a successful response
         success: function(json) {
           removeMarkers(markerClusterer);
-          resetMap(map);
+          // resetMap(map);
           if (json["complaints"].length > 0) {
-            addComplaintMarkers(json["complaints"], map, markerClusterer, true);
+            addComplaintMarkers(json.complaints, map, markerClusterer, true);
           } else {
             // TODO: Este no se puede cerrar manualmente.
             $('.toast').toast({delay: 3000});

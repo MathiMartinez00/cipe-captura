@@ -68,12 +68,12 @@ class ComplaintVoteSerializer(serializers.ModelSerializer):
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
         model = City
-        fields = ['id', 'name', 'code']
+        fields = ['id', 'name', 'code', 'color']
 
 class ComplaintTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = ComplaintType
-        fields = ['id', 'name', 'code']
+        fields = ['id', 'name', 'code', 'color']
 
 class ComplaintSerializerRead(serializers.ModelSerializer):
     votes = serializers.SerializerMethodField()
