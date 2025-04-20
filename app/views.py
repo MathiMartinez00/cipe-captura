@@ -159,7 +159,7 @@ def filter_map(request):
         if city:
             complaints = complaints.filter(city_id=city)
         if date:
-            complaints = complaints.filter(created_at=date)
+            complaints = complaints.filter(created_at__date=date)
         serializer = ComplaintSerializerRead(complaints, many=True)
         response_data = {
             'complaints': serializer.data,
