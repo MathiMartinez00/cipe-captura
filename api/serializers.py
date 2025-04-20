@@ -9,12 +9,26 @@ class VoteCount(TypedDict):
     Y: int
     N: int
 
+@extend_schema_serializer(
+    examples=[
+        OpenApiExample(
+            'Subir un archivo con foto',
+            value={
+                'complaint_type': 0,
+                'description': 'Descripción de la denuncia',
+                'city': 0,
+                'latitude': 0,
+                'longitude': 0,
+            },
+            request_only=True,
+            media_type='multipart/form-data'
+        )
+    ]
+)
 class ComplaintSerializerWrite(serializers.ModelSerializer):
-    photo_base64 = serializers.CharField(required=False, allow_blank=True)
-
     class Meta:
         model = Complaint
-        fields = ['complaint_type', 'description', 'city', 'latitude', 'longitude', 'created_at', 'photo_base64']
+        fields = ['complaint_type', 'description', 'city', 'latitude', 'longitude', 'photo']
 
     def save(self):
         complaint = Complaint.objects.create(
@@ -26,12 +40,9 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
             altitude=0,
             accuracy=0,
             road_type=None,
-            captura_id=self.validated_data.get('captura_id', None)
+            captura_id=self.validated_data.get('captura_id', None),
+            photo=self.validated_data['photo']
         )
-        photo_base64_string = self.validated_data.get('photo_base64', None)
-        if photo_base64_string:
-            photo_file = ContentFile(base64.b64decode(photo_base64_string), name='temp.png')
-            complaint.photo.save("test.png", photo_file)
         return complaint
 
 

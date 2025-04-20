@@ -1,10 +1,5 @@
-from django.db import IntegrityError
-from django.http import JsonResponse
-from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
-from django.contrib.auth.models import User
-from django.contrib.auth.hashers import check_password
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import viewsets, mixins
@@ -12,64 +7,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
+from rest_framework.parsers import MultiPartParser, JSONParser
 from api.models import Complaint, ComplaintVote, City, ComplaintType
 from api.serializers import ComplaintTypeSerializer, ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer, CitySerializer, AuthTokenRequestSerializer
-from app.models import Scientist
 from app.utils import ComplaintsStatsReporter
 from drf_spectacular.utils import extend_schema, OpenApiParameter, extend_schema_view, OpenApiExample
 from drf_spectacular.types import OpenApiTypes
 import logging
-import json
+
 logger = logging.getLogger(__name__)
-
-@method_decorator(csrf_exempt, name='dispatch')
-class ScientistListView(View):
-
-    def get(self, request, *args, **kwargs):
-        scientists = [s.serialize() for s in Scientist.objects.all()]
-        return JsonResponse(scientists, safe=False)
-
-    def post(self, request, *args, **kwargs):
-        try:
-            scientist_data = json.loads(request.body)
-            scientist = Scientist.objects.create(**scientist_data)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
-        except IntegrityError:
-            return JsonResponse({'error': 'Scientist already registered.'}, status=400)
-        return JsonResponse(scientist.serialize(), safe=False)
-
-
-@method_decorator(csrf_exempt, name='dispatch')
-class ScientistDetailView(View):
-
-    def get(self, request, scientist_id, *args, **kwargs):
-        try:
-            scientist = Scientist.objects.get(id=scientist_id)
-        except Scientist.DoesNotExist:
-            return JsonResponse({'error': 'Scientist not found.'}, status=404)
-        return JsonResponse(scientist.serialize(), safe=False)
-
-    def put(self, request, scientist_id, *args, **kwargs):
-        try:
-            scientist_data = json.loads(request.body)
-            scientist = Scientist.objects.get(id=scientist_id)
-        except json.JSONDecodeError:
-            return JsonResponse({'error': 'Invalid JSON.'}, status=400)
-        except Scientist.DoesNotExist:
-            return JsonResponse({'error': 'Scientist not found.'}, status=404)
-
-        Scientist.objects.filter(id=scientist.id).update(**scientist_data)
-        return JsonResponse({'message': 'Scientist updated successfully!'})
-
-    def delete(self, request, scientist_id, *args, **kwargs):
-        try:
-            scientist = Scientist.objects.get(id=scientist_id)
-        except Scientist.DoesNotExist:
-            return JsonResponse({'error': 'Scientist not found.'}, status=404)
-        scientist.delete()
-        return JsonResponse({'message': 'Scientist deleted successfully!'})
-
 
 @method_decorator(csrf_exempt, name='dispatch')
 class GetUserTokenView(ObtainAuthToken):
@@ -141,13 +87,14 @@ class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, views
         parameters=[
             OpenApiParameter('id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id de la denuncia.'),
             OpenApiParameter('complaint-type-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id del tipo de denuncia.'),
-            OpenApiParameter('start-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Inicio de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd.', default='2024-11-05'),
-            OpenApiParameter('end-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Fin de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd.', default='2024-11-05'),
-            OpenApiParameter('date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Día de la denuncia. Utilizado cuando se busca solo por un día. Debe seguir el formato YYYY-mm-dd.', default='2024-11-05'),
+            OpenApiParameter('start-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Inicio de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
+            OpenApiParameter('end-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Fin de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
+            OpenApiParameter('date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Día de la denuncia. Utilizado cuando se busca solo por un día. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
         ],
     ),
     create=extend_schema(
-        description="Crea una denuncia. Para adjuntar una foto a una denuncia, se debe utilizar el campo 'photo_base64' el cual debe tener una codificación en base64 de la foto."
+        description="Crea una denuncia.",
+        request={'multipart/form-data': ComplaintSerializerWrite}
     )
 )
 class ComplaintListCreateView(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -172,19 +119,15 @@ class ComplaintListCreateView(mixins.CreateModelMixin, mixins.ListModelMixin, vi
             queryset = queryset.filter(created_at__date__gte=start_date, created_at__date__lte=end_date)
         return queryset
 
-    @extend_schema(
-        description='Prueba',
-    )
+    # TODO: Add a created_by to the complaint.
     def perform_create(self, serializer):
         serializer.save()
 
     def get_serializer_class(self):
-        if self.request.method == 'GET':
-            return ComplaintSerializerRead
-        if self.request.method == 'POST':
+        if self.action == 'create':
             return ComplaintSerializerWrite
-        else:
-            return ComplaintSerializerRead
+        return ComplaintSerializerRead
+
 
 
 class DownloadComplaintsPerCityReportView(APIView):
