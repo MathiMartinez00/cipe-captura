@@ -76,7 +76,7 @@ async function addComplaintMarkers(complaints, map, markerClusterer, isMarkerInt
   });
 
   complaints.map((complaint) => {
-    const glyphPotholeSvgPinElement = new PinElement({
+    const markerPin = new PinElement({
       glyph: complaint.complaint_type.code[0],
       background: complaint.complaint_type.color,
       borderColor: complaint.complaint_type.color,
@@ -86,7 +86,7 @@ async function addComplaintMarkers(complaints, map, markerClusterer, isMarkerInt
       map,
       position: { lat: complaint.latitude, lng: complaint.longitude },
       gmpClickable: true,
-      content: glyphPotholeSvgPinElement.element,
+      content: markerPin.element,
     });
 
     if (isMarkerInteractive) {
@@ -130,7 +130,14 @@ async function addComplaintMarkers(complaints, map, markerClusterer, isMarkerInt
         descriptionElement.innerHTML = `Descripción: ${complaint.description}`;
   
         const datetimeElement = document.getElementById("complaint-datetime");
-        datetimeElement.innerHTML = `Fecha de creación: ${new Date(complaint.created_at).toLocaleString()}`
+        datetimeElement.innerHTML = `Fecha de creación: ${new Date(complaint.created_at).toLocaleString()}`;
+
+        const voteElement = document.getElementById("complaint-votes");
+        if (complaint.votes.Y === 0 && complaint.votes.N === 0) {
+          voteElement.innerHTML = `La denuncia actualmente no tienen ningún voto, se el primero en votar.`;
+        } else {
+          voteElement.innerHTML = `Votaciones actuales: ${complaint.votes.N} votaron por "No" y ${complaint.votes.Y} votaron por "Sí"`;
+        }
   
         modalBootstrap.show();
       });
