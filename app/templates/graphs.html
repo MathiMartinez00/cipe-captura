@@ -37,13 +37,13 @@
 
   <div class="d-flex justify-content-center mb-4 gap-4">
     <button class="btn btn-primary">
-      <a class="text-light text-decoration-none" href="{% url 'complaints-per-city-csv-report' %}" download>
+      <a class="text-light text-decoration-none" href="{% url 'complaints-per-city-csv-report' %}" download id="download-csv-per-city">
         <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
         Descargar CSV
       </a>
     </button>
     <button class="btn btn-primary">
-      <a class="text-light text-decoration-none" href="{% url 'complaints-per-city-json-report' %}" target="_blank">
+      <a class="text-light text-decoration-none" href="{% url 'complaints-per-city-json-report' %}" target="_blank" id="download-json-per-city">
         <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
         Descargar JSON
       </a>
@@ -58,13 +58,13 @@
 
   <div class="d-flex justify-content-center mb-4 gap-4">
     <button class="btn btn-primary">
-      <a class="text-light text-decoration-none" href="{% url 'complaints-per-complaint-type-csv-report' %}" download>
+      <a class="text-light text-decoration-none" href="{% url 'complaints-per-complaint-type-csv-report' %}" download id="download-csv-per-complaint-type">
         <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
         Descargar CSV
       </a>
     </button>
     <button class="btn btn-primary">
-      <a class="text-light text-decoration-none" href="{% url 'complaints-per-complaint-type-json-report' %}" target="_blank">
+      <a class="text-light text-decoration-none" href="{% url 'complaints-per-complaint-type-json-report' %}" target="_blank" id="download-json-per-complaint-type">
         <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
         Descargar JSON
       </a>
@@ -75,7 +75,6 @@
 
 <script>
 {% block javascript %}
-  // TODO: See if there's a way to display both the shorthand and label on click/hover.
   const stats = JSON.parse(document.querySelector('#stats').textContent);
 
   const mainDiv = document.querySelector('#main');
@@ -127,6 +126,24 @@
   generate_complaints_per_city_graph(stats);
   generate_complaints_per_complaint_types_graph(stats);
 
+  function changeDownloadUrls(start_date, end_date) {
+    const hrefUrlCSVPerCity = "/app/reports/csv/complaints-per-city";
+    const hrefUrlJSONPerCity = "/app/reports/json/complaints-per-city";
+    const hrefUrlCSVPerComplaintType = "/app/reports/csv/complaints-per-complaint-type";
+    const hrefUrlJSONPerComplaintType = "/app/reports/csv/complaints-per-comaplaint-type";
+
+    const downloadCSVPerCityAnchorElement = document.getElementById('download-csv-per-city');
+    const downloadJSONPerCityAnchorElement = document.getElementById('download-json-per-city');
+    const downloadCSVPerComplaintTypeAnchorElement = document.getElementById('download-csv-per-complaint-type');
+    const downloadJSONPerComplaintTypeAnchorElement = document.getElementById('download-csv-per-complaint-type');
+
+    // TODO: Finish this.
+    downloadCSVPerCityAnchorElement.href = `${hrefUrlCSVPerCity}?start-date=${start_date}&end-date=${end_date}`;
+    downloadJSONPerCityAnchorElement.href = `${hrefUrlJSONPerCity}?start-date=${start_date}&end-date=${end_date}`;
+    downloadCSVPerComplaintTypeAnchorElement.href = `${hrefUrlCSVPerComplaintType}?start-date=${start_date}&end-date=${end_date}`;
+    downloadJSONPerComplaintTypeAnchorElement.href = `${hrefUrlJSONPerComplaintType}?start-date=${start_date}&end-date=${end_date}`;
+  }
+
   $('#filter').on('submit', function(event) {
     event.preventDefault();
     $.ajax({
@@ -141,10 +158,12 @@
       // handle a successful response
       success: function(json) {
         if (json.stats) {
+          const start_date = $('#start-date').val();
+          const end_date = $('#end-date').val();
           generate_complaints_per_city_graph(json.stats);
           generate_complaints_per_complaint_types_graph(json.stats);
+          changeDownloadUrls(start_date, end_date);
         } else {
-          // TODO: Este no se puede cerrar manualmente.
           $('.toast').toast({delay: 3000});
           $('.toast').toast('show');
         }

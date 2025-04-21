@@ -321,14 +321,23 @@ def graphs_page(request):
     complaint_stats = ComplaintsStatsReporter().get_complaints_stats()
     return render(request, 'graphs.html', { 'stats': complaint_stats, 'complaint_types': complaint_types, 'cities': cities })
 
+# TODO: Add the filters here to the frontend, it's very important.
 def complaints_per_city_csv_report(request):
-    return ComplaintsStatsReporter().generate_complaints_per_city_csv_report()
+    start_date = request.GET.get('start-date', None)
+    end_date = request.GET.get('end-date', None)
+    return ComplaintsStatsReporter(start_date, end_date).generate_complaints_per_city_csv_report()
 
 def complaints_per_city_json_report(request):
-    return ComplaintsStatsReporter().generate_complaints_per_city_json_report()
+    start_date = request.GET.get('start-date', None)
+    end_date = request.GET.get('end-date', None)
+    return ComplaintsStatsReporter(start_date, end_date).generate_complaints_per_city_json_report()
 
 def complaints_per_complaint_type_csv_report(request):
-    return ComplaintsStatsReporter().generate_complaints_per_complaint_count_csv_report()
+    start_date = request.GET.get('start-date', None)
+    end_date = request.GET.get('end-date', None)
+    return ComplaintsStatsReporter(start_date, end_date).generate_complaints_per_complaint_count_csv_report()
 
 def complaints_per_complaint_type_json_report(request):
-    return ComplaintsStatsReporter().generate_complaints_per_complaint_count_json_report()
+    start_date = request.GET.get('start-date', None)
+    end_date = request.GET.get('end-date', None)
+    return ComplaintsStatsReporter(start_date, end_date).generate_complaints_per_complaint_count_json_report()
