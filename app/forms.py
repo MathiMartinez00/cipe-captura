@@ -41,8 +41,12 @@ class RegistrationForm(forms.Form):
     photo = forms.ImageField(label="Foto", required=False, widget=forms.FileInput(attrs={
         'class': 'form-control',
     }))
-    location_lat = forms.CharField(widget=forms.HiddenInput(), required=True)
-    location_lng = forms.CharField(widget=forms.HiddenInput(), required=True)
+    location_lat = forms.CharField(widget=forms.HiddenInput(), required=True, error_messages={
+        'required': 'La ubicación en el mapa es obligatoria.'
+    })
+    location_lng = forms.CharField(widget=forms.HiddenInput(), required=True, error_messages={
+        'required': 'La ubicación en el mapa es obligatoria.'
+    })
 
 
 class RegistrationEditForm(forms.Form):
