@@ -87,9 +87,9 @@ class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, views
         parameters=[
             OpenApiParameter('id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id de la denuncia.'),
             OpenApiParameter('complaint-type-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id del tipo de denuncia.'),
+            OpenApiParameter('city-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id del tipo de la ciudad.'),
             OpenApiParameter('start-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Inicio de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
             OpenApiParameter('end-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Fin de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
-            OpenApiParameter('date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Día de la denuncia. Utilizado cuando se busca solo por un día. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
         ],
     ),
     create=extend_schema(
@@ -106,11 +106,14 @@ class ComplaintListCreateView(mixins.CreateModelMixin, mixins.ListModelMixin, vi
         search_params = self.request.query_params
         complaint_id = search_params.get('id', None)
         complaint_type_id = search_params.get('complaint-type-id', None)
+        city_id = search_params.get('city-id', None)
         date = search_params.get('date', None)
         start_date = search_params.get('start-date', None)
         end_date = search_params.get('end-date', None)
         if complaint_id:
             queryset = queryset.filter(id=complaint_id)
+        if city_id:
+            queryset = queryset.filter(city_id=city_id)
         if complaint_type_id:
             queryset = queryset.filter(complaint_type_id=complaint_type_id)
         if date:

@@ -149,10 +149,10 @@ def complaints_map_view(request):
 
 
 def filter_map(request):
-    if request.method == 'POST':
-        complaint_type = request.POST.get('complaint_type')
-        city = request.POST.get('city')
-        date = request.POST.get('date')
+    if request.method == 'GET':
+        complaint_type = request.GET.get('complaint_type')
+        city = request.GET.get('city')
+        date = request.GET.get('date')
         complaints = Complaint.objects.all()
         if complaint_type:
             complaints = complaints.filter(complaint_type_id=complaint_type)
