@@ -106,7 +106,7 @@ def registration(request):
                 latitude=form.cleaned_data['location_lat'],
                 longitude=form.cleaned_data['location_lng'],
                 road_type=None,
-                photo=request.FILES['photo'],
+                photo=request.FILES.get('photo', None),
                 altitude=0,
                 accuracy=0,
                 captura_id=None,
@@ -321,7 +321,6 @@ def graphs_page(request):
     complaint_stats = ComplaintsStatsReporter().get_complaints_stats()
     return render(request, 'graphs.html', { 'stats': complaint_stats, 'complaint_types': complaint_types, 'cities': cities })
 
-# TODO: Add the filters here to the frontend, it's very important.
 def complaints_per_city_csv_report(request):
     start_date = request.GET.get('start-date', None)
     end_date = request.GET.get('end-date', None)
