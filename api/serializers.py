@@ -33,7 +33,7 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
     def save(self):
         complaint = Complaint.objects.create(
             complaint_type=self.validated_data['complaint_type'],
-            description=self.validated_data['description'],
+            description=self.validated_data.get('description', None),
             city=self.validated_data['city'],
             latitude=self.validated_data['latitude'],
             longitude=self.validated_data['longitude'],
@@ -41,7 +41,7 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
             accuracy=0,
             road_type=None,
             captura_id=self.validated_data.get('captura_id', None),
-            photo=self.validated_data['photo']
+            photo=self.validated_data.get('photo', None)
         )
         return complaint
 

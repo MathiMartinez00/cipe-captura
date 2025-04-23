@@ -23,6 +23,7 @@ class GetUserTokenView(ObtainAuthToken):
     authentication_classes = []
 
     @extend_schema(
+        summary='Retorna el token de un usuario',
         description='Retorna el token de un usuario.',
         examples=[
             OpenApiExample(
@@ -52,13 +53,15 @@ class GetUserTokenView(ObtainAuthToken):
 @method_decorator(csrf_exempt, name='dispatch')
 @extend_schema_view(
     list=extend_schema(
-        description="Lista los votos de las denuncias. Los votos tienen el campo 'vote_type' para indicar si las denuncias ya fueron resueltas (vote_type='Y') o no (vote_type='N').",
+        summary='Lista todos los votos hechos en la aplicación.',
+        description='Los votos tienen el campo "vote_type" para indicar si las denuncias ya fueron resueltas (vote_type="Y") o no (vote_type="N"). Se puede utilizar el parámetro "complaint-id" para listar las votaciones sobre una denuncia.',
         parameters=[
             OpenApiParameter('complaint-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id de la denuncia.')
         ]
     ),
     create=extend_schema(
-        description="Crea un voto para una denuncia. El voto tiene el campo 'vote_type' para indicar si ya se resolvió la denuncia (vote_type='Y') o no (vote_type='N')."
+        summary='Realiza una votación sobre el estado de una denuncia.',
+        description='El voto tiene el campo "vote_type" para indicar si ya se resolvió la denuncia (vote_type="Y") o no (vote_type="N").'
     )
 )
 class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -80,20 +83,24 @@ class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, views
         else:
             serializer.save(user=None, complaint_id=self.request.data['complaint'], vote_type=self.request.data['vote_type'])
 
-
 @extend_schema_view(
     list=extend_schema(
-        description='Lista todas las denuncias.',
+        summary='Lista todas las denuncias.',
+        description='Lista todas las denuncias según el rango de fechas dado ("start-date" y "end-date"), la ciudad ("city-id") o el tipo de denuncia ("complaint-type-id"). ' \
+        'El campo "photo" de la entidad es el enlace dentro de la página para ver la foto de la denuncia y descargarla, ' \
+        'sin embargo, tener en cuenta que denuncias hechas en 2024 pueden tener enlaces pero no fotos disponibles ya que pudieron haber sido borradas. ' \
+        'El campo "votes" tiene la cuenta de los votos realizados sobre la denuncia para determinar si se resolvió (llave "Y") o no (llave "N").',
         parameters=[
             OpenApiParameter('id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id de la denuncia.'),
             OpenApiParameter('complaint-type-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id del tipo de denuncia.'),
-            OpenApiParameter('city-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id del tipo de la ciudad.'),
-            OpenApiParameter('start-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Inicio de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
-            OpenApiParameter('end-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Fin de rango de fechas de la denuncia. Utilizado cuando se filtra por un rango de fechas. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
+            OpenApiParameter('city-id', OpenApiTypes.INT, OpenApiParameter.QUERY, description='Id de la ciudad.'),
+            OpenApiParameter('start-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Inicio de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
+            OpenApiParameter('end-date', OpenApiTypes.DATE, OpenApiParameter.QUERY, description='Fin de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
         ],
     ),
     create=extend_schema(
-        description="Crea una denuncia.",
+        summary='Crea una denuncia.',
+        description='Para crear una denuncia se necesitará la ubicación de esta, para esto se puede utilizar alguna aplicación de mapas como Google Maps o OpenStreetMap.',
         request={'multipart/form-data': ComplaintSerializerWrite}
     )
 )
@@ -138,9 +145,12 @@ class DownloadComplaintsPerCityReportView(APIView):
     authentication_classes = [TokenAuthentication]
 
     @extend_schema(
-        description="Genera el reporte de las denuncias hechas por ciudad. El formato puede ser csv (report-format='csv') o json (report-format='json').",
+        summary='Retorna el reporte de la cantidad de denuncias hechas por ciudad.',
+        description='El formato del reporte está determinado por el campo "report-format" que puede ser "csv" o "json" y acepta los parámetros "start-date" y "end-date" para determinar que denuncias utilizar para recopilar los datos.',
         parameters=[
-            OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".')
+            OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".'),
+            OpenApiParameter('start-date', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Inicio de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
+            OpenApiParameter('end-format', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Fin de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").')
         ]
     )
     def get(self, request):
@@ -160,9 +170,12 @@ class DownloadComplaintsPerComplaintTypeReportView(APIView):
     authentication_classes = [TokenAuthentication]
 
     @extend_schema(
-        description="Genera el reporte de las denuncias hechas por tipo de denuncia. El formato puede ser csv (report-format='csv') o json (report-format='json').",
+        summary='Retorna el reporte de la cantidad de denuncias hechas por tipo de denuncia.',
+        description='El formato del reporte está determinado por el campo "report-format" que puede ser "csv" o "json" y acepta los parámetros "start-date" y "end-date" para determinar que denuncias utilizar para recopilar los datos.',
         parameters=[
-            OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".')
+            OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".'),
+            OpenApiParameter('start-date', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Inicio de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
+            OpenApiParameter('end-format', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Fin de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").')
         ]
     )
     def get(self, request, format=None):
@@ -184,7 +197,8 @@ class CityListView(APIView):
     serializer_class = CitySerializer
 
     @extend_schema(
-        description='Lista las ciudades.',
+        summary='Lista las ciudades.',
+        description='Representa una ciudad que se asocia a una denuncia por medio de su id. Los campos "code" y "color" son utilizados para realizar los gráficos en la web.',
         parameters=[
             OpenApiParameter('id', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Id de la ciudad.')
         ]
@@ -203,11 +217,11 @@ class ComplaintTypeListView(APIView):
     serializer_class = ComplaintTypeSerializer
 
     @extend_schema(
-        description='Lista los tipos de denuncia.',
+        summary='Lista los tipos de denuncia.',
+        description='Representa un tipo de denuncia que se asocia a una denuncia por medio de su id. Los campos "code" y "color" son utilizados para realizar los gráficos en la web.',
         parameters=[
             OpenApiParameter('id', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Id del tipo de denuncia.')
         ],
-
     )
     def get(self, request):
         city_id = request.query_params.get('id', None)
