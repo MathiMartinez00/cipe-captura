@@ -199,9 +199,9 @@ SPECTACULAR_SETTINGS = {
             'url': 'https://097l4f27wj.execute-api.us-east-1.amazonaws.com/',
             'description': 'API Serverless',
         },
-        {
-            'url': '/',
-            'description': 'Servidor local',
-        }
+        # {
+        #     'url': '/',
+        #     'description': 'Servidor local',
+        # }
     ]
 }
