@@ -18,4 +18,6 @@ urlpatterns = [
     path('reports/json/complaints-per-city', views.complaints_per_city_json_report, name='complaints-per-city-json-report'),
     path('reports/csv/complaints-per-complaint-type', views.complaints_per_complaint_type_csv_report, name='complaints-per-complaint-type-csv-report'),
     path('reports/json/complaints-per-complaint-type', views.complaints_per_complaint_type_json_report, name='complaints-per-complaint-type-json-report'),
+    path('reports/csv/map', views.map_complaints_csv_report, name='map-complaints-csv-report'),
+    path('reports/json/map', views.map_complaints_json_report, name='map-complaints-json-report'),
 ]

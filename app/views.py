@@ -1,5 +1,6 @@
 import logging
 import json
+import csv
 from api.models import City, ComplaintType, Complaint
 from api.serializers import ComplaintSerializerRead, ComplaintTypeSerializer, CitySerializer
 from app.forms import RegistrationForm, RegistrationEditForm, UserRegistrationForm
@@ -145,7 +146,6 @@ def complaints_map_view(request):
         'complaint_types': complaint_types,
         'complaints': json.dumps(serializer.data),
     }
-    print(cities, complaint_types)
     return render(request, 'map.html', context)
 
 
@@ -341,3 +341,80 @@ def complaints_per_complaint_type_json_report(request):
     start_date = request.GET.get('start-date', None)
     end_date = request.GET.get('end-date', None)
     return ComplaintsStatsReporter(start_date, end_date).generate_complaints_per_complaint_count_json_report()
+
+def map_complaints_json_report(request):
+    if request.method == 'GET':
+        complaint_type = request.GET.get('complaint_type')
+        city = request.GET.get('city')
+        date = request.GET.get('date')
+        complaints = Complaint.objects.all()
+        if complaint_type:
+            complaints = complaints.filter(complaint_type_id=complaint_type)
+        if city:
+            complaints = complaints.filter(city_id=city)
+        if date:
+            complaints = complaints.filter(created_at__date=date)
+        serializer = ComplaintSerializerRead(complaints, many=True)
+        response_data = {
+            'complaints': serializer.data,
+        }
+        return JsonResponse(response_data, status=200)
+    else:
+        return HttpResponse(
+            json.dumps({"msg": "Cannot recognize the method type"}),
+            content_type="application/json"
+        )
+    
+def map_complaints_csv_report(request):
+    if request.method == 'GET':
+        complaint_type = request.GET.get('complaint_type')
+        city = request.GET.get('city')
+        date = request.GET.get('date')
+        complaints = Complaint.objects.all()
+        if complaint_type:
+            complaints = complaints.filter(complaint_type_id=complaint_type)
+        if city:
+            complaints = complaints.filter(city_id=city)
+        if date:
+            complaints = complaints.filter(created_at__date=date)
+        serializer = ComplaintSerializerRead(complaints, many=True)
+        response_data = {
+            'complaints': serializer.data,
+        }
+        response = HttpResponse(
+            content_type="text/csv; charset=utf-8",
+            headers={"Content-Disposition": 'attachment; filename="map_data.csv"'},
+        )
+
+        writer = csv.writer(response)
+        writer.writerow([
+            "id", 
+            "city_id", 
+            "city_name", 
+            "complaint_type_id",
+            "complaint_type_name", 
+            "latitude", 
+            "longitude", 
+            "yes_votes",
+            "no_votes",
+            "created_at",
+        ])
+        writer.writerows([[
+            complaint['id'],
+            complaint['city']['id'],
+            complaint['city']['name'],
+            complaint['complaint_type']['id'],
+            complaint['complaint_type']['name'],
+            complaint['latitude'],
+            complaint['longitude'],
+            complaint['votes']['Y'],
+            complaint['votes']['N'],
+            complaint['created_at'],
+        ] for complaint in response_data['complaints']])
+
+        return response
+    else:
+        return HttpResponse(
+            json.dumps({"msg": "Cannot recognize the method type"}),
+            content_type="application/json"
+        )

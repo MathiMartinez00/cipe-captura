@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content %}
 <div class="toast bg-white" style="position: fixed; top: 20px; right: 20px">
   <div class="toast-header">
@@ -45,6 +45,7 @@
     </form>
   </div>
 </div>
+
 <div class="container-fluid">
   <div class="row mb-3">
     <div class="col-12">
@@ -52,6 +53,24 @@
     </div>
   </div>
 </div>
+
+<div class="container-fluid">
+  <div class="d-flex justify-content-center mb-4 gap-4">
+    <button class="btn btn-primary">
+      <a class="text-light text-decoration-none" href="{% url 'map-complaints-csv-report' %}" download id="download-csv-map">
+        <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
+        Descargar CSV
+      </a>
+    </button>
+    <button class="btn btn-primary">
+      <a class="text-light text-decoration-none" href="{% url 'map-complaints-json-report' %}" target="_blank" id="download-json-map">
+        <img src="{% static 'app/img/icons/file-earmark-arrow-down.svg' %}" />
+        Descargar JSON
+      </a>
+    </button>
+  </div>
+</div>
+
 <div class="modal" id="detailModal" tabindex="-1">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
@@ -134,6 +153,30 @@
     const { map, markerClusterer } = await initMap('map', true);
     await addComplaintMarkers({{ complaints|safe }}, map, markerClusterer, true);
   
+    function updateDownloadButtons() {
+      const csvDownloadAnchorElement = document.getElementById("download-csv-map");
+      const jsonDownloadAnchorElement = document.getElementById("download-json-map");
+
+      const csvDefaultURL = "/app/reports/csv/map"
+      const jsonDefaultURL = "/app/reports/json/map"
+      
+      const city = $('#city').val();
+      const complaint_type = $('#complaint_type').val();
+      const date = $('#date').val();
+      const queryParams = new URLSearchParams();
+      if (city) {
+        queryParams.set('city', city);
+      }
+      if (complaint_type) {
+        queryParams.set('complaint_type', complaint_type);
+      }
+      if (date) {
+        queryParams.set('date', date);
+      }
+      csvDownloadAnchorElement.href = `${csvDefaultURL}?${queryParams.toString()}`
+      jsonDownloadAnchorElement.href = `${jsonDefaultURL}?${queryParams.toString()}`
+    }
+
     $('#filter').on('submit', function(event) {
       event.preventDefault();
       $.ajax({
@@ -149,6 +192,7 @@
         success: function(json) {
           removeMarkers(markerClusterer);
           // resetMap(map);
+          updateDownloadButtons();
           if (json["complaints"].length > 0) {
             addComplaintMarkers(json.complaints, map, markerClusterer, true);
           } else {
