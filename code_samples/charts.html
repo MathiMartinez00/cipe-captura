@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Echarts Sample</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
+  </head>
+
+  <body>
+    <div class="container-fluid">    
+      <div class="fw-bold fs-3 text-center mt-4 text-secondary">Denuncias por ciudadades</div>
+      <div class="divider-custom">
+        <div class="divider-custom-line"></div>
+      </div>
+      <div id="main" class="w-auto" style="height: 400px"></div>
+    
+      <p class="fw-bold fs-3 text-center text-secondary">Denuncias por tipo de denuncia</p>
+      <div class="divider-custom">
+        <div class="divider-custom-line"></div>
+      </div>
+      <div id="main2" class="w-auto" style="height: 400px"></div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js" integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.6.0/dist/echarts.min.js" integrity="sha256-v0oiNSTkC3fDBL7GfhIiz1UfFIgM9Cxp3ARlWOEcB7E=" crossorigin="anonymous"></script>
+
+    <script>
+      async function generate_reports() {
+        const auth_token = "ca273e045aa8897fdb2b4c4ad4dd2e8ae545cedc"
+        const api_url = "https://097l4f27wj.execute-api.us-east-1.amazonaws.com/api"
+
+        const mainDiv = document.querySelector('#main');
+        const complaints_per_city_graph = echarts.init(mainDiv);
+        const per_city_stats_response = await fetch(`${api_url}/reports/complaints-per-city/?report-format=json`, {
+          headers: {
+            Authorization: `Token ${auth_token}`
+          }
+        });
+        const per_city_stats = await per_city_stats_response.json();
+
+        function generate_complaints_per_city_graph(stats) {
+          const complaints_per_city_graph_options = {
+            tooltip: {},
+            legend: {},
+            xAxis: {
+              data: stats.map((complaint) => complaint.city_code),
+            },
+            yAxis: {},
+            series: [{ 
+              type: 'bar',
+              data: stats.map((complaint) => ({ 
+                name: complaint.city_name,
+                value: complaint.count,
+                itemStyle: { color: complaint.color },
+              })),
+            }],
+          };
+          complaints_per_city_graph.setOption(complaints_per_city_graph_options);
+        }
+      
+        const mainDiv2 = document.querySelector('#main2');
+        const complaints_per_complaint_type = echarts.init(mainDiv2);
+        const per_complaint_type_stats_response = await fetch(`${api_url}/reports/complaints-per-complaint-type/?report-format=json`, {
+          headers: {
+            Authorization: `Token ${auth_token}`
+          }
+        });
+        const per_complaint_type_stats = await per_complaint_type_stats_response.json();
+
+        function generate_complaints_per_complaint_types_graph(stats) {
+          const complaints_per_complaint_type_options = {
+            tooltip: {},
+            legend: {},
+            xAxis: {
+              data: stats.map((complaint) => complaint.complaint_type_code),
+            },
+            yAxis: {},
+            series: [{ 
+              type: 'bar',
+              data: stats.map((complaint) => ({ 
+                name: complaint.complaint_type_name,
+                value: complaint.count,
+                itemStyle: { color: complaint.color },
+              })),
+            }],
+          };
+          complaints_per_complaint_type.setOption(complaints_per_complaint_type_options);
+        }
+      
+        generate_complaints_per_city_graph(per_city_stats);
+        generate_complaints_per_complaint_types_graph(per_complaint_type_stats);
+      }
+      generate_reports();
+    </script>
+  </body>
+</html>
