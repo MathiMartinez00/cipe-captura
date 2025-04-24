@@ -8,6 +8,7 @@ from urllib.parse import urlencode
 from api.models import Complaint, ComplaintType, City
 from django.http import HttpResponse, JsonResponse
 from typing import TypedDict
+import unicodedata
 
 gmaps = googlemaps.Client(key=f"{settings.GOOGLE_MAPS_API_KEY}")
 logger = logging.getLogger(__name__)
@@ -101,6 +102,9 @@ class ComplaintsStatsDict(TypedDict):
     complaints_per_complaint_type: list[ComplaintsPerComplaintTypeDict]
 
 
+def strip_accents(str):
+    return ''.join(char for char in unicodedata.normalize('NFD', str) if unicodedata.category(char) != 'Mn')
+
 class ComplaintsStatsReporter:
     # If adding more colors is necessary, you can do so here: https://supercolorpalette.com/?scp=G0-hsl-BE7023-BA8426-B7962A-B4A62D-ACB030-99AD34-87A937-77A63A-69A33E-5D9F41
     colors = {
@@ -169,7 +173,11 @@ class ComplaintsStatsReporter:
 
             writer = csv.writer(response)
             writer.writerow(["city_name", "city_code", "complaint_count"])
-            writer.writerows([[complaint['city_name'], complaint['city_code'], complaint['count']] for complaint in complaint_stats['complaints_per_city']])
+            writer.writerows([[
+                strip_accents(complaint['city_name']), 
+                strip_accents(complaint['city_code']), 
+                complaint['count']
+            ] for complaint in complaint_stats['complaints_per_city']])
 
             return response
         
@@ -192,7 +200,11 @@ class ComplaintsStatsReporter:
 
             writer = csv.writer(response)
             writer.writerow(["complaint_type_name", "complaint_type_code", "complaint_count"])
-            writer.writerows([[complaint['complaint_type_name'], complaint['complaint_type_code'], complaint['count']] for complaint in complaint_stats['complaints_per_complaint_type']])
+            writer.writerows([[
+                strip_accents(complaint['complaint_type_name']),
+                strip_accents(complaint['complaint_type_code']),
+                complaint['count']
+            ] for complaint in complaint_stats['complaints_per_complaint_type']])
 
             return response
         
