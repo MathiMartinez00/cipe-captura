@@ -149,7 +149,7 @@ class DownloadComplaintsPerCityReportView(APIView):
         parameters=[
             OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".'),
             OpenApiParameter('start-date', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Inicio de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
-            OpenApiParameter('end-format', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Fin de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").')
+            OpenApiParameter('end-date', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Fin de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").')
         ]
     )
     def get(self, request):
@@ -174,7 +174,7 @@ class DownloadComplaintsPerComplaintTypeReportView(APIView):
         parameters=[
             OpenApiParameter('report-format', OpenApiTypes.STR, OpenApiParameter.QUERY, default='csv', description='Formato del reporte. Puede ser "csv" o "json".'),
             OpenApiParameter('start-date', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Inicio de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").'),
-            OpenApiParameter('end-format', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Fin de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").')
+            OpenApiParameter('end-date', OpenApiTypes.STR, OpenApiParameter.QUERY, description='Fin de rango de fechas de las denuncias. Debe seguir el formato YYYY-mm-dd (Ejemplo: "2024-11-05").')
         ]
     )
     def get(self, request, format=None):

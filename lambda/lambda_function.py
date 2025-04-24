@@ -70,7 +70,7 @@ def lambda_handler(event, context):
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
                 },
-                'body': response.text.encode('latin1').decode('utf-8')
+                'body': response.text
             }
         else:
             return get_json_response(response)
@@ -93,7 +93,7 @@ def lambda_handler(event, context):
                     'Access-Control-Allow-Origin': '*',
                     'Access-Control-Allow-Methods': 'OPTIONS,POST,GET',
                 },
-                'body': response.text.encode('latin1').decode('utf-8')
+                'body': response.text
             }
         else:
             return get_json_response(response)
