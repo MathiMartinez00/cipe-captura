@@ -44,7 +44,7 @@ def lambda_handler(event, context):
 
     if event['resource'] == '/complaint-votes':
         if event['httpMethod'] == 'GET':
-            response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaint-votes/', headers=event['headers'])
+            response = requests.get(f'{os.environ.get('REST_DOMAIN')}/api/complaint-votes/', headers=event['headers'], params=event['queryStringParameters'])
             return get_json_response(response)
         elif event['httpMethod'] == 'POST':
             response = requests.post(f'{os.environ.get('REST_DOMAIN')}/api/complaint-votes/', headers=event['headers'], data=event['body'])
