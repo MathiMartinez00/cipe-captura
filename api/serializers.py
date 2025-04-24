@@ -30,12 +30,12 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
 
     class Meta:
         model = Complaint
-        fields = ['complaint_type', 'description', 'city', 'latitude', 'longitude', 'road_type', 'created_at', 'photo_base64']
+        fields = ['complaint_type', 'description', 'city', 'latitude', 'longitude', 'created_at', 'photo_base64']
 
     def save(self):
         complaint = Complaint.objects.create(
             complaint_type=self.validated_data['complaint_type'],
-            description=self.validated_data['description'],
+            description=self.validated_data.get('description', ''),
             city=self.validated_data['city'],
             latitude=self.validated_data['latitude'],
             longitude=self.validated_data['longitude'],
