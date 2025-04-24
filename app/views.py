@@ -136,8 +136,8 @@ def success_registration(request):
 
 
 def complaints_map_view(request):
-    cities = City.objects.all()
-    complaint_types = ComplaintType.objects.all()
+    cities = City.objects.all().order_by('name')
+    complaint_types = ComplaintType.objects.all().order_by('name')
     complaints = Complaint.objects.all()
     serializer = ComplaintSerializerRead(complaints, many=True)
     context = {
@@ -145,6 +145,7 @@ def complaints_map_view(request):
         'complaint_types': complaint_types,
         'complaints': json.dumps(serializer.data),
     }
+    print(cities, complaint_types)
     return render(request, 'map.html', context)
 
 

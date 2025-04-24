@@ -25,10 +25,10 @@ class UserRegistrationForm(forms.Form):
     ))
 
 class RegistrationForm(forms.Form):
-    complaint_type = forms.ModelChoiceField(queryset=ComplaintType.objects.all(), label="Tipo de denuncia *", empty_label="Tipo de denuncia", widget=forms.Select(attrs={
+    complaint_type = forms.ModelChoiceField(queryset=ComplaintType.objects.all().order_by('name'), label="Tipo de denuncia *", empty_label="Tipo de denuncia", widget=forms.Select(attrs={
         'class': 'form-select',
     }))
-    city = forms.ModelChoiceField(queryset=City.objects.all(), label="Ciudad *", empty_label="Ciudad", widget=forms.Select(attrs={
+    city = forms.ModelChoiceField(queryset=City.objects.all().order_by('name'), label="Ciudad *", empty_label="Ciudad", widget=forms.Select(attrs={
         'class': 'form-select',
     }))
     # road_type = forms.ModelChoiceField(queryset=RoadType.objects.all(), required=False, label="Tipo de calle", empty_label="Tipo de calle", widget=forms.Select(attrs={
