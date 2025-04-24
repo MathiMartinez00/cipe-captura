@@ -26,23 +26,28 @@ class VoteCount(TypedDict):
     ]
 )
 class ComplaintSerializerWrite(serializers.ModelSerializer):
+    photo_base64 = serializers.CharField(required=False, allow_blank=True)
+
     class Meta:
         model = Complaint
-        fields = ['complaint_type', 'description', 'city', 'latitude', 'longitude', 'photo']
+        fields = ['complaint_type', 'description', 'city', 'latitude', 'longitude', 'road_type', 'created_at', 'photo_base64']
 
     def save(self):
         complaint = Complaint.objects.create(
             complaint_type=self.validated_data['complaint_type'],
-            description=self.validated_data.get('description', None),
+            description=self.validated_data['description'],
             city=self.validated_data['city'],
             latitude=self.validated_data['latitude'],
             longitude=self.validated_data['longitude'],
             altitude=0,
             accuracy=0,
-            road_type=None,
-            captura_id=self.validated_data.get('captura_id', None),
-            photo=self.validated_data.get('photo', None)
+            road_type=self.validated_data.get('road_type', None),
+            captura_id=self.validated_data.get('captura_id', None)
         )
+        photo_base64_string = self.validated_data.get('photo_base64', None)
+        if photo_base64_string:
+            photo_file = ContentFile(base64.b64decode(photo_base64_string), name='temp.png')
+            complaint.photo.save("test.png", photo_file)
         return complaint
 
 

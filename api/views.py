@@ -7,7 +7,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
-from rest_framework.parsers import MultiPartParser, JSONParser
 from api.models import Complaint, ComplaintVote, City, ComplaintType
 from api.serializers import ComplaintTypeSerializer, ComplaintSerializerRead, ComplaintSerializerWrite, ComplaintVoteSerializer, CitySerializer, AuthTokenRequestSerializer
 from app.utils import ComplaintsStatsReporter
@@ -101,7 +100,7 @@ class ComplaintVoteViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, views
     create=extend_schema(
         summary='Crea una denuncia.',
         description='Para crear una denuncia se necesitará la ubicación de esta, para esto se puede utilizar alguna aplicación de mapas como Google Maps o OpenStreetMap.',
-        request={'multipart/form-data': ComplaintSerializerWrite}
+        request={'application/json': ComplaintSerializerWrite}
     )
 )
 class ComplaintListCreateView(mixins.CreateModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet):
