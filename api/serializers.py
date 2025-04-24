@@ -53,7 +53,7 @@ class ComplaintSerializerWrite(serializers.ModelSerializer):
             description='Crea una votación para indicar que la denuncia con id 0 SI se resolvió.',
             value={
                 'vote_type': 'Y',
-                'complaint_id': 0,
+                'complaint': 0,
             },
             request_only=True
         ),
