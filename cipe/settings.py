@@ -186,6 +186,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+    'DEFAULT_THROTTLE_RATES': {
+        'anon': '5/s',
+        'user': '5/s',
+    }
 }
 
 SPECTACULAR_SETTINGS = {
